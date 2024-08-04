@@ -65,7 +65,7 @@
 \begin{document}
 % ----------------------------------------------------------------------------
 \title{
-  Integrating the Language Server Protocol into SEE
+  Building Code Cities using \mbox{the Language Server Protocol}
   \ifdraft
     -- \emph{DRAFT} --
   \fi
@@ -176,8 +176,8 @@ These are the IDEs and editors that incorporate the language server into themsel
 Examples for IDEs that support acting as a Language Client in the LSP context include \emph{Eclipse, Emacs, IntelliJ IDEA} (including other JetBrains IDEs), \emph{(Neo)vim}, and \emph{Visual Studio}.
 
 \section{Goals}\label{sec:goals}
-The goal of this master's thesis, as indicated by its title, is to integrate the Language Server Protocol into \SEE{} by making it a Language Client, then evaluate this implementation by comparing it with traditional IDEs in a user study.
-To this end, code cities should be generated using the Language Server, and all the information obtainable by relevant LSP capabilities should be manifested\footnote{
+The goal of this master's thesis is to integrate the Language Server Protocol into \SEE{} by making it a Language Client, then evaluate this implementation by comparing it with traditional IDEs in a user study.
+To this end, the main contribution will be a way of generating code cities using the Language Server, where all the information obtainable by relevant LSP capabilities should be manifested\footnote{
   Since there is a lot of diverse data available via LSP, it makes sense to only immediately display the most pertinent information and make the rest of it available upon request within \SEE{}'s UI.
 } in the city in a suitable way.
 This is an unintended (or at the very least, unusual) use of LSP and may require some experimentation.
@@ -206,7 +206,7 @@ There already exist well-made interfaces for this purpose\footnote{
 \subsection{Mandatory goals}
 In short, I plan to fulfill all of the following goals as part of this thesis:
 \begin{itemize}
-  \item Integrating an LSP SDK into \SEE{} and allowing users to manage (i.e., install, start, and stop) Language Servers from within SEE
+  \item Integrating an LSP SDK into \SEE{} and allowing users to manage Language Servers from within SEE
   \item Making \SEE{} an LSP Language Client, such that:
     \begin{enumerate}
       \item Code cities can be generated directly from source code directories, using Language Servers that \SEE{} interfaces with,
@@ -220,7 +220,7 @@ In short, I plan to fulfill all of the following goals as part of this thesis:
 These are ideas for further goals, which probably won't be implemented as part of the master's thesis, but build on the parts described above and introduce additional features.
 \begin{itemize}
   \item Regenerating a code city automatically when the underlying source code is modified
-  \item Offering to download and install Language Server from within \SEE{}
+  \item Offering to download and install Language Servers from within \SEE{}
   \item Introducing LSP-assisted edit functionalities for both code cities and code windows
   \item Using the Language Server Index Format~\cite{lsif} to build code cities for remote projects (e.g., ones hosted in remote Git repositories)
   \item Supporting additional LSP capabilities not included in \autoref{sec:capabilities}, such as folding ranges or inlay hints
@@ -398,12 +398,12 @@ The graphs are formalized as $G = (V, E, a, s, t, \ell)$, with:
     \Statex
     \Function{FindNodesByLocation}{$\texttt{doc}, \texttt{range}$}
     \LComment{We pick the nodes with the most specific range containing the given location.}
-    \State $B \gets \{ v \in V \mid a(v, \texttt{SourcePath}) = \texttt{doc} \land \texttt{range.start.line}, \texttt{range.end.line} \in [a(v, \texttt{SourcePath})\texttt{.start.line}, a(v, \texttt{SourcePath})\texttt{.end.line}] \land 
-      \texttt{range.start.column} \geq a(v, \texttt{SourcePath})\texttt{.start.column} \land
-      \texttt{range.end.column} \leq a(v, \texttt{SourcePath})\texttt{.end.column}
+    \State $B \gets \{ v \in V \mid a(v, \texttt{SourcePath}) = \texttt{doc} \land \texttt{range.start.line}, \texttt{range.end.line} \in [a(v, \texttt{SourceRange})\texttt{.start.line}, a(v, \texttt{SourceRange})\texttt{.end.line}] \land 
+      \texttt{range.start.column} \geq a(v, \texttt{SourceRange})\texttt{.start.column} \land
+      \texttt{range.end.column} \leq a(v, \texttt{SourceRange})\texttt{.end.column}
     \}$
-    \State {$B \gets \argmin\limits_{v \in B} a(v, \texttt{SourcePath})\texttt{.end.line} - a(v, \texttt{SourcePath})\texttt{.start.line}$}
-    \State \Return{$\argmin\limits_{v \in B} a(v, \texttt{SourcePath})\texttt{.end.column} - a(v, \texttt{SourcePath})\texttt{.start.column}$}
+    \State {$B \gets \argmin\limits_{v \in B} a(v, \texttt{SourceRange})\texttt{.end.line} - a(v, \texttt{SourceRange})\texttt{.start.line}$}
+    \State \Return{$\argmin\limits_{v \in B} a(v, \texttt{SourceRange})\texttt{.end.column} - a(v, \texttt{SourceRange})\texttt{.start.column}$}
     \EndFunction
   \end{algorithmic}
 \end{algorithm}
@@ -458,19 +458,17 @@ Aside from measuring task accuracy and time to complete the task, participants w
 The research question I seek to answer here is whether code cities are a suitable means to present LSP information to developers as compared to IDEs---specifically, whether code cities are better than, as good as, or worse than IDEs for this purpose on the dimensions of speed, accuracy, and usability.
 
 \section{Schedule}
-This schedule is preliminary and should only serve as a rough estimate.
+As of today, \today{}, the implementation has been completed, while the evaluation (and master's thesis itself) still remains to be done.
+Below is a rough schedule outlining the remaining steps to be taken, as well as completion dates for finished milestones.
 \begin{enumerate}
-    \item \textbf{February 1, 2024}: Beginning of planning phase, beginning of the creation of this exposé.
-    \item \textbf{March 1, 2024} (29 days): Finished the exposé and planning.
-    \item \textbf{April 1, 2024} (31 days): Finished code city generation via LSP as described in \autoref{subsubsec:generate}.
-    \item \textbf{April 14, 2024} (14 days): Finished extending code city functionality via LSP information as described in \autoref{subsubsec:city}.
-    \item \textbf{May 6, 2024} (21 days): Finished integrating LSP into code windows as described in \autoref{subsubsec:window} (and thereby finished the implementation part as a whole).
-    \item \textbf{May 20, 2024} (21 days): Finished preparation of the evaluation (i.e., setting up the user study).
-    \item \textbf{June 9, 2024} (21 days): Finished the evaluation as described in \autoref{subsec:evaluation}.
-    \item \textbf{June 9, 2024} (21 days): Finished the evaluation.
-    \item \textbf{August 1, 2024} (53 days): Completed the master's thesis.
+    \item \textbf{May 1, 2024}: Finished code city generation via LSP as described in \autoref{subsubsec:generate}.
+    \item \textbf{June 18, 2024}: Finished extending code city functionality via LSP information as described in \autoref{subsubsec:city}.
+    \item \textbf{August 1, 2024}: Finished integrating LSP into code windows as described in \autoref{subsubsec:window} (and thereby finished the implementation part as a whole).
+    \item \textbf{August 14, 2024}: Finished preparation of the evaluation (i.e., setting up the user study).
+    \item \textbf{September, 2024}: Finished the evaluation as described in \autoref{subsec:evaluation}.
+    \item \textbf{October, 2024}: Completed the master's thesis.
       After this date, only smaller details (e.g., formatting improvements) and fixes (e.g., for spelling mistakes) should be applied.
-    \item \textbf{August 21, 2024} (20 days): Finished and submitted the master's thesis.
+    \item \textbf{November, 2024}: Finished and submitted the master's thesis.
 \end{enumerate}
 
 \newpage
