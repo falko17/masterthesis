@@ -1,0 +1,404 @@
+\documentclass[%
+	paper=A4,
+	twoside=true,
+	openright,
+	parskip=half,           % spacing value / method for paragraphs
+  11pt,
+	chapterprefix=true,     % prefix for chapter marks
+	headings=normal,        % size of headings
+	bibliography=totocnumbered,     % include bib in toc
+	listof=totocnumbered,   % include listof entries in toc
+	titlepage=on,           % own page for each title page
+	captions=tableabove,    % display table captions above the float env
+  draft   % if neither is specified, "draft for review mode"
+  %final
+]{scrbook}
+
+%%% PACKAGES %%%
+
+\PassOptionsToPackage{utf8}{inputenc}
+\usepackage{inputenc}
+\usepackage{kantlipsum}
+\usepackage{graphicx}
+\usepackage{xifthen}
+\usepackage{xspace}
+\usepackage[english]{babel}
+\usepackage{subfiles}
+\usepackage{microtype}
+\usepackage{listings}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{algorithm}
+\usepackage{algpseudocodex}
+\usepackage{wrapfig2}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{fontenc}
+\usepackage{lettrine}
+\usepackage{etoolbox}
+\usepackage{ifdraft}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{soul}
+\usepackage{fixme}
+\usepackage{tikz}
+\usepackage{nameref}
+\usepackage[asymmetric]{geometry}
+
+\PassOptionsToClass{listof=numbered}{scrreprt}
+
+\PassOptionsToPackage{
+    figuresep=colon,
+    hangfigurecaption=false,
+    hangsection=true,
+    hangsubsection=true,
+    configurelistings=true,
+    colorize=full,
+    configurebiblatex=true,
+    bibsys=biber,
+    bibfile=sources,
+    bibstyle=alphabetic,
+}{cleanthesis}
+\usepackage{cleanthesis}
+
+% TODO: Maybe 1.064 or just 1 instead?
+\usepackage[p,scaled=1.05]{erewhon}
+\usepackage[scaled=1.05,proportional]{zlmtt}
+\usepackage[type1]{cabin}
+\usepackage[utopia,vvarbb]{newtxmath}
+
+
+%%% COMMANDS %%%
+\newcommand{\myTitle}{%
+  Building Code Cities using the Language Server Protocol\xspace
+  \ifoptionfinal{}{\\--- \emph{DRAFT} ---}{}
+}
+\newcommand{\mySubtitle}{Master's Thesis\xspace}
+\newcommand{\myName}{Falko Galperin\xspace}
+\newcommand{\myProf}{Prof.\ Dr.\ Rainer Koschke\xspace}
+\newcommand{\myOtherProf}{Prof.\ Dr.\ Ute Bormann\xspace}
+\newcommand{\myProfDepartment}{Working group \textit{Software Engineering}\xspace}
+\newcommand{\myOtherProfDepartment}{Working group \textit{Computer Networks}\xspace}
+\newcommand{\myDepartment}{Faculty 3 --- Mathematics \& Computer Science\xspace}
+\newcommand{\myUniversity}{University of Bremen\xspace}
+
+\newcommand{\participants}{4\xspace}
+
+\newcommand{\SEE}{\gls*{see}}
+\newcommand{\eg}{e.\,g.\xspace}
+\newcommand{\ie}{i.\,e.\xspace}
+\newcommand{\code}[1]{\fxerror{Use lstinline here!}}
+\newcommand{\web}[2]{\url{#1} \textit{(last access: #2)}}
+
+\newcommand{\ifempty}[3]{%
+  \if\relax\detokenize{#1}\relax
+    #2%
+  \else
+    #3%
+  \fi}
+
+\makeatletter
+\newcommand*{\currentname}{\@currentlabelname{} (\@currentlabel{})}
+\makeatother
+
+%%% OPTIONS %%%
+
+\let\oldmarginpar\marginpar
+\renewcommand{\marginpar}[2][]{%
+  \oldmarginpar[#1]{\ifthispageodd{#2}{\hspace*{-4mm}\parbox{23mm}{#2}}}
+}
+
+\fxsetup{
+  \ifoptionfinal{final}{draft},
+    author=,
+    theme=color,
+}
+
+\let\inlineLayout\FXLayoutInline
+\renewcommand{\FXLayoutInline}[3]{\inlineLayout{#1}{\ifthenelse{\isempty{#2}}{\textbf{TODO!}}{\textbf{TODO: } #2}}{#3}}
+\let\marginLayout\FXLayoutMargin
+% Place empty todos as inline text, otherwise it looks weird.
+\renewcommand{\FXLayoutMargin}[3]{\ifthenelse{\isempty{#2}}{\FXLayoutInline{#1}{#2}{#3}}{\marginLayout{#1}{\textbf{TODO:} #2}{#3}}}
+\renewcommand{\FXTargetLayoutColor}[2]{\hl{#2}}
+
+\let\oldFxLox\FXLayoutContentsLine
+\renewcommand{\FXLayoutContentsLine}[3]{\oldFxLox{#1}{\ifempty{#2}{Unfinished section\ifempty{\currentname}{}{: \currentname}}{#2}}{#3}}
+
+%\definecolor{fxnote}{rgb}{0.9000,0.0000,0.0000}
+
+\renewcommand\LettrineFontHook{\initfamily}
+
+% draft=false to disable rulers in draft mode
+\KOMAoptions{BCOR=8mm,draft=false}
+
+\hypersetup{% setup the hyperref-package options
+    pdftitle={\myTitle},
+    pdfsubject={\mySubtitle},
+    pdfauthor={\textcopyright\ \myName, \myUniversity},
+    colorlinks=true,
+    linkcolor=Fuchsia,
+    citecolor=ForestGreen,
+    urlcolor=Blue,
+    breaklinks=true,
+    bookmarksnumbered=true,
+}
+
+\graphicspath{{figures/}}
+
+% Allow using " for quotes.
+\MakeOuterQuote{"}
+ 
+% Center all captions.
+\captionsetup{justification=centering}
+
+% Change color theme to Maroon-Magenta.
+\makeatletter
+\def\cthesissetcolorcustom{%
+  \cthesissetcolor{rgb}%
+  {0.6863, 0.1961, 0.2078}%
+  {0.6863, 0.1961, 0.4550}%
+}
+\cthesissetcolorcustom
+
+\definecolor{ctcolorgraydark}{gray}{.2}
+
+% The thesis is colorful enough with glossary terms being highlighted,
+% no need to also colorize section titles.
+\colorlet{ctcolorsection}{ctcolorblack}
+\colorlet{ctcolorsubsection}{ctcolorblack}
+\colorlet{ctcolorfootertitle}{ctcolorgraydark}
+
+\input GoudyIn.fd
+\newcommand*\initfamily{\usefont{U}{GoudyIn}{xl}{n}}
+\input RoyalIn.fd
+\newcommand*\letterfamily{\usefont{U}{RoyalIn}{xl}{n}}
+
+\renewcommand{\ctchapternumber}[1]{%
+    \usekomafont{chapter}%
+    \begin{minipage}[t]{0.3\textwidth}%
+        \raggedleft{%
+            {\color{ctcolorchapterline}\rule[-5pt]{2pt}{5cm}}%
+            \quad%
+            {\color{ctcolorchapternum}\fontsize{60}{60}\selectfont#1}%
+        }%
+    \end{minipage}}
+
+
+% Change sans font
+\renewcommand{\thesischapterfont}{\color{ctcolorblack}\nobreak\normalfont\Huge \cabin\selectfont}
+\renewcommand{\thesissectionfont}{\color{ctcolorsection}\nobreak\normalfont\LARGE \cabin}
+\renewcommand{\thesissubsectionfont}{\color{ctcolorsubsection}\nobreak\normalfont\Large \cabin}
+\renewcommand{\thesisparagraphfont}{\color{ctcolorparagraph}\nobreak\cabin\small\bfseries}
+
+\renewcommand{\ctfontfootertext}{%
+    \color{ctcolorfootertitle}%
+    \normalfont\footnotesize \cabin%
+}
+
+\renewcommand*{\figureformat}{%
+  \figurename~\thefigure%
+}
+
+% Correct hanging section offsets.
+\renewcommand*{\sectionformat}{%
+      \usekomafont{section}%
+      \makebox[-1pt][r]{\color{ctcolorblack}\thesection\hspace*{8pt}}%
+  }
+\renewcommand*{\subsectionformat}{%
+      \usekomafont{subsection}%
+      \makebox[-1pt][r]{\color{ctcolorblack}\thesubsection\hspace*{8pt}}%
+   }
+
+\makeatother
+
+% Listings setup.
+\lstset{
+  basicstyle=\footnotesize\ttfamily,breaklines=true,mathescape=true,
+  columns=fullflexible, frame=single,
+  postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
+  language=[Sharp]C,
+  numbers=left,showstringspaces=false
+}
+
+%%% CONTENTS %%%
+
+\input{content/glossary}
+
+\begin{document}
+
+\title{\myTitle}
+\subtitle{\mySubtitle}
+\author{\myName}
+\date{\today}
+
+\frontmatter
+
+\begin{titlepage}
+	\fxwarning{Make sure this is centered!}
+	\begin{addmargin}[-2cm]{-2.5cm}
+		\pdfbookmark[0]{Titlepage}{Titlepage}
+		\tgherosfont
+		\centering
+
+		{\Large \myUniversity} \\[4mm]
+		\includegraphics[width=6cm]{unibremen} \\[2mm]
+		\textsf{\myDepartment}
+
+		\vfill
+		{\large \mySubtitle} \\[5mm]
+		{\LARGE \color{ctcolortitle}\textbf{\myTitle} \\[10mm]}
+		{\Large \myName} \\
+
+		\vfill
+		\begin{minipage}[t]{.27\textwidth}
+			\raggedleft
+			\textit{1. Reviewer}
+		\end{minipage}
+		\hspace*{15pt}
+		\begin{minipage}[t]{.65\textwidth}
+			{\Large \myProf} \\
+			{\small \myProfDepartment} \\[-2mm]
+		\end{minipage} \\[5mm]
+		\begin{minipage}[t]{.27\textwidth}
+			\raggedleft
+			\textit{2. Reviewer}
+		\end{minipage}
+		\hspace*{15pt}
+		\begin{minipage}[t]{.65\textwidth}
+			{\Large \myOtherProf} \\
+			{\small \myOtherProfDepartment} \\[-2mm]
+		\end{minipage} \\[10mm]
+
+		\today \\
+
+	\end{addmargin}
+\end{titlepage}
+
+\cleardoublepage
+
+\pdfbookmark[0]{Abstract}{abstract}
+{\usekomafont{chapter}Abstract}
+
+\fxfatal{}
+
+\cleardoublepage{}
+
+\pdfbookmark[0]{Declaration}{syn}
+{\usekomafont{chapter}Declaration}
+
+% Ich versichere, die Bachelorarbeit --- sofern dies nicht explizit anders gekennzeichnet wurde --- ohne fremde Hilfe angefertigt zu haben.
+% Ich habe keine anderen als die angegebenen Quellen und Hilfsmittel benutzt.
+% Alle Stellen, die wörtlich oder sinngemäß aus Veröffentlichungen entnommen sind, sind als solche kenntlich gemacht.
+
+I hereby declare that I have completed this master's thesis independently and without any external assistance, unless explicitly stated otherwise.
+I have not used any sources or aids other than those specified.
+All passages that have been quoted verbatim or paraphrased from published sources are clearly identified as such.
+
+\bigskip
+
+\noindent\textit{Bremen, \today}
+\smallskip
+\begin{flushright}
+	\begin{tabular}{m{5cm}}
+		\\ \hline
+		\centering\myName \\
+	\end{tabular}
+\end{flushright}
+
+\vfill
+
+%die Danksagung
+\pdfbookmark[0]{Acknowledgements}{ack}
+{\usekomafont{chapter}Acknowledgements}
+
+\fxfatal{}
+% Zuallererst möchte ich mich bei Rainer Koschke bedanken, der mich durch das schnelle und ausführliche Beantworten meiner zahlreichen Fragen bei der Implementierung, beim Schreiben der Bachelorarbeit und auch bei der Durchführung der Evaluation unterstützt hat, \zB{} indem dort das Angebot einer Gratispizza für alle Teilnehmenden des Bachelorprojekts als Anreiz gesetzt wurde.
+% Marcel Steinbeck danke ich unter anderem für einen Performance-rettenden Tipp bei der Implementierung.
+% Ebenso bedanke ich mich bei Christian Müller für das Testen und Verbreiten meiner Evaluation und natürlich auch bei allen anderen Teilnehmenden der Evaluation, die letztendlich für eine sehr zufriedenstellende Teilnehmerzahl gesorgt haben.
+% Weiterhin möchte ich mich bei Thore Frenzel bedanken, der mich unter anderem beim Testen der Evaluation unterstützt hat.
+% Abschließend möchte ich mich bei allen anderen Korrekturlesern bedanken, die trotz des Umfangs dieser Bachelorarbeit nicht vor der Aufgabe zurückgeschreckt sind.%dieses Dokument wohl in diesem Augenblick gerade lesen und mich daran erinnern sollten, diesen Satz hier anzupassen.
+
+\cleardoublepage
+
+% TOC
+\pdfbookmark[0]{\contentsname}{tableofcontents}
+\tableofcontents
+\cleardoublepage
+
+\mainmatter
+
+\fxwarning{Convert diagrams to TikZ}
+% TODO: Convert diagrams to TikZ
+
+\subfile{content/intro}
+
+\subfile{content/concepts}
+
+\subfile{content/implementation}
+
+\subfile{content/evaluation}
+
+\subfile{content/conclusion}
+
+\cleardoublepage{}
+
+\appendix
+
+% \renewcommand{\ctchapternumber}[1]{%
+% 	\usekomafont{chapter}%
+% 	\begin{minipage}[t]{0.3\textwidth}%
+% 		\raggedleft{%
+% 			{\color{ctcolorchapterline}\rule[-5pt]{2pt}{5cm}}%
+% 			\quad%
+% 			{\color{ctcolorchapternum}\fontsize{60}{60}\letterfamily\selectfont#1}%
+% 		}%
+% 	\end{minipage}}
+
+\makeatletter
+\renewcommand\listoffigures{%
+	\chapter{\listfigurename}
+	\@starttoc{lof}%
+}
+\makeatother
+
+\makeatletter
+\renewcommand\listoftables{%
+	\chapter{\listtablename}
+	\@starttoc{lot}%
+}
+\makeatother
+
+\makeatletter
+\renewcommand\listoffixmes{%
+	\chapter{List of TODOs}
+	\lettrine[lines=3]{\textcolor{Maroon}{O}}{pen} tasks/notes/mistakes for this master's thesis are collected within this appendix.
+	If you see any mistake or empty section not covered by such a note, please tell me.
+	Note that this appendix will only appear in draft versions.
+
+	\@starttoc{lox}%
+}
+\makeatother
+
+\glslongextraSetWidest{csvresults}
+
+\renewcommand{\glslongextraNameAlign}[0]{r}
+
+\listoffixmes
+
+\printglossary[type=main,style={index}]
+\printglossary[type=\acronymtype]
+\printunsrtglossary[type=file,style={long-name-desc}]
+
+\listoffigures
+
+\vspace{8ex}
+
+\listoftables
+
+\vspace{8ex}
+
+\printbibliography[heading=bibnumbered]
+
+\end{document}

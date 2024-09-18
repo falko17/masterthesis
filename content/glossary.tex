@@ -1,0 +1,143 @@
+%! TEX root = ../thesis.tex
+\usepackage[toc,numberedsection=autolabel,section=chapter,abbreviations]{glossaries-extra}
+%\usepackage{glossary-mcols}
+%\usepackage{marginnote}
+\usepackage{glossary-longextra}
+\usepackage{marginfix}
+\usepackage{float,tcolorbox}
+
+\tcbuselibrary{skins}
+
+% This part is from https://tex.stackexchange.com/a/605352
+\makeatletter
+\newfloat{info@box}{tbp}{loi}[section]% 1: Name of float environment. 2: Default placement (top, bottom, ...). 3: File extension if written to an aux-file (like toc, lof, lot, loa, ...). 4: Numbering within <section/subsection/...>.
+\makeatother
+\floatname{info@box}{Infobox}% Adapt caption.
+
+\newenvironment{infobox}[1]{% Create new environment using info@box and tcolorbox
+	\begin{info@box}
+		\begin{tcolorbox}[colback=Maroon!15!white,colframe=Maroon!75!black,
+				arc=0mm, left=1mm, width=\textwidth,
+				before skip balanced=0mm, beforeafter skip=-2mm,
+				fonttitle=\bfseries\sffamily,
+				enhanced, drop fuzzy shadow,
+				title=New Term: #1
+			]%
+			}{%
+		\end{tcolorbox}
+	\end{info@box}
+}
+
+% No links for description
+\let\oldglsdesc\glsdesc
+\renewcommand{\glsdesc}[1]{\oldglsdesc*{#1}}
+\let\Oldglsdesc\Glsdesc
+\renewcommand{\Glsdesc}[1]{\Oldglsdesc*{#1}}
+
+% File index
+\newglossary{file}{fln}{flo}{Attached Files}
+\makeglossaries{}
+
+% ----------------------------------------------------------------------------
+
+% https://tex.stackexchange.com/a/359561
+
+\let\fc\lowercase
+\let\oldprintglossary\printglossary
+\def\printglossary{\let\fc\uppercase\oldprintglossary}
+
+% Full name on first time
+\setabbreviationstyle[acronym]{long-postshort-user}
+% Also color acronym itself
+\renewcommand{\glsfirstabbrvuserfont}[1]{\textcolor{Maroon}{#1}}
+
+\newcommand{\glossterm}[1]{%
+	\ifglshaslong{#1}%
+	{\textit{\glsentrytext{#1}} (\glsxtrlong{#1})}%
+	{\textit{\glsentrytext{#1}}}%
+}
+
+% Only color for the first time
+\newcommand{\firstuseformat}[1]{\textcolor{Maroon}{{\emph{#1}}}}
+\newcommand{\seconduseformat}[1]{\textcolor{black}{{#1}}}
+\newcommand{\mainformat}[1]{%
+	\ifglsused{#1}{}{\glslinkvar{%
+			\let\fc\uppercase%
+			\begin{infobox}{\glossterm{#1}}
+				% TODO: Full title for acronyms
+				\glsentrydesc{#1}
+			\end{infobox}%
+			\let\fc\lowercase}{}{}%
+	}%
+}
+
+
+\defglsentryfmt[main]{\glsgenentryfmt\mainformat{\glslabel}}
+%\defglsentryfmt[\acronymtype]{\glsgenentryfmt\ifglsused{\glslabel}{\glsentryshort{\glslabel}}{\glsentrylong{\glslabel}}\mainformat{\glslabel}}
+\defglsentryfmt[\acronymtype]{\glsgenentryfmt\ifglsused{\glslabel}{}{\mainformat{\glslabel}}}
+
+% Remove emphasis and set new color for files
+\defglsentryfmt[file]{\emph{\textcolor{Cyan}{\glsentryname{\glslabel}}}}
+
+\renewcommand{\glslinkpresetkeys}{%
+	\ifglsused{\glslabel}%
+	{\let\glstextformat\seconduseformat}%
+	{\let\glstextformat\firstuseformat}%
+}
+
+% Bei Symbol spezielle Randnotiz
+\newcommand{\glsmarginpar}[1]{
+	\let\fc\uppercase%
+	\marginpar{%
+		\textcolor{Maroon}{\emph{\glsentryname{#1} (\glsentrysymbol{#1})}:} \glsentrydesc{#1}}%
+	\let\fc\lowercase%
+}
+
+
+%%% ACRONYMS HERE %%%
+
+\newacronym[description={\fc{A}n interactive software visualization tool using the code city metaphor in 3D, developed in the Unity game engine at the University of Bremen.}]{see}{SEE}{Software Engineering Experience}
+
+\newacronym[description={\fc{T}he number of lines in a source code file.}]{loc}{LOC}{Lines of Code}
+
+\newacronym[description={\fc{A} file format for graphs, used in \gls{see} for representing dependency and hierarchy graphs of software projects.}]{gxl}{GXL}{Graph eXchange Language}
+
+\newacronym[description={\fc{E}ditor for source code with features that are useful for development (\eg, highlighting errors). Examples are \emph{Eclipse} or \emph{\textsc{JetBrains} IntelliJ}}.]{ide}{IDE}{Integrated Development Environment}
+
+\newacronym[description={\fc{A} protocol which specifies how language servers can provide language-specific features to IDEs, such as hover information, go to definition, or diagnostics.}]{lsp}{LSP}{Language Server Protocol}
+
+\newacronym[description={\fc{A} remote procedure call protocol that uses JSON as its encoding, supporting (among other features) asynchronous calls and notifications. It is used as the base for \gls{lsp} (even though \gls{lsp} is technically not a remote protocol).}]{jrpc}{JSON-RPC}{JavaScript Object Notation---Remote Procedure Call}
+
+\newacronym{ui}{UI}{User Interface}
+
+
+%%% GLOSSARY HERE %%%
+
+\newglossaryentry{city}{name=\fc{c}ode \fc{c}ity,
+	description={\fc{I}n the code city metaphor, software components are visualized as buildings within a city, where various metrics of the software are represented visually (\eg, the height of a building could represent the lines of code of the component).},
+	plural=code cities}
+
+\newglossaryentry{ls}{name={L}anguage {S}erver,
+description={\fc{A} locally-running JSON-RPC-based application following the Language Server Protocol that provides language-specific features and aids to the Language Client.}}
+
+\newglossaryentry{lc}{name={L}anguage {C}lient,
+description={\fc{A} development tool, such as an \gls{ide}, that supports \gls{lsp} and can hence integrate language-specific features into itself using compatible \glspl{ls}.}}
+
+\newglossaryentry{capability}{name=\fc{c}apability,
+	description={\fc{A} specific set of features a given \gls{ls} (and \gls{lc}) support.},
+	plural=capabilities}
+
+\newglossaryentry{window}{name=\fc{c}ode \fc{w}indow,
+	description={\fc{A} source code viewer in \SEE{} which supports very basic \gls{IDE}-like functionality.}}
+
+\newglossaryentry{reflexion}{name=\fc{r}eflexion \fc{a}nalysis,
+	description={\fc{T}he process of comparing the architecture and implementation of a software project and finding incongruencies between the two.}}
+
+
+% TODO Replace with English source, change quote
+\newglossaryentry{smell}{name=\fc{c}ode \fc{s}mell,
+	description={\fc{c}ertain structures in source code that make it apparent that a refactoring is in order~\cite{Refa2020}.}}
+
+%%% DIGITAL HERE %%%
+\newglossaryentry{seezip}{name={\texttt{SEE.zip}}, type=file,
+	description={\fc{T}he build of \SEE{} used for the evaluation.}}

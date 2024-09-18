@@ -1,0 +1,96 @@
+\documentclass[../thesis]{subfiles}
+\graphicspath{{\subfix{../figures/}}}
+
+\begin{document}
+\chapter{Concepts}\label{ch:concepts}
+
+\lettrine[lines=3]{\textcolor{Maroon}{B}}{efore} tackling the implementation, we need to take a closer look at the concepts central to this thesis, so that we can form a concrete idea of which parts of \gls{lsp} are well-suited to being integrated into \glspl{city}.
+Thus, we will examine the concept of \glspl{city}, where we will use \SEE{} as a concrete implementation (which we do in \cref{sec:see}), as well as the \glsentrylong{lsp} (which we do in \cref{sec:lsp}).
+For the former, we will go over some of the existing literature regarding \glspl{city} (as this is more of an academic topic than \gls{lsp}) and describe the essentials that we need to work with in the implementation, such as the project graph.
+As for the latter, we will go over the available \glspl{capability} and take a look at both existing \glspl{ls} and \glspl{lc} to get an idea of what the \glsentrylong{lsp} offers and how it is most commonly used.
+For both topics, we will focus on the parts relevant to the implementation and evaluation---for example, we will only explore those \glspl{capability} in detail that actually end up being used in this thesis.
+
+\section{SEE}\label{sec:see}
+
+As explained in \cref{subsec:see}, \SEE{} is an interactive software visualization tool using the \gls{city} metaphor in 3D, with the aim to make it easier to work with large software projects on an architectural level.
+To name a few example scenarios in which using code cities could be useful, \fxwarning*{Back this up with sources}{compared to} using traditional \glspl{ide}:
+\begin{itemize}
+	\item Senior developers may use it in its "multiplayer" mode to explain the structure of their software to newcomers
+	\item Project planners could visualize \glspl{smell} to find candidates for refactoring~\cite{falko}
+	\item Software architects can find violations of the planned architecture using \SEE{}'s \gls{reflexion}
+\end{itemize}
+
+\fxnote{Refer back here later, noting how LSP can generate code cities for each of these use cases}
+
+\SEE{} is an open-source project, currently hosted at GitHub\footnote{\web{https://github.com/uni-bremen-agst/SEE}{2024-09-18} (but note that, to clone this repository, you additionally need access to the Git LFS counterpart hosted at the University of Bremen's GitLab, as this is where paid plugins for \SEE{} are hosted.)}.
+It is a research project at the University of Bremen, where it has been in development \fxwarning*{is this correct? And put source here}{since 2019}, and where it is frequently offered as a bachelor or master project for the students.
+While it was at first a project for the \emph{Unreal Engine}, the game engine has been switched to \emph{Unity} relatively early, mainly because its editor eased development due to the ability to reload the \gls*{ui} without having to restart the whole engine.
+
+After going over the basics of how \SEE{} works, I will give an explanation and formalization of the project graph---as this is the central component in the \gls{lsp}-based \gls{city}-generation algorithm---followed by a brief overview over other features that are relevant for this thesis.
+Finally, we will take a look at some of the literature regarding \glspl{city} in general.
+
+\subsection{Basics}
+\fxfatal{}
+\fxnote{Also provide screenshots here}
+
+% Nodes, edges.
+% 3D view.
+% Code city based on project.
+% Maybe add a link to a video here (introductory video)
+
+\subsection{Project Graph}
+\fxfatal{}
+
+% Explain what nodes and edges are, maybe even introduce formal model here.
+% Attributes, go over some examples (specifically, source line/column).
+% Also give some examples for some software projects, maybe even a 2D viz along with the SEE viz.
+
+\subsection{Other Relevant Features}
+\fxfatal{}
+
+% Which are:
+% - Context Menu
+% - Unity Editor, City menu.
+% - Erosion icons
+% - Code Windows (with Lexer-based syntax highlighting)
+
+\subsection{Literature}
+\fxfatal{}
+
+\section{Language Server Protocol}\label{sec:lsp}
+\fxfatal{}
+
+\subsection{History}
+\fxfatal{}
+
+\subsection{Basics}
+\fxfatal{}
+
+\paragraph{JSON-RPC}
+\fxfatal{}
+
+\paragraph{Lifecycle}
+\fxfatal{}
+
+\subsection{Capabilities}
+\fxfatal{}
+
+% List all capabilities along with short explanation and maybe screenshot, grouped by category, and also mention how we plan to integrate this into SEE
+% Where category can be "Navigation", "Structure", etc.
+% Group together unused capabilities at the end, give short overview
+
+\subsection{Language Servers}
+\fxfatal{}
+
+% Dunno what to do here yet
+% Make this a shorter section—the focus is on language clients.
+
+\subsection{Language Clients}
+\fxfatal{}
+% I.e., go over IDEs/tools that support LSP, and common ways how they do that.
+
+\section{Interim Conclusion}  % Or maybe just recap?
+\fxfatal{}
+% Add table from Expose here for overview over plans
+
+\end{document}
