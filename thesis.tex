@@ -25,7 +25,6 @@
 \usepackage[english]{babel}
 \usepackage{subfiles}
 \usepackage{microtype}
-\usepackage{listings}
 \usepackage{subcaption}
 \usepackage{float}
 \usepackage{booktabs}
@@ -46,6 +45,13 @@
 \usepackage{tikz}
 \usepackage{nameref}
 \usepackage[asymmetric]{geometry}
+\usepackage[chapter]{minted}
+\usepackage{tcolorbox}
+\usepackage{morewrites}
+
+\tcbuselibrary{skins,minted,breakable}
+
+\usetikzlibrary{shadows}
 
 \PassOptionsToClass{listof=numbered}{scrreprt}
 
@@ -63,12 +69,10 @@
 }{cleanthesis}
 \usepackage{cleanthesis}
 
-% TODO: Maybe 1.064 or just 1 instead?
-\usepackage[p,scaled=1.05]{erewhon}
-\usepackage[scaled=1.05,proportional]{zlmtt}
+\usepackage[p,osf,scaled=1.05]{erewhon}
+\usepackage[scaled=1.05]{zlmtt}
 \usepackage[type1]{cabin}
 \usepackage[utopia,vvarbb]{newtxmath}
-
 
 %%% COMMANDS %%%
 \newcommand{\myTitle}{%
@@ -91,6 +95,23 @@
 \newcommand{\ie}{i.\,e.\xspace}
 \newcommand{\code}[1]{\fxerror{Use lstinline here!}}
 \newcommand{\web}[2]{\url{#1} \textit{(last access: #2)}}
+\newcommand{\tt}[1]{\proptt{#1}}
+
+\newcommand{\keystroke}[1]{%
+  \tikz[baseline=(key.base)]
+    \node[%
+      draw,
+      fill=gray!25,
+      drop shadow={shadow xshift=0.25ex,shadow yshift=-0.25ex,fill=black,opacity=0.2},
+      rectangle,
+      rounded corners=2pt,
+      inner ysep=0.5pt,
+      inner xsep=3pt,
+      line width=0.5pt,
+      font=\footnotesize\sffamily
+    ](key) {#1\strut}
+  ;
+}
 
 \newcommand{\ifempty}[3]{%
   \if\relax\detokenize{#1}\relax
@@ -103,11 +124,28 @@
 \newcommand*{\currentname}{\@currentlabelname{} (\@currentlabel{})}
 \makeatother
 
+\AtBeginDocument{
+  \newtcblisting[blend into=listings]{codebox}[3][csharp]{%
+    colback=Blue!15!white,colframe=Blue!75!black,
+    width=\textwidth, arc=0mm,
+    left=1mm, right=1mm, 
+    boxrule=0.2mm, boxsep=0.3mm,
+    toptitle=0.5mm, bottomtitle=0.2mm,
+    fonttitle=\sffamily\small,
+    enhanced, drop fuzzy shadow,
+    listing only,
+    %breakable,
+    minted language=#1,
+    label=#2,
+    adjusted title=#3,
+  }
+}
+
 %%% OPTIONS %%%
 
 \let\oldmarginpar\marginpar
 \renewcommand{\marginpar}[2][]{%
-  \oldmarginpar[#1]{\ifthispageodd{#2}{\hspace*{-4mm}\parbox{23mm}{#2}}}
+  \oldmarginpar[#1]{\Ifthispageodd{#2}{\hspace*{-4mm}\parbox{23mm}{#2}}}
 }
 
 \fxsetup{
@@ -201,6 +239,10 @@
   \figurename~\thefigure%
 }
 
+\renewcommand*{\tableformat}{%
+  \tablename~\thetable%
+}
+
 % Correct hanging section offsets.
 \renewcommand*{\sectionformat}{%
       \usekomafont{section}%
@@ -214,13 +256,26 @@
 \makeatother
 
 % Listings setup.
-\lstset{
-  basicstyle=\footnotesize\ttfamily,breaklines=true,mathescape=true,
-  columns=fullflexible, frame=single,
-  postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
-  language=[Sharp]C,
-  numbers=left,showstringspaces=false
+
+\setminted{
+  autogobble,
+  breakaftersymbolpre=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
+  breaklines,
+  fontsize=\footnotesize,
+  numberblanklines=false,
+  mathescape,
+  texcomments,
 }
+
+
+\renewcommand{\listoflistings}{%
+  \cleardoublepage
+  \addcontentsline{toc}{chapter}{\listoflistingscaption}%
+  \listof{listing}{\listoflistingscaption}%
+}
+
+\crefname{lstlisting}{listing}{listings}
+\Crefname{lstlisting}{Listing}{Listings}
 
 %%% CONTENTS %%%
 
@@ -393,11 +448,9 @@ All passages that have been quoted verbatim or paraphrased from published source
 
 \listoffigures
 
-\vspace{8ex}
-
 \listoftables
 
-\vspace{8ex}
+\listoflistings
 
 \printbibliography[heading=bibnumbered]
 

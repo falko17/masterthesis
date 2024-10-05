@@ -1,12 +1,10 @@
 %! TEX root = ../thesis.tex
-\usepackage[toc,numberedsection=autolabel,section=chapter,abbreviations]{glossaries-extra}
+\usepackage[toc,numberedsection=autolabel,section=chapter,abbreviations,xindy]{glossaries-extra}
 %\usepackage{glossary-mcols}
 %\usepackage{marginnote}
 \usepackage{glossary-longextra}
 \usepackage{marginfix}
-\usepackage{float,tcolorbox}
-
-\tcbuselibrary{skins}
+\usepackage{float}
 
 % This part is from https://tex.stackexchange.com/a/605352
 \makeatletter
@@ -17,11 +15,13 @@
 \newenvironment{infobox}[1]{% Create new environment using info@box and tcolorbox
 	\begin{info@box}
 		\begin{tcolorbox}[colback=Maroon!15!white,colframe=Maroon!75!black,
-				arc=0mm, left=1mm, width=\textwidth,
-				before skip balanced=0mm, beforeafter skip=-2mm,
-				fonttitle=\bfseries\sffamily,
+				arc=0mm, width=\textwidth, %left=1mm, right=1mm,
+				boxrule=0.2mm, boxsep=0.3mm,
+				toptitle=0.5mm, bottomtitle=0.2mm, lefttitle=1mm, righttitle=1mm,
+				beforeafter skip=-2mm,
+				fonttitle=\bfseries\sffamily\small,
 				enhanced, drop fuzzy shadow,
-				title=New Term: #1
+				adjusted title=New Term: #1
 			]%
 			}{%
 		\end{tcolorbox}
@@ -37,6 +37,8 @@
 % File index
 \newglossary{file}{fln}{flo}{Attached Files}
 \makeglossaries{}
+
+% FIXME  Acronyms' long form not shown at the end.
 
 % ----------------------------------------------------------------------------
 
@@ -106,9 +108,17 @@
 
 \newacronym[description={\fc{A} protocol which specifies how language servers can provide language-specific features to IDEs, such as hover information, go to definition, or diagnostics.}]{lsp}{LSP}{Language Server Protocol}
 
+\newacronym[description={\fc{A} format which language servers can emit to persist LSP-based information about a software project.},seealso=lsp]{lsif}{LSIF}{Language Server Index Format}
+
+\newacronym[description={\fc{A} protocol that can be viewed as the analogue to LSP for debuggers, with the goal to make it easier to integrate debuggers into development tools.}]{dap}{DAP}{Debug Adapter Protocol}
+
 \newacronym[description={\fc{A} remote procedure call protocol that uses JSON as its encoding, supporting (among other features) asynchronous calls and notifications. It is used as the base for \gls{lsp} (even though \gls{lsp} is technically not a remote protocol).}]{jrpc}{JSON-RPC}{JavaScript Object Notation---Remote Procedure Call}
 
 \newacronym{ui}{UI}{User Interface}
+
+\newacronym[description={A string that uniquely identifies some resource.}]{uri}{URI}{Uniform Resource Identifier}
+
+\newacronym[description={A proprietary, but free \gls{ide} developed by Microsoft with a plugin system from which LSP originated. See \web{https://code.visualstudio.com}{2024-10-05}}]{vscode}{VSCode}{Visual Studio Code}
 
 
 %%% GLOSSARY HERE %%%
@@ -128,16 +138,30 @@ description={\fc{A} development tool, such as an \gls{ide}, that supports \gls{l
 	plural=capabilities}
 
 \newglossaryentry{window}{name=\fc{c}ode \fc{w}indow,
-	description={\fc{A} source code viewer in \SEE{} which supports very basic \gls{IDE}-like functionality.}}
+	description={\fc{A} source code viewer in \SEE{} which supports very basic \gls{ide}-like functionality.}}
 
 \newglossaryentry{reflexion}{name=\fc{r}eflexion \fc{a}nalysis,
 	description={\fc{T}he process of comparing the architecture and implementation of a software project and finding incongruencies between the two.}}
 
+\newglossaryentry{polytree}{name=\fc{p}olytree,
+	description={\fc{A} directed acylic graph which also has no undirected cycles.}}
 
-% TODO Replace with English source, change quote
+\newglossaryentry{editor}{name={U}nity Editor,
+	description={\fc{T}he main \gls{ui} of the Unity game engine, in which scenes can be set up, components can be configured, the game itself can be run, etc. Note that it is only used for development purposes, and hence not included within generated builds of a game.}}
+
+\newglossaryentry{provider}{name=\fc{G}raph provider,
+	description={\fc{A} component in \SEE{} that produces or transforms a project graph by some means. Can optionally take configuration parameters by users.}}
+
 \newglossaryentry{smell}{name=\fc{c}ode \fc{s}mell,
-	description={\fc{c}ertain structures in source code that make it apparent that a refactoring is in order~\cite{Refa2020}.}}
+	description={\fc{c}ertain structures in source code that suggest that a refactoring is in order, such as duplicated code, or a very long method~\cite[85-87]{fowler2019}.}}
+
+  \newglossaryentry{range}{name=Source Range, text=range,
+	description={\fc{t}he contiguous portion within a source code file that a certain element occupies. In this thesis, we will express it as an ordered pair of a start and end position $(s, e)$, or, alternatively, as a 4-tuple $(s_l, s_c, e_l, e_c)$.
+In the latter representation, the first two elements describe the zero-indexed start line and start character offset, respectively, and the last two describe the corresponding (exclusive) end line and end character offset.}}
+
+\newglossaryentry{token}{name=\fc{s}emantic token, text=semantic token,
+description={An \gls{lsp} \gls{capability} that returns tokens for a document, with the intention that those tokens can be used to apply syntax highlighting to the file. Apart from token types, it also offers token \emph{modifiers}, which can be used to apply additional formatting on top of the colors from the types.}}
 
 %%% DIGITAL HERE %%%
-\newglossaryentry{seezip}{name={\texttt{SEE.zip}}, type=file,
+\newglossaryentry{seezip}{name={\tt{SEE.zip}}, type=file,
 	description={\fc{T}he build of \SEE{} used for the evaluation.}}

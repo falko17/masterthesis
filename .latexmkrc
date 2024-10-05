@@ -14,3 +14,4 @@ $biber = "biber --validate-datamodel %O %S";
 push @generated_exts, 'loe', 'lol', 'lor', 'run.xml', 'glg', 'glstex';
 $clean_ext = "%R-*.glstex %R_contourtmp*.*";
 
+$pdflatex = 'pdflatex --shell-escape %O %S';

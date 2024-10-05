@@ -71,7 +71,7 @@ This approach has the disadvantage of only supporting languages supported by the
 Another current shortcoming of \SEE{} is that information about the source code available to the user is limited when compared to an \gls{ide}---for example, quickly displaying documentation for a given component by hovering over it is not supported.
 This is where the Language Server Protocol can help.
 
-\subsection{Language Server Protocol}
+\subsection{Language Server Protocol}\label{subsec:lsp}
 
 As stated on its website:
 \begin{displayquote}[\cite{lsp}]
@@ -90,9 +90,9 @@ As stated on its website:
 	\caption{An illustration of how \gls{lsp} can help simplify IDE development.}\label{fig:lsp}
 \end{figure}
 
-\noindent{}As \gls{lsp}\footnote{%
+\noindent{}Since \gls{lsp}\footnote{%
 	Note that I will often refer to the \glsentrylong{lsp} as just "\gls{lsp}" instead of "the LSP" (e.g., "\glspl{ide} use \gls{lsp}") from now on, as this is how the specification~\cite{lsp} does it as well.
-} is a central component of my master's thesis, I have created a diagram in \cref{fig:lsp} in the hope to strengthen intuitions around the use of the protocol.
+} is a central component of my master's thesis, I have created a diagram in \cref{fig:lsp} in the hope to strengthen intuitions around the motivation and use of the protocol.
 While the \gls{lsp} specification has originally been created by Microsoft, it is by now an open-source project\footnote{
 	Available at \web{https://github.com/Microsoft/language-server-protocol}{2024-09-11}.
 }, where changes can be actively proposed using issues or pull requests.
@@ -101,9 +101,9 @@ A partial overview of available implementations is listed at \web{https://micros
 
 The protocol introduces the concept of so-called \glspl*{capability}, which define a specific set of features a given \gls{ls} (and \gls{lc}) support.
 These include navigational features, like the ability to jump to a variable's declaration, and editing-related features, such as autocomplete.
-To give a specific example of what an \gls{lsp} \gls{capability} might look like in practice, the \texttt{texlab}\footnote{
+To give a specific example of what an \gls{lsp} \gls{capability} might look like in practice, the \tt{texlab}\footnote{
 	\web{https://github.com/latex-lsp/texlab}{2024-09-12}
-} \gls{ls} for \LaTeX{}---which I am using while writing this document---provides a list of available packages when one starts typing text after "\lstinline[language={[LaTeX]TeX}]+\usepackage{+".
+} \gls{ls} for \LaTeX{}---which I am using while writing this document---provides a list of available packages when one starts typing text after "\mintinline{LaTeX}+\usepackage{+".
 Additionally, for the currently hovered package, a short description of it is displayed.
 A screenshot of this behavior within the \textsc{Neovim} editor is provided in \cref{fig:mwe}.
 
@@ -111,7 +111,7 @@ A screenshot of this behavior within the \textsc{Neovim} editor is provided in \
 	\begin{center}
 		\includegraphics[width=0.95\textwidth]{../figures/mwe}
 	\end{center}
-	\caption{An example of the \texttt{texlab} \gls{ls} running in \textsc{Neovim}.}\label{fig:mwe}
+	\caption{An example of the \tt{texlab} \gls{ls} running in \textsc{Neovim}.}\label{fig:mwe}
 \end{figure}
 
 The counterparts to \glspl{ls} are the \glspl{lc}:
@@ -145,7 +145,7 @@ Examples for IDEs that support acting as a \gls{lc} in the \gls{lsp} context inc
 	\caption{A simplified illustration of how \SEE{} currently gains and uses information about software projects, and how the integration of \gls{lsp} would change that.}\label{fig:seeplan}
 \end{figure}
 
-\section{Goals \& Research Questions}
+\section{Goals \& Research Questions}\label{sec:goals}
 The goal of this master's thesis---as outlined in \cref{subsec:integration}---is to integrate the \glsentrylong{lsp} into \SEE{} by making it a \gls{lc}, then evaluate this implementation by comparing it with traditional \glspl{ide} in a user study.
 To this end, the main contribution is a way of generating \glspl{city} using the \gls{ls}, where all the information obtainable by relevant \gls{lsp} \glspl{capability} should be manifested\footnote{
 	Since there is a lot of diverse data available via \gls{lsp}, it makes sense to only immediately display the most pertinent information and make the rest of it available upon request within \SEE{}'s UI.

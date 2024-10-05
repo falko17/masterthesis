@@ -1,84 +1,402 @@
-@manual{lsp,
-  organization = "Microsoft",
-  title = "Language Server Protocol",
-  year = 2022,
-  month = 10,
-  url = {
-         https://microsoft.github.io/language-server-protocol/overviews/lsp/overview/
-         },
-  urldate = {2024-01-28},
-  shorthand = {LSPSpec},
+@article{bacher,
+  title = {Visualising {{The Complex Features Of Source Code}}},
+  author = {Bacher, Ivan},
+  publisher = {Technological University of Dublin},
+  doi = {10.21427/D1AV-KS51},
+  abstract = {Software development is a complex undertaking composed of several activities that include reading, writing, and modifying source code. Indeed, previous studies have shown that the majority of the effort invested in software development is dedicated to understanding code. This includes understanding the static structure, dynamic behaviour, and evolution of the code. Given these particular characteristics, as well as the high complexity of source code, it is reasonable to consider how visualisation can facilitate source code understanding. This work proposes to extend existing software development tools with visualisations that can be used to encode the various complex features within a source code document. Further, this work establishes a design space which includes a series of visualisations that are meant to complement existing textual views of source code, as found in source code editors. Several prototype visualisations are presented in this work which utilise various visualisation techniques, such as tree visualisations techniques and visualisation techniques based on the code-map metaphor. This work also presents several experiments, where the results of these experiments indicate that combining existing software development tools with visualisations can have a positive effect on source code understanding. Additionally, the result of the experiments show that the less a visualisation is abstracted from the original textural representation of a source code document, in terms of line, token, ordering, and character information, the more likely it is that viewers can link the visualisation to the code and back.}
 }
 
-@manual{lsif,
-  organization = "Microsoft",
-  title = "Language Server Index Format",
-  year = 2021,
-  month = 9,
-  url = {
-         https://microsoft.github.io/language-server-protocol/overviews/lsif/overview/
-         },
-  urldate = {2024-01-31},
-  shorthand = {LSIFSpec},
+@thesis{damerau2024,
+  type = {mathesis},
+  title = {Combining {{Static}} and {{Dynamic Analysis}} in {{Code Cities}}},
+  author = {Damerau, Lukas},
+  namea = {Hasselbring, Wilhelm and Krause, Alexander},
+  nameatype = {collaborator},
+  date = {2024-03},
+  institution = {Kiel University},
+  url = {https://oceanrep.geomar.de/id/eprint/60361/},
+  urldate = {2024-08-09},
+  abstract = {Software visualization tools are meant to help developers in gaining a better understanding of the code base they are involved in. Many tools only focus on either the dynamic (runtime) aspect or the static (structural) aspect of software systems. ExplorViz is such a tool that lays its focus on the runtime analysis of Java applications. It provides a visualization that is based on the city metaphor approach. In this work, ExplorViz is extended by incorporating static code properties into the software visualizations. For this purpose, the target source code base is statically analyzed based on Git commits. The analyzed data is then processed, persisted, and provided for visualization in the frontend. The result is a working prototype that is able to visualize a code city based on its code structure. Also, the visualization of the code evolution in form of a commit comparison is now possible. Furthermore, code metrics such as lines of code are being provided to assist the user in the perception of code complexity which is part of program comprehension. An usability test by means of a pluralistic walkthrough with an experienced developer/user of ExplorViz was conducted via Zoom. The prototype proved to be easy to use. The visualization of the static aspects was perceived as helpful and intuitive, as it makes use of existing and well known features of ExplorViz.},
+  langid = {english},
+  pagetotal = {74}
 }
 
-@manual{dap,
-  organization = "Microsoft",
-  title = "Debug Adapter Protocol",
+@report{dap,
+  title = {Debug {{Adapter Protocol}}},
+  date = {2022-05},
+  institution = {Microsoft},
   url = {https://microsoft.github.io/debug-adapter-protocol/overview},
   urldate = {2024-01-31},
-  shorthand = {DAPSpec},
+  shorthand = {DapSpec}
 }
 
-@mastersthesis{moritz,
-  type = "Bachelor's Thesis",
-  title = "Developing a Multi-user Source Code Editor for SEE",
-  author = "Moritz Blecker",
-  institution = "University of Bremen",
-  date = "2022-01-31",
-  url = "
-         https://www.szi.uni-bremen.de/wp-content/uploads/2022/07/Bachelorarbeit_-Moritz-Blecker_redfs-1.pdf
-         ",
-  urldate = {2024-02-02},
+@inproceedings{fittkau2015,
+  title = {Exploring Software Cities in Virtual Reality},
+  booktitle = {2015 {{IEEE}} 3rd {{Working Conference}} on {{Software Visualization}} ({{VISSOFT}})},
+  author = {Fittkau, Florian and Krause, Alexander and Hasselbring, Wilhelm},
+  date = {2015-09},
+  pages = {130--134},
+  publisher = {IEEE},
+  location = {Bremen, Germany},
+  doi = {10.1109/VISSOFT.2015.7332423},
+  eventtitle = {2015 {{IEEE}} 3rd {{Working Conference}} on {{Software Visualization}} ({{VISSOFT}})},
+  isbn = {978-1-4673-7526-9}
 }
 
-@mastersthesis{falko,
-  type = "Bachelor's Thesis",
-  title = "Visualizing Code Smells in Code Cities",
-  author = "Falko Galperin",
-  institution = "University of Bremen",
-  date = "2021-09-27",
-  url = "
-         https://github.com/uni-bremen-agst/VISSOFT2022/blob/main/BachelorThesis.pdf
-         ",
-  urldate = {2024-02-02},
+@book{fowler2019,
+  title = {Refactoring: Improving the Design of Existing Code},
+  shorttitle = {Refactoring},
+  author = {Fowler, Martin and Beck, Kent},
+  date = {2019},
+  series = {The {{Addison-Wesley}} Signature Series},
+  edition = {Second edition},
+  publisher = {Addison-Wesley},
+  location = {Boston Columbus New York San Francisco Amsterdam Cape Town Dubai London Munich},
+  abstract = {This book offers a thorough discussion of the principles of refactoring, including where to spot opportunities for refactoring, and how to set up the required tests. There is also a catalog of more than 40 proven refactorings with details as to when and why to use the refactoring, step by step instructions for implementing it, and an example illustrating how it works. [Verlagshomepage]},
+  isbn = {978-0-13-475759-9},
+  langid = {english},
+  pagetotal = {418}
+}
+
+@inproceedings{freire-pozo2023,
+  title = {{{DGT-AR}}: {{Visualizing Code Dependencies}} in {{AR}}},
+  shorttitle = {{{DGT-AR}}},
+  booktitle = {2023 {{IEEE Working Conference}} on {{Software Visualization}} ({{VISSOFT}})},
+  author = {Freire-Pozo, Dussan and Cespedes-Arancibia, Kevin and Merino, Leonel and Fernandez-Blanco, Alison and Neyem, Andres and Sandoval Alcocer, Juan Pablo},
+  date = {2023-10-01},
+  pages = {95--99},
+  publisher = {IEEE},
+  location = {Bogotá, Colombia},
+  doi = {10.1109/VISSOFT60811.2023.00020},
+  eventtitle = {2023 {{IEEE Working Conference}} on {{Software Visualization}} ({{VISSOFT}})},
+  isbn = {9798350308297}
+}
+
+@thesis{galperin2021,
+  type = {bathesis},
+  title = {Visualizing {{Code Smells}} in {{Code Cities}}},
+  author = {Galperin, Falko},
+  date = {2021-09-27},
+  institution = {University of Bremen},
+  url = {https://github.com/uni-bremen-agst/VISSOFT2022/raw/main/BachelorThesis.pdf},
+  urldate = {2024-02-02}
+}
+
+@inproceedings{galperin2022,
+  title = {Visualizing {{Code Smells}}: {{Tables}} or {{Code Cities}}? {{A Controlled Experiment}}},
+  shorttitle = {Visualizing {{Code Smells}}},
+  booktitle = {2022 {{Working Conference}} on {{Software Visualization}} ({{VISSOFT}})},
+  author = {Galperin, Falko and Koschke, Rainer and Steinbeck, Marcel},
+  date = {2022-10},
+  pages = {51--62},
+  publisher = {IEEE},
+  location = {Limassol, Cyprus},
+  doi = {10.1109/VISSOFT55257.2022.00014},
+  eventtitle = {2022 {{Working Conference}} on {{Software Visualization}} ({{VISSOFT}})},
+  isbn = {978-1-66548-092-5}
+}
+
+@inproceedings{jeffery2019,
+  title = {The {{City Metaphor}} in {{Software Visualization}}},
+  booktitle = {Computer {{Science Research Notes}}},
+  author = {Jeffery, Clinton L.},
+  date = {2019},
+  publisher = {Západočeská univerzita},
+  doi = {10.24132/CSRN.2019.2901.1.18},
+  eventtitle = {{{WSCG}}'2019 - 27. {{International Conference}} in {{Central Europe}} on {{Computer Graphics}}, {{Visualization}} and {{Computer Vision}}'2019},
+  isbn = {978-80-86943-37-4}
+}
+
+@report{json,
+  type = {Request for Comments},
+  title = {The Application/Json {{Media Type}} for {{JavaScript Object Notation}} ({{JSON}})},
+  author = {Crockford, Douglas},
+  date = {2006-07},
+  number = {RFC 4627},
+  institution = {Internet Engineering Task Force},
+  doi = {10.17487/RFC4627},
+  abstract = {JavaScript Object Notation (JSON) is a lightweight, text-based, language-independent data interchange format. It was derived from the ECMAScript Programming Language Standard. JSON defines a small set of formatting rules for the portable representation of structured data. This memo provides information for the Internet community.},
+  pagetotal = {10}
+}
+
+@report{jsonrpc,
+  title = {{{JSON-RPC}} 2.0 {{Specification}}},
+  author = {{JSON-RPC Working Group}},
+  date = {2013-01-04},
+  url = {https://www.jsonrpc.org/specification},
+  urldate = {2024-10-04}
+}
+
+@inproceedings{jung2020,
+  title = {Towards {{Collaborative}} and {{Dynamic Software Visualization}} in {{VR}}:},
+  shorttitle = {Towards {{Collaborative}} and {{Dynamic Software Visualization}} in {{VR}}},
+  booktitle = {Proceedings of the 15th {{International Joint Conference}} on {{Computer Vision}}, {{Imaging}} and {{Computer Graphics Theory}} and {{Applications}}},
+  author = {Jung, Florian and Dashuber, Veronika and Philippsen, Michael},
+  date = {2020},
+  pages = {149--156},
+  publisher = {{SCITEPRESS - Science and Technology Publications}},
+  location = {Valletta, Malta},
+  doi = {10.5220/0008945201490156},
+  eventtitle = {11th {{International Conference}} on {{Information Visualization Theory}} and {{Applications}}},
+  isbn = {978-989-758-402-2}
+}
+
+@inproceedings{khaloo2017,
+  title = {Code {{Park}}: {{A New 3D Code Visualization Tool}}},
+  shorttitle = {Code {{Park}}},
+  booktitle = {2017 {{IEEE Working Conference}} on {{Software Visualization}} ({{VISSOFT}})},
+  author = {Khaloo, Pooya and Maghoumi, Mehran and Taranta, Eugene and Bettner, David and Laviola, Joseph},
+  date = {2017-09},
+  pages = {43--53},
+  publisher = {IEEE},
+  location = {Shanghai},
+  doi = {10.1109/VISSOFT.2017.10},
+  eventtitle = {2017 {{IEEE Working Conference}} on {{Software Visualization}} ({{VISSOFT}})},
+  isbn = {978-1-5386-1003-9},
+  keywords = {idecomparison}
+}
+
+@online{krause-glau2024,
+  title = {Visual {{Integration}} of {{Static}} and {{Dynamic Software Analysis}} in {{Code Reviews}} via {{Software City Visualization}}},
+  author = {Krause-Glau, Alexander and Damerau, Lukas and Hansen, Malte and Hasselbring, Wilhelm},
+  date = {2024-08-15},
+  eprint = {2408.08141},
+  eprinttype = {arXiv},
+  eprintclass = {cs},
+  doi = {10.48550/arXiv.2408.08141},
+  abstract = {Software visualization approaches for code reviews are often implemented as standalone applications, which use static code analysis. The goal is to visualize the structural changes introduced by a pull / merge request to facilitate the review process. In this way, for example, structural changes that hinder code evolution can be more easily identified, but understanding the changed program behavior is still mainly done by reading the code. For software visualization to be successful in code review, tools must be provided that go beyond an alternative representation of code changes and integrate well into the developers' daily workflow. In this paper, we report on the novel and in-progress design and implementation of a web-based approach capable of combining static and dynamic analysis data in software city visualizations. Our architectural tool design incorporates modern web technologies such as the integration into common Git hosting services. As a result, code reviewers can explore how the modified software evolves and execute its use cases, which is especially helpful for distributed software systems. In this context, developers can be directly linked from the Git hosting service's issue tracking system to the corresponding software city visualization. This approach eliminates the recurring action of manual data collection and setup. We implement our design by extending the web-based software visualization tool ExplorViz. We invite other researchers to extend our open source software and jointly research this approach. Video URL: https://youtu.be/DYxijdCEdrY},
+  pubstate = {prepublished},
+  version = {1},
+  keywords = {Computer Science - Software Engineering}
+}
+
+@inproceedings{kreber2022,
+  title = {{{IDEvelopAR}}: {{A Programming Interface}} to Enhance {{Code Understanding}} in {{Augmented Reality}}},
+  shorttitle = {{{IDEvelopAR}}},
+  booktitle = {2022 {{Working Conference}} on {{Software Visualization}} ({{VISSOFT}})},
+  author = {Kreber, Lucas and Diehl, Stephan and Weil, Patrick},
+  date = {2022-10},
+  pages = {87--95},
+  publisher = {IEEE},
+  location = {Limassol, Cyprus},
+  doi = {10.1109/VISSOFT55257.2022.00017},
+  eventtitle = {2022 {{Working Conference}} on {{Software Visualization}} ({{VISSOFT}})},
+  isbn = {978-1-66548-092-5}
+}
+
+@inproceedings{kuhn2010,
+  title = {Embedding Spatial Software Visualization in the {{IDE}}: An Exploratory Study},
+  shorttitle = {Embedding Spatial Software Visualization in the {{IDE}}},
+  booktitle = {Proceedings of the 5th International Symposium on {{Software}} Visualization},
+  author = {Kuhn, Adrian and Erni, David and Nierstrasz, Oscar},
+  date = {2010-10-25},
+  pages = {113--122},
+  publisher = {ACM},
+  location = {Salt Lake City Utah USA},
+  doi = {10.1145/1879211.1879229},
+  eventtitle = {{{SOFTVIS}} '10: {{International Symposium}} on {{Software Visualization}}},
+  isbn = {978-1-4503-0028-5},
+  langid = {english}
+}
+
+@report{lsif,
+  title = {Language {{Server Index Format}}},
+  date = {2021-09},
+  institution = {Microsoft},
+  url = {https://microsoft.github.io/language-server-protocol/overviews/lsif/overview/},
+  urldate = {2024-01-31},
+  shorthand = {LsifSpec}
+}
+
+@report{lsp,
+  title = {Language {{Server Protocol}}},
+  date = {2022-10},
+  institution = {Microsoft},
+  url = {https://microsoft.github.io/language-server-protocol/overviews/lsp/overview/},
+  urldate = {2024-01-28},
+  shorthand = {LspSpec}
 }
 
 @article{mccabe,
+  title = {A {{Complexity Measure}}},
   author = {McCabe, T.J.},
-  journal = {IEEE Transactions on Software Engineering},
-  title = {A Complexity Measure},
-  year = {1976},
+  date = {1976-12},
+  journaltitle = {IEEE Transactions on Software Engineering},
+  shortjournal = {IIEEE Trans. Software Eng.},
   volume = {SE-2},
   number = {4},
-  pages = {308-320},
-  keywords = {Software testing;System testing;Graph theory;Fluid flow
-              measurement;Software measurement;Linear programming;Software
-              engineering;Software systems;Software maintenance;National
-              security;Basis;complexity measure;control flow;decomposition;graph
-              theory;independence;linear;modularization;programming;reduction;software;testing
-              },
-  doi = {10.1109/TSE.1976.233837},
+  pages = {308--320},
+  issn = {0098-5589},
+  doi = {10.1109/TSE.1976.233837}
 }
 
-@book{Refa2020,
-  title = {Refactoring -- Wie Sie das Design bestehender Software verbessern},
-  author = {Martin Fowler},
-  edition = {2nd edition},
-  publisher = {mitp Verlag},
-  year = {2020},
-  note = {472},
-  ISBN = {9783958459434},
-  URL = {https://learning.oreilly.com/library/view/-/9783958459434/?ar},
-  urldate = {2021-06-01},
+@inproceedings{mehra2019,
+  title = {{{XRaSE}}: {{Towards Virtually Tangible Software}} Using {{Augmented Reality}}},
+  shorttitle = {{{XRaSE}}},
+  booktitle = {2019 34th {{IEEE}}/{{ACM International Conference}} on {{Automated Software Engineering}} ({{ASE}})},
+  author = {Mehra, Rohit and Sharma, Vibhu Saujanya and Kaulgud, Vikrant and Podder, Sanjay},
+  date = {2019-11},
+  pages = {1194--1197},
+  publisher = {IEEE},
+  location = {San Diego, CA, USA},
+  doi = {10.1109/ASE.2019.00135},
+  eventtitle = {2019 34th {{IEEE}}/{{ACM International Conference}} on {{Automated Software Engineering}} ({{ASE}})},
+  isbn = {978-1-72812-508-4}
+}
+
+@inproceedings{mehra2020,
+  title = {Towards Immersive Comprehension of Software Systems Using Augmented Reality: An Empirical Evaluation},
+  shorttitle = {Towards Immersive Comprehension of Software Systems Using Augmented Reality},
+  booktitle = {Proceedings of the 35th {{IEEE}}/{{ACM International Conference}} on {{Automated Software Engineering}}},
+  author = {Mehra, Rohit and Sharma, Vibhu Saujanya and Kaulgud, Vikrant and Podder, Sanjay and Burden, Adam P.},
+  date = {2020-12-21},
+  pages = {1267--1269},
+  publisher = {ACM},
+  location = {Virtual Event Australia},
+  doi = {10.1145/3324884.3418907},
+  eventtitle = {{{ASE}} '20: 35th {{IEEE}}/{{ACM International Conference}} on {{Automated Software Engineering}}},
+  isbn = {978-1-4503-6768-4},
+  langid = {english},
+  keywords = {idecomparison}
+}
+
+@inproceedings{merino2017,
+  title = {{{CityVR}}: {{Gameful Software Visualization}}},
+  shorttitle = {{{CityVR}}},
+  booktitle = {2017 {{IEEE International Conference}} on {{Software Maintenance}} and {{Evolution}} ({{ICSME}})},
+  author = {Merino, Leonel and Ghafari, Mohammad and Anslow, Craig and Nierstrasz, Oscar},
+  date = {2017-09},
+  pages = {633--637},
+  publisher = {IEEE},
+  location = {Shanghai},
+  doi = {10.1109/ICSME.2017.70},
+  eventtitle = {2017 {{IEEE International Conference}} on {{Software Maintenance}} and {{Evolution}} ({{ICSME}})},
+  isbn = {978-1-5386-0992-7}
+}
+
+@inproceedings{merino2018,
+  title = {Overcoming {{Issues}} of {{3D Software Visualization}} through {{Immersive Augmented Reality}}},
+  booktitle = {2018 {{IEEE Working Conference}} on {{Software Visualization}} ({{VISSOFT}})},
+  author = {Merino, Leonel and Bergel, Alexandre and Nierstrasz, Oscar},
+  date = {2018-09},
+  pages = {54--64},
+  publisher = {IEEE},
+  location = {Madrid},
+  doi = {10.1109/VISSOFT.2018.00014},
+  eventtitle = {2018 {{IEEE Working Conference}} on {{Software Visualization}} ({{VISSOFT}})},
+  isbn = {978-1-5386-8292-0}
+}
+
+@thesis{moritz,
+  type = {bathesis},
+  title = {Developing a {{Multi-user Source Code Editor}} for {{SEE}}},
+  author = {Blecker, Moritz},
+  date = {2022-01-31},
+  institution = {University of Bremen},
+  url = {https://www.szi.uni-bremen.de/wp-content/uploads/2022/07/Bachelorarbeit_-Moritz-Blecker_redfs-1.pdf},
+  urldate = {2024-02-02}
+}
+
+@article{mortara2024,
+  title = {Visualization of Object-Oriented Software in a City Metaphor: {{Comprehending}} the Implemented Variability and Its Technical Debt},
+  shorttitle = {Visualization of Object-Oriented Software in a City Metaphor},
+  author = {Mortara, Johann and Collet, Philippe and Dery-Pinna, Anne-Marie},
+  date = {2024-02},
+  journaltitle = {Journal of Systems and Software},
+  shortjournal = {Journal of Systems and Software},
+  volume = {208},
+  pages = {111876},
+  issn = {01641212},
+  doi = {10.1016/j.jss.2023.111876},
+  langid = {english},
+  keywords = {idecomparison}
+}
+
+@thesis{rohlfing2022,
+  type = {bathesis},
+  title = {Debug {{Adapter Protocol}} in {{SEE}}},
+  author = {Rohlfing, Ferdinand},
+  date = {2022-08},
+  institution = {University of Bremen}
+}
+
+@article{romano2019,
+  title = {On the Use of Virtual Reality in Software Visualization: {{The}} Case of the City Metaphor},
+  shorttitle = {On the Use of Virtual Reality in Software Visualization},
+  author = {Romano, Simone and Capece, Nicola and Erra, Ugo and Scanniello, Giuseppe and Lanza, Michele},
+  date = {2019-10},
+  journaltitle = {Information and Software Technology},
+  shortjournal = {Information and Software Technology},
+  volume = {114},
+  pages = {92--106},
+  issn = {09505849},
+  doi = {10.1016/j.infsof.2019.06.007},
+  langid = {english},
+  keywords = {idecomparison}
+}
+
+@inproceedings{sauro2009,
+  title = {Correlations among Prototypical Usability Metrics: Evidence for the Construct of Usability},
+  shorttitle = {Correlations among Prototypical Usability Metrics},
+  booktitle = {Proceedings of the {{SIGCHI Conference}} on {{Human Factors}} in {{Computing Systems}}},
+  author = {Sauro, Jeff and Lewis, James R.},
+  date = {2009-04-04},
+  pages = {1609--1618},
+  publisher = {ACM},
+  location = {Boston MA USA},
+  doi = {10.1145/1518701.1518947},
+  eventtitle = {{{CHI}} '09: {{CHI Conference}} on {{Human Factors}} in {{Computing Systems}}},
+  isbn = {978-1-60558-246-7},
+  langid = {english}
+}
+
+@thesis{schramm2022,
+  type = {bathesis},
+  title = {Bidirektionale Integrierte {{Entwicklungsumgebung}}},
+  author = {Schramm, Jan-Phillipp},
+  date = {2022-02},
+  institution = {University of Bremen},
+  keywords = {idecomparison}
+}
+
+@inproceedings{schroer2021,
+  title = {Recording, {{Visualising}} and {{Understanding Developer Programming Behaviour}}},
+  booktitle = {2021 {{IEEE International Conference}} on {{Software Analysis}}, {{Evolution}} and {{Reengineering}} ({{SANER}})},
+  author = {Schröer, Martin and Koschke, Rainer},
+  date = {2021-03},
+  pages = {561--566},
+  issn = {1534-5351},
+  doi = {10.1109/SANER50967.2021.00066},
+  abstract = {To understand how developers solve programming tasks, it is necessary to observe what they are doing, i.e., what specific actions they perform, which strategies they apply and how they make use of possibly present, but not yet known or otherwise not yet available information that is needed to solve a task. To do so, we implemented a plug-in for the Eclipse IDE which captures nearly every interaction with the IDE a developer performs when working on a programming task. This enables us to comprehensively track a developer’s behaviour, e.g., whether and when a code edit needed for solving a given task was performed, and even more interesting, what were the preceding steps that led the developer to do so. In a first experiment conducted with the new plug-in, we were able to observe action patterns and program comprehension stages that confirm results of previous studies as well as were partly only suspected until now by recent literature, but never truly observed before.Screencast of the tool: https://youtu.be/GeZI-vCdgfoClosed caption version: https://youtu.be/mgt6Q-t7U00},
+  eventtitle = {2021 {{IEEE International Conference}} on {{Software Analysis}}, {{Evolution}} and {{Reengineering}} ({{SANER}})},
+  keywords = {Conferences,developer interactions,human factors,Inspection,Navigation,program comprehension,Programming,Software,software maintenance,Tools,visualisation,Visualization}
+}
+
+@inproceedings{wettel2007,
+  title = {Visualizing {{Software Systems}} as {{Cities}}},
+  booktitle = {2007 4th {{IEEE International Workshop}} on {{Visualizing Software}} for {{Understanding}} and {{Analysis}}},
+  author = {Wettel, Richard and Lanza, Michele},
+  date = {2007-06},
+  pages = {92--99},
+  publisher = {IEEE},
+  location = {Banff, AB, Canada},
+  doi = {10.1109/VISSOF.2007.4290706},
+  eventtitle = {2007 4th {{IEEE International Workshop}} on {{Visualizing Software}} for {{Understanding}} and {{Analysis}}},
+  isbn = {978-1-4244-0599-2 978-1-4244-0600-5}
+}
+
+@inproceedings{wettel2011,
+  title = {Software Systems as Cities: A Controlled Experiment},
+  shorttitle = {Software Systems as Cities},
+  booktitle = {Proceedings of the 33rd {{International Conference}} on {{Software Engineering}}},
+  author = {Wettel, Richard and Lanza, Michele and Robbes, Romain},
+  date = {2011-05-21},
+  pages = {551--560},
+  publisher = {ACM},
+  location = {Waikiki, Honolulu HI USA},
+  doi = {10.1145/1985793.1985868},
+  eventtitle = {{{ICSE11}}: {{International Conference}} on {{Software Engineering}}},
+  isbn = {978-1-4503-0445-0},
+  langid = {english},
+  keywords = {idecomparison}
 }
