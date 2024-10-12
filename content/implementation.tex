@@ -4,19 +4,72 @@
 \begin{document}
 \chapter{Implementation}\label{ch:implementation}
 
-\lettrine[lines=3]{\textcolor{Maroon}{X}}{} \fxfatal{}
+\lettrine[lines=3]{\textcolor{Maroon}{R}}{elying} on the foundations of \SEE{} and the \glsentrylong{lsp} established in the previous chapter, we can now turn to the core part of this thesis:
+The integration of \gls{lsp} into \SEE{}, with a special focus on how to build \glspl{city} using \gls{lsp}'s \glspl{capability}.
+We will start by briefly going over some preliminary changes to both \SEE{} and the \gls{lsp} specification.
+Then, we will spend a good chunk of this chapter specifying and explaining the algorithm which "converts" \gls{lsp} information into \glspl{city}, before looking into how additional \glspl{capability} can be integrated into \SEE{}'s \glspl{city} and \glspl{window} specifically.
+Finally, we will conduct a brief technical evaluation, with a more thorough user study following in the next chapter.
 
 \section{Preliminary Changes}
-\fxfatal{}
+As promised in the preceding paragraph, we will first quickly list some preparations.
 
 \subsection{Specification Cleanup}
-\fxfatal{}
+While familiarizing myself with the \gls{lsp} specification, I noticed and fixed a few small issues along the way.
+Most of these were of a formal nature (\eg, spelling, grammar, formatting, consistent usage of terms), some were fixing incorrect TypeScript syntax in the definition of \gls{lsp}'s data models.
+The rest of the changes were related to the so-called snippet grammar.
+
+In the context of \gls{lsp}, snippets are in essence string templates that are inserted on certain completions (see \cref{subsec:unplanned}), with some designed parts being filled in by the programmer on insertion.
+There are also parts that can be filled in by certain values (\eg, the file name), which can themselves be transformed using regular expressions.\footnote{
+	I am skipping over some additional features and details here because this is not that relevant a \gls{capability} for us---to get the full picture, see \web{https://microsoft.github.io/language-server-protocol/specifications/lsp/3.18/specification/\#snippet\_syntax}{2024-10-10}.
+}
+The complexity of the combinations of all these features increase the possibility of misunderstandings, which is why the snippet's grammar has been formally specified in \gls{ebnf}.
+However, as it was written down in the specification, the grammar had a few problems that I have fixed.
+Three notable examples are:
+\begin{itemize}
+	\item Some alternatives were incorrectly grouped, contradicting the explanatory text above them.
+	      Also, the rules on how and when control characters had to be escaped were inconsistent with the surrounding text.\footnote{
+		      This has lead to confusion in some projects making use of snippets.
+		      See, for example, \web{https://github.com/neovim/neovim/issues/30495}{2024-10-10}.
+	      }
+	\item The grammar contained some string transformations that were unexplained in the text.
+	      Since the \gls{lsp} specification is based on \gls{vscode}, I added explanations to the text based on what these transformations did in \gls{vscode}'s source code.
+	\item Finally, there were ambiguities present in the grammar that led to \textsf{FIRST}/\textsf{FOLLOW} conflicts.
+	      I have rewritten the grammar to eliminate these, and it should now be $LL(1)$-parseable~\cite[222--224]{aho2007}.
+
+\end{itemize}
+
+
+I have submitted these fixes as a pull request\footnote{\web{https://github.com/microsoft/language-server-protocol/pull/1886}{2024-10-10}}.
+After addressing the resulting code review, it has been merged, and the changes will be incorporated in the upcoming 3.18 release of the specification.
 
 \subsection{Preparing SEE}
-\fxfatal{}
+There was not much I had to do in terms of getting \SEE{} ready, so this section will be very short:
+\begin{itemize}
+	\item I have integrated the OmniSharp \gls{lsp} C\# library\footnote{
+		      Available at \web{https://github.com/OmniSharp/csharp-language-server-protocol}{2024-10-11}
+	      } into \SEE{}, which we will leverage in the subsequent sections so that we can use \gls{lsp} without needing to worry about \gls{jrpc} encoding, data models, and so on.
+	\item \Glspl{window} have previously been made editable by \textcite{moritz} in his bachelor thesis, also enabling collaborative editing over the internet.
+	      I unfortunately had to remove these changes because they did not work anymore in the current version of \SEE{}, and additionally caused a lot of complexity overhead in the \gls{window} implementation that would have made the \gls{lsp} integration much harder to accomplish.
+	\item Finally, the attribute space $\mathcal{A}$ in \SEE{} did not allow for \glspl{range} of the form \gls{lsp} needs, so I had to replace the existing attributes (which track the line and column, but not a full range) with a proper set of \gls{range} attributes.
+	      In \cref{subsec:graph}, we have introduced this as a single \texttt{Source.Range} attribute, but in reality, there are four \gls{range} attributes---one per member of the decomposed form.
+	      We will ignore this reality for the rest of this thesis and act like the \gls{range} is a single attribute, that is, for all project graphs with nodes $V$ and attributes $a$, it holds that $\{a(v, \texttt{Source.Range}) \mid v \in V \land (v, \texttt{Source.Range}) \in \mathrm{dom}(a) \} \subseteq \mathcal{R}$.
+\end{itemize}
+
+All of these changes have been made across two pull requests to \SEE{}.\footnote{
+	\url{https://github.com/uni-bremen-agst/SEE/pull/687} and \web{https://github.com/uni-bremen-agst/SEE/pull/715}{2024-10-11}.
+}
 
 \section{Generating Code Cities using LSP}\label{sec:generate}
 \fxfatal{}
+
+\subsection{Algorithm}
+
+\subsection{Code}
+
+\subsection{Editor UI}
+
+\subsection{Support langs}
+\fxerror{Or maybe in tech eval instead}
 
 \section{Integrating LSP Functionality into Code Cities}\label{sec:intocity}
 \fxfatal{}
@@ -24,8 +77,10 @@
 \section{Integrating LSP Functionality into Code Windows}\label{sec:intowindow}
 \fxfatal{}
 
-\section{Technical Evaluation}  % Maybe?
+\section{Technical Evaluation}\label{sec:techeval}
 \fxfatal{}
 
-\section{Interim Conclusion}  % Or maybe just recap?
+\section{Interim Conclusion}
 \fxfatal{}
+\fxerror{Also recap all written code/PRs here, maybe with LOC/links, maybe in a table.}
+

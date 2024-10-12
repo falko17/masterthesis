@@ -16,6 +16,8 @@
 
 %%% PACKAGES %%%
 
+\usepackage{silence}
+
 \PassOptionsToPackage{utf8}{inputenc}
 \usepackage{inputenc}
 \usepackage{kantlipsum}
@@ -24,7 +26,7 @@
 \usepackage{xspace}
 \usepackage[english]{babel}
 \usepackage{subfiles}
-\usepackage{microtype}
+\usepackage[nopatch=footnote]{microtype}
 \usepackage{subcaption}
 \usepackage{float}
 \usepackage{booktabs}
@@ -88,7 +90,7 @@
 \newcommand{\myDepartment}{Faculty 3 --- Mathematics \& Computer Science\xspace}
 \newcommand{\myUniversity}{University of Bremen\xspace}
 
-\newcommand{\participants}{4\xspace}
+\newcommand{\participants}{20\xspace}
 
 \newcommand{\SEE}{\gls*{see}}
 \newcommand{\eg}{e.\,g.\xspace}
@@ -128,7 +130,7 @@
   \newtcblisting[blend into=listings]{codebox}[3][csharp]{%
     colback=Blue!15!white,colframe=Blue!75!black,
     width=\textwidth, arc=0mm,
-    left=1mm, right=1mm, 
+    left=2mm, right=1mm, 
     boxrule=0.2mm, boxsep=0.3mm,
     toptitle=0.5mm, bottomtitle=0.2mm,
     fonttitle=\sffamily\small,
@@ -267,6 +269,10 @@
   texcomments,
 }
 
+\setmintedinline{
+  fontsize=\normalsize,
+}
+
 
 \renewcommand{\listoflistings}{%
   \cleardoublepage
@@ -380,6 +386,7 @@ All passages that have been quoted verbatim or paraphrased from published source
 % TOC
 \pdfbookmark[0]{\contentsname}{tableofcontents}
 \tableofcontents
+\fxerror{Listings appear twice in TOC}
 \cleardoublepage
 
 \mainmatter
@@ -428,7 +435,7 @@ All passages that have been quoted verbatim or paraphrased from published source
 \makeatletter
 \renewcommand\listoffixmes{%
 	\chapter{List of TODOs}
-	\lettrine[lines=3]{\textcolor{Maroon}{O}}{pen} tasks/notes/mistakes for this master's thesis are collected within this appendix.
+	\lettrine[lines=3]{\textcolor{Maroon}{A}}{ny} open tasks/notes/mistakes for this master's thesis are collected within this appendix.
 	If you see any mistake or empty section not covered by such a note, please tell me.
 	Note that this appendix will only appear in draft versions.
 
@@ -453,5 +460,6 @@ All passages that have been quoted verbatim or paraphrased from published source
 \listoflistings
 
 \printbibliography[heading=bibnumbered]
+\fxerror{Bibliography doesn't work}
 
 \end{document}

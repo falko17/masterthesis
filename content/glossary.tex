@@ -98,21 +98,23 @@
 
 %%% ACRONYMS HERE %%%
 
-\newacronym[description={\fc{A}n interactive software visualization tool using the code city metaphor in 3D, developed in the Unity game engine at the University of Bremen.}]{see}{SEE}{Software Engineering Experience}
+\newacronym[description={\fc{A} protocol that can be viewed as the analogue to LSP for debuggers, with the goal to make it easier to integrate debuggers into development tools.}]{dap}{DAP}{Debug Adapter Protocol}
 
-\newacronym[description={\fc{T}he number of lines in a source code file.}]{loc}{LOC}{Lines of Code}
+\newacronym[description={A syntax in which context-free grammars can be formally expressed.}]{ebnf}{EBNF}{Extended Backus–Naur Form}
 
 \newacronym[description={\fc{A} file format for graphs, used in \gls{see} for representing dependency and hierarchy graphs of software projects.}]{gxl}{GXL}{Graph eXchange Language}
 
 \newacronym[description={\fc{E}ditor for source code with features that are useful for development (\eg, highlighting errors). Examples are \emph{Eclipse} or \emph{\textsc{JetBrains} IntelliJ}}.]{ide}{IDE}{Integrated Development Environment}
 
-\newacronym[description={\fc{A} protocol which specifies how language servers can provide language-specific features to IDEs, such as hover information, go to definition, or diagnostics.}]{lsp}{LSP}{Language Server Protocol}
+\newacronym[description={\fc{A} remote procedure call protocol that uses JSON as its encoding, supporting (among other features) asynchronous calls and notifications. It is used as the base for \gls{lsp} (even though \gls{lsp} is technically not a remote protocol).}]{jrpc}{JSON-RPC}{JavaScript Object Notation---Remote Procedure Call}
+
+\newacronym[description={\fc{T}he number of lines in a source code file.}]{loc}{LOC}{Lines of Code}
 
 \newacronym[description={\fc{A} format which language servers can emit to persist LSP-based information about a software project.},seealso=lsp]{lsif}{LSIF}{Language Server Index Format}
 
-\newacronym[description={\fc{A} protocol that can be viewed as the analogue to LSP for debuggers, with the goal to make it easier to integrate debuggers into development tools.}]{dap}{DAP}{Debug Adapter Protocol}
+\newacronym[description={\fc{A} protocol which specifies how language servers can provide language-specific features to IDEs, such as hover information, go to definition, or diagnostics.}]{lsp}{LSP}{Language Server Protocol}
 
-\newacronym[description={\fc{A} remote procedure call protocol that uses JSON as its encoding, supporting (among other features) asynchronous calls and notifications. It is used as the base for \gls{lsp} (even though \gls{lsp} is technically not a remote protocol).}]{jrpc}{JSON-RPC}{JavaScript Object Notation---Remote Procedure Call}
+\newacronym[description={\fc{A}n interactive software visualization tool using the code city metaphor in 3D, developed in the Unity game engine at the University of Bremen.}]{see}{SEE}{Software Engineering Experience}
 
 \newacronym{ui}{UI}{User Interface}
 
@@ -137,8 +139,8 @@ description={\fc{A} development tool, such as an \gls{ide}, that supports \gls{l
 	description={\fc{A} specific set of features a given \gls{ls} (and \gls{lc}) support.},
 	plural=capabilities}
 
-\newglossaryentry{window}{name=\fc{c}ode \fc{w}indow,
-	description={\fc{A} source code viewer in \SEE{} which supports very basic \gls{ide}-like functionality.}}
+\newglossaryentry{window}{name=\fc{c}ode {w}indow, text=code window,
+description={\fc{A} source code viewer in \SEE{} which supports very basic \gls{ide}-like functionality.}}
 
 \newglossaryentry{reflexion}{name=\fc{r}eflexion \fc{a}nalysis,
 	description={\fc{T}he process of comparing the architecture and implementation of a software project and finding incongruencies between the two.}}
@@ -155,12 +157,12 @@ description={\fc{A} development tool, such as an \gls{ide}, that supports \gls{l
 \newglossaryentry{smell}{name=\fc{c}ode \fc{s}mell,
 	description={\fc{c}ertain structures in source code that suggest that a refactoring is in order, such as duplicated code, or a very long method~\cite[85-87]{fowler2019}.}}
 
-  \newglossaryentry{range}{name=Source Range, text=range,
+\newglossaryentry{range}{name=Source Range, text=range,
 	description={\fc{t}he contiguous portion within a source code file that a certain element occupies. In this thesis, we will express it as an ordered pair of a start and end position $(s, e)$, or, alternatively, as a 4-tuple $(s_l, s_c, e_l, e_c)$.
-In the latter representation, the first two elements describe the zero-indexed start line and start character offset, respectively, and the last two describe the corresponding (exclusive) end line and end character offset.}}
+			In the latter representation, the first two elements describe the zero-indexed start line and start character offset, respectively, and the last two describe the corresponding (exclusive) end line and end character offset.}}
 
 \newglossaryentry{token}{name=\fc{s}emantic token, text=semantic token,
-description={An \gls{lsp} \gls{capability} that returns tokens for a document, with the intention that those tokens can be used to apply syntax highlighting to the file. Apart from token types, it also offers token \emph{modifiers}, which can be used to apply additional formatting on top of the colors from the types.}}
+	description={An \gls{lsp} \gls{capability} that returns tokens for a document, with the intention that those tokens can be used to apply syntax highlighting to the file. Apart from token types, it also offers token \emph{modifiers}, which can be used to apply additional formatting on top of the colors from the types.}}
 
 %%% DIGITAL HERE %%%
 \newglossaryentry{seezip}{name={\tt{SEE.zip}}, type=file,

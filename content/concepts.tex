@@ -5,7 +5,8 @@
 \begin{document}
 \chapter{Concepts}\label{ch:concepts}
 
-\lettrine[lines=3]{\textcolor{Maroon}{B}}{efore} tackling the implementation, we need to take a closer look at the concepts central to this thesis, so that we can form a concrete idea of which parts of \gls{lsp} are well-suited to being integrated into \glspl{city}.
+%\lettrine[lines=3]{\textcolor{Maroon}{B}}{efore} tackling the implementation, we need to take a closer look at the concepts central to this thesis, so that we can form a concrete idea of which parts of \gls{lsp} are well-suited to being integrated into \glspl{city}.
+\lettrine[lines=3]{\textcolor{Maroon}{O}}{utlining} the central concepts behind this thesis is a crucial first step before tackling the implementation, so that we can form a concrete idea of which parts of \gls{lsp} are well-suited to being integrated into \glspl{city}.
 Thus, we will examine the concept of \glspl{city}, where we will use \SEE{} as a concrete implementation (which we do in \cref{sec:see}), as well as the \glsentrylong{lsp} (which we do in \cref{sec:lsp}).
 For the former, we will go over some of the existing literature regarding \glspl{city} (as this is more of an academic topic than \gls{lsp}) and describe the essentials that we need to work with in the implementation, such as the project graph.
 As for the latter, we will go over the available \glspl{capability} and take a look at both existing \glspl{ls} and \glspl{lc} to get an idea of what the \glsentrylong{lsp} offers and how it is most commonly used.
@@ -81,7 +82,7 @@ We formally define the domain of ranges $\mathcal{R}$ as the Cartesian square of
 Hence, as a whole, $\mathcal{R} = \mathcal{P}^2 = \mathbb{N}^4_0$.
 Semantically, a position $(l, c) \in \mathcal{P}$ describes a zero-indexed line $l$ and a zero-indexed character offset $c$, relative to the beginning of the line.
 A range $(s, e) \in \mathcal{R}$ can be understood as a starting position $s$ (inclusive) and an ending position $e$ (exclusive).
-We will also occasionally "unwrap" those positions and refer to a range $r$ as $r = ({s_l}, {s_c}, {e_l}, {e_c})$.
+We will also occasionally "decompose" those positions and refer to a range $r$ in decomposed form as $r = ({s_l}, {s_c}, {e_l}, {e_c})$.
 For example, the interval of lines that the range (partially or completely) covers is then given by $[s_l, e_l)$.
 
 I should note that the model presented here is a simplification of \SEE{}'s actual data model for source code graphs.
@@ -125,7 +126,7 @@ While \gls{lsp} does not offer a standardized way of offering \gls{smell} inform
 The very basic concepts behing \gls{lsp} have already been explained in \cref{subsec:lsp}.
 The protocol aims to make it easier for \glspl{ide} to support more programming languages---specifically, to support language-specific \glspl{capability}, which we will go over in \cref{subsec:capabilities}.
 It was originally developed for Microsoft's editor \gls{vscode} and was later converted into an open-source specification\footnote{
-  Available at \web{https://github.com/microsoft/language-server-protocol}{2024-10-05}.
+	Available at \web{https://github.com/microsoft/language-server-protocol}{2024-10-05}.
 } (though there are still \gls{vscode}-specific extensions to \gls{lsp} that are not in the official specification today).
 \gls{lsp} has found widespread use:
 An overview page by Microsoft lists at least 269 \glspl{ls}\footnote{\web{https://microsoft.github.io/language-server-protocol/implementors/servers/}{2024-10-05}} (\ie, servers offering support for some programming language) and 61 \glspl{lc}\footnote{\web{https://microsoft.github.io/language-server-protocol/implementors/tools/}{2024-10-05}} (\ie, \glspl{ide} or development tools).
@@ -141,19 +142,19 @@ While the specification does not mandate it, it lists some recommended communica
 The specification lists all available types for requests and responses as TypeScript interfaces.
 A sample type definition for the hovering \gls{capability}, taken from the documentation, can be seen in \cref{lst:lspex}.
 From this example, we can also see that locations within documents\footnote{
-  These documents must always be textual---there is no support for binary files.
+	These documents must always be textual---there is no support for binary files.
 } are represented as a \gls*{uri} representing the document along with a \gls{range} (which we have formalized in \cref{subsec:graph}).
 The corresponding method name for this example is \tt{textDocument/hover}.
 
 \begin{codebox}[TypeScript]{lst:lspex}{Example specification of request and response objects for the Hover {capability}.}
-  interface HoverParams {
-    textDocument: string; /** The text document's URI in string form */
-    position: { line: uinteger; character: uinteger; };
-  }
+interface HoverParams {
+  textDocument: string; /** The text document's URI in string form */
+  position: { line: uinteger; character: uinteger; };
+}
 
-	interface HoverResult {
-    value: string;
-  }
+interface HoverResult {
+  value: string;
+}
 \end{codebox}\label{lst:lspex}
 
 The first request from the \gls{lc} to the \gls{ls} always has to be the \tt{initialize} request, including the so-called client \glspl{capability}.
@@ -173,7 +174,7 @@ There are also notifications related to modifications to the document that the \
 
 Apart from describing fundamentals of the protocol like the above, the biggest part of the protocol's specification are the \emph{\glspl{capability}}, that is, the \gls{jrpc} method names and types of the parameters and response objects for each feature that either the \gls{lc} or \gls{ls} can use~\cite{lsp}.
 
-\subsection{Capabilities}\label{subsec:capabilities}
+\subsection{Planned Capabilities}\label{subsec:capabilities}
 The \glspl{capability} I will make use of in \SEE{} can roughly be grouped into the three categories \emph{Navigation}, \emph{Information}, and \emph{Structure}.
 We will take a detailed look at each relevant \gls{capability} below, along with how exactly they will be integrated into \glspl{city}.
 This level of detail is justified in the fact that the integration of the \glspl{capability} is the main focus of this whole thesis.
@@ -228,14 +229,14 @@ I have grouped the following \glspl{capability} into this category:
 	      The specification does not specify what exactly this "hover text" should be~\cite{lsp}, but most implementations of \glspl{ls} display the documentation of the hovered element, or the signature if it's a method, or other helpful associated details.
 	      We can simply implement this part of the specification as intended:
 	      If the user hovers above an element in a \gls{window}, or a node in a \gls{city}, we should reveal the hover information in some kind of box near the mouse cursor, hiding it again once the cursor is moved away.
-      \item \textbf{\Glspl*{token}}: Returns \glspl*{token} for the given file, which are intended for syntax highlighting.
-        Similar to normal (\eg, lexer-based) syntax highlighting, requesting \glspl{token} for a document yields a list of tokens containing their positions and a type, where the type can be one that is specified in the protocol (\eg, \tt{enum}) or one that was previously announced as supported in the client \glspl{capability}.
-    \glspl{ide} can then render each token type in a different color.
-    An interesting addition to usual syntax highlighting is that each token can also be affected by any number of \emph{token modifiers}, where each modifier may add an additional rendering effect on top of the type-based color.
-    For example, tokens with the \tt{static} modifier might be rendered in \textit{italics}, while ones with the \tt{deprecated} modifier could be rendered in \st{strikethrough}.
+	\item \textbf{\Glspl*{token}}: Returns \glspl*{token} for the given file, which are intended for syntax highlighting.
+	      Similar to normal (\eg, lexer-based) syntax highlighting, requesting \glspl{token} for a document yields a list of tokens containing their positions and a type, where the type can be one that is specified in the protocol (\eg, \tt{enum}) or one that was previously announced as supported in the client \glspl{capability}.
+	      \glspl{ide} can then render each token type in a different color.
+	      An interesting addition to usual syntax highlighting is that each token can also be affected by any number of \emph{token modifiers}, where each modifier may add an additional rendering effect on top of the type-based color.
+	      For example, tokens with the \tt{static} modifier might be rendered in \textit{italics}, while ones with the \tt{deprecated} modifier could be rendered in \st{strikethrough}.
 
-    \SEE{} currently uses \textsc{Antlr}\footnote{\web{https://www.antlr.org}{2024-06-10}}-based syntax highlighting, where we need to manually group each parser's token into some categories to determine colors.
-    The added value of the \glspl{token} \gls{capability} here would be ease of use (\ie, no need to manually configure each \gls{ls}) on the one hand, and support for token modifiers (\ie, "extended" syntax highlighting) on the other hand.
+	      \SEE{} currently uses \textsc{Antlr}\footnote{\web{https://www.antlr.org}{2024-06-10}}-based syntax highlighting, where we need to manually group each parser's token into some categories to determine colors.
+	      The added value of the \glspl{token} \gls{capability} here would be ease of use (\ie, no need to manually configure each \gls{ls}) on the one hand, and support for token modifiers (\ie, "extended" syntax highlighting) on the other hand.
 \end{itemize}
 
 
@@ -254,7 +255,7 @@ There are actually two different possible kinds of symbols that this \gls{capabi
 	      Using this property, we can establish a hierarchy and build a \gls{city} by recursively enumerating all \tt{DocumentSymbol}s and their children for each file, then querying for all relevant information by using the other \glspl{capability} outlined above.
 \end{enumerate}
 
-\paragraph{Unused Capabilities}
+\subsection{Unplanned Capabilities}\label{subsec:unplanned}
 There are a number of \glspl{capability} that I will not implement into \SEE{}.
 These can be grouped into roughly three categories, based on the reasoning behind them being unused:
 The first concerns those \glspl{capability} that relate to editing only and provide no features related to simply viewing code---as explained in \cref{sec:goals}, editing code is not part of the goals here and requires additional large-scale preparatory changes to \SEE{}.
@@ -264,38 +265,36 @@ For these, I also have not deemed the effort worth it to implement them, at leas
 
 I will quickly list the contents of all these groups here.
 
-\begin{enumerate}
-	\item {Editing \glspl{capability}}
-	      \begin{itemize}
-		      \item \textbf{Code Actions}: Allows the programmer to apply refactoring actions to the code, such as importing a referenced library.
-		      \item \textbf{Completion}: Computes autocomplete items while the user is typing, and applies them when chosen.
-		      \item \textbf{Formatting}: Applies automatic formatting to a file, or range, of code.
-		      \item \textbf{Rename}: Executes a project-wide rename of a symbol, which also renames all references to that symbol.
-		      \item \textbf{Linked Editing Range}: Returns a list of \glspl{range} that will be edited upon executing a rename of a symbol, with the purpose of highlighting those ranges during the rename.
-		      \item \textbf{Signature Help}: Returns signature information at the given cursor information.
-		            This may seem relevant for our purposes, but it is actually intended to be shown while editing (\eg, highlighting the active parameter as one types), and its information is given by the hover \gls{capability} anyway in almost all cases.
-	      \end{itemize}
-	\item {Niche \glspl{capability}}
-	      \begin{itemize}
-		      \item \textbf{Document Color}: Lists all color references in the code (\eg, symbolic references like \tt{Colors.red}) along with their color value in the RGB format.
-		      \item \textbf{Color Presentation}: Allows users to modify color references in the code by using a color picker.
-		      \item \textbf{Document Link}: Returns the location of links in the document.
-		      \item \textbf{Code Lens:} Returns commands that can be shown next to source code, such as the number of implementers of an abstract method.
-		      \item \textbf{Monikers:} This is a description of what symbols a project imports and which ones it exports, and is intended to make relations between multiple projects possible.
-		            As \gls{lsp} usually only deals with a single project at a time, this is more useful in the \gls{lsif}, whose specification it also originates from~\cite{lsif}.
-	      \end{itemize}
-	\item {Complex \glspl{capability}}
-	      \begin{itemize}
-		      \item \textbf{Folding Range}: Returns \glspl{range} that can be collapsed in the code viewer.
-		            For example, the contents of a function could be collapsed, leaving only its signature visible.
-		            Due to the way \glspl{window} are implemented in \SEE{}, this would increase the complexity of the implementation quite a bit.
-		      \item \textbf{Inline Value}: In debugging contexts, this supplies the contents of a variable with the purpose of displaying them inline in the \gls{lc}, next to the variable itself.
-		            It uses the \gls{dap}~\cite{dap}, which has previously already been integrated into \SEE{}~\cite{rohlfing2022}, but it would take a lot of refactoring work to make the two implementations compatible with each other.
-		      \item \textbf{Inlay Hint}: Returns textual hints that can be rendered within the source code.
-		            An example would be parameter names that are intended to be shown at the call site, such as in the screenshot in \cref{fig:inlay}.
-		      \item \textbf{Notebook-related \glspl{capability}}: These are intended for interactive notebook systems such as Jupyter\footnote{See \web{https://jupyter.org/}{2024-10-03}}, which \SEE{} does not currently support.
-	      \end{itemize}
-\end{enumerate}
+\paragraph{Editing \glspl{capability}}
+\begin{itemize}
+	\item \textbf{Code Actions}: Allows the programmer to apply refactoring actions to the code, such as importing a referenced library.
+	\item \textbf{Completion}: Computes autocomplete items while the user is typing, and applies them when chosen.
+	\item \textbf{Formatting}: Applies automatic formatting to a file, or range, of code.
+	\item \textbf{Rename}: Executes a project-wide rename of a symbol, which also renames all references to that symbol.
+	\item \textbf{Linked Editing Range}: Returns a list of \glspl{range} that will be edited upon executing a rename of a symbol, with the purpose of highlighting those ranges during the rename.
+	\item \textbf{Signature Help}: Returns signature information at the given cursor information.
+	      This may seem relevant for our purposes, but it is actually intended to be shown while editing (\eg, highlighting the active parameter as one types), and its information is given by the hover \gls{capability} anyway in almost all cases.
+\end{itemize}
+\paragraph{Niche \glspl{capability}}
+\begin{itemize}
+	\item \textbf{Document Color}: Lists all color references in the code (\eg, symbolic references like \tt{Colors.red}) along with their color value in the RGB format.
+	\item \textbf{Color Presentation}: Allows users to modify color references in the code by using a color picker.
+	\item \textbf{Document Link}: Returns the location of links in the document.
+	\item \textbf{Code Lens:} Returns commands that can be shown next to source code, such as the number of implementers of an abstract method.
+	\item \textbf{Monikers:} This is a description of what symbols a project imports and which ones it exports, and is intended to make relations between multiple projects possible.
+	      As \gls{lsp} usually only deals with a single project at a time, this is more useful in the \gls{lsif}, whose specification it also originates from~\cite{lsif}.
+\end{itemize}
+\paragraph{Complex \glspl{capability}}
+\begin{itemize}
+	\item \textbf{Folding Range}: Returns \glspl{range} that can be collapsed in the code viewer.
+	      For example, the contents of a function could be collapsed, leaving only its signature visible.
+	      Due to the way \glspl{window} are implemented in \SEE{}, this would increase the complexity of the implementation quite a bit.
+	\item \textbf{Inline Value}: In debugging contexts, this supplies the contents of a variable with the purpose of displaying them inline in the \gls{lc}, next to the variable itself.
+	      It uses the \gls{dap}~\cite{dap}, which has previously already been integrated into \SEE{}~\cite{rohlfing2022}, but it would take a lot of refactoring work to make the two implementations compatible with each other.
+	\item \textbf{Inlay Hint}: Returns textual hints that can be rendered within the source code.
+	      An example would be parameter names that are intended to be shown at the call site, such as in the screenshot in \cref{fig:inlay}.
+	\item \textbf{Notebook-related \glspl{capability}}: These are intended for interactive notebook systems such as Jupyter\footnote{See \web{https://jupyter.org/}{2024-10-03}}, which \SEE{} does not currently support.
+\end{itemize}
 
 \begin{figure}
 	\begin{center}
@@ -313,20 +312,20 @@ We are now ready to tackle the actual implementation in the next chapter.
 As a quick overview and recap before then, there is a table of planned \glspl{capability} along with their intended use in \SEE{} in \cref{tab:capabilities}.
 
 \begin{table}[htbp]
-\caption{\gls{lsp} \glspl{capability} that will be integrated into \SEE{} as part of this thesis.}\label{tab:capabilities}
-\begin{tabularx}{\textwidth}{@{}lXX@{}}
-	\toprule
-	\multicolumn{1}{c}{\textbf{Capability}} & \multicolumn{1}{c}{\textbf{Code Windows}}                        & \multicolumn{1}{c}{\textbf{Code Cities}}            \\ \midrule
-	\textit{Call hierarchy}                 & Show incoming/outgoing calls and allow jumping to caller         & Generate corresponding edges                        \\
-	\textit{Diagnostics}                    & Highlight corresponding code \glspl{range} and display details on hover & Display code smell icons~\cite[see][]{galperin2021} \\
-	\textit{References}                     & Show references and allow jumping to usage                       & Generate corresponding edges                        \\
-	\textit{Document symbols}               & ---                                                              & Generate corresponding nodes and hierarchy          \\
-  \textit{Go to location$^*$}                                     & Show locations and allow jumping to them                         & Generate corresponding edges                        \\
-	\textit{Hover}                          & Show hover information when hovering above item                  & Show hover information when hovering above node     \\
-  \textit{\glspl{token}}                & Extended ("semantic") syntax highlighting                        & ---                                                 \\
-	\textit{Type hierarchy}                 & Show sub-/supertypes and allow jumping to them                   & Generate corresponding edges                        \\\bottomrule
-\end{tabularx}
-\caption*{\footnotesize $^*$This includes the \textit{Go to declaration / definition / implementation / type definition} capabilities.}
+	\caption{\gls{lsp} \glspl{capability} that will be integrated into \SEE{} as part of this thesis.}\label{tab:capabilities}
+	\begin{tabularx}{\textwidth}{@{}lXX@{}}
+		\toprule
+		\multicolumn{1}{c}{\textbf{Capability}} & \multicolumn{1}{c}{\textbf{Code Windows}}                               & \multicolumn{1}{c}{\textbf{Code Cities}}            \\ \midrule
+		\textit{Call hierarchy}                 & Show incoming/outgoing calls and allow jumping to caller                & Generate corresponding edges                        \\
+		\textit{Diagnostics}                    & Highlight corresponding code \glspl{range} and display details on hover & Display code smell icons~\cite[see][]{galperin2021} \\
+		\textit{References}                     & Show references and allow jumping to usage                              & Generate corresponding edges                        \\
+		\textit{Document symbols}               & ---                                                                     & Generate corresponding nodes and hierarchy          \\
+		\textit{Go to location$^*$}             & Show locations and allow jumping to them                                & Generate corresponding edges                        \\
+		\textit{Hover}                          & Show hover information when hovering above item                         & Show hover information when hovering above node     \\
+		\textit{\glspl{token}}                  & Extended ("semantic") syntax highlighting                               & ---                                                 \\
+		\textit{Type hierarchy}                 & Show sub-/supertypes and allow jumping to them                          & Generate corresponding edges                        \\\bottomrule
+	\end{tabularx}
+	\caption*{\footnotesize $^*$This includes the \textit{Go to declaration / definition / implementation / type definition} capabilities.}
 \end{table}
 
 \end{document}

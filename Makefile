@@ -5,10 +5,10 @@ all: thesis
 pdf: thesis clean
 
 thesis:
-	pdflatex -draftmode $(FILENAME).tex
+	pdflatex -shell-escape -draftmode $(FILENAME).tex
 	biber $(FILENAME)
-	pdflatex -draftmode $(FILENAME).tex
-	pdflatex $(FILENAME).tex
+	pdflatex -shell-escape -draftmode $(FILENAME).tex
+	pdflatex -shell-escape $(FILENAME).tex
 	
 clean:
 	latexmk -c

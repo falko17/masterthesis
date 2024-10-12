@@ -3,7 +3,8 @@
 \begin{document}
 \chapter{Introduction}
 
-\lettrine[lines=3]{\textcolor{Maroon}{T}}{his} master's thesis is about the integration of the Language Server Protocol into code cities (specifically, into SEE).
+%\lettrine[lines=3]{\textcolor{Maroon}{T}}{his} master's thesis is about the integration of the Language Server Protocol into code cities (specifically, into SEE).
+\lettrine[lines=3]{\textcolor{Maroon}{L}}{inking} the Language Server Protocol with code cities, specifically SEE, is the core focus of this master's thesis.
 The main novel contribution will be a way of creating code cities using only information provided by the \glsentrylong{lsp}, while additional contributions consist of the integration of \glsentrylong{lsp}-based functionality into code cities as well as their integration into SEE's code windows.
 Finally, the penultimate \cref{ch:evaluation} describes a controlled experiment (with $n=\participants$ participants) in which code cities are compared to traditional IDEs via a user study---this serves as an evaluation for this thesis and for code cities as IDE replacements in general.
 
@@ -31,12 +32,12 @@ Note that these will get more thorough explanations in \cref{ch:concepts}.
 
 \subsection{Code Cities \& SEE}\label{subsec:see}
 Visualization in general often helps facilitate the understanding of complex systems by representing them with a simplified visual model.
-This can be especially useful in the area of software engineering, where it is often hard to get an intuitive overview of large software systems.
+This can be especially useful in the area of software engineering, where it is often hard to get an intuitive overview of large software systems when only equipped with standard tools, like \glspl{ide}.
 One such software visualization---called \SEE{}---is being developed at the University of Bremen and will be introduced in the next section.
 
 \SEE{} is an interactive software visualization tool using the \gls*{city} metaphor in 3D, developed in the {Unity} game engine.
 It features collaborative "multiplayer" functionality across multiple platforms\footnote{
-	Notably, besides usual desktop and touchscreen-based environments, virtual reality (e.g., via the \emph{Valve Index}) is supported as well.
+	Notably, besides usual desktop and touchscreen-based environments, virtual reality (\eg, via the \emph{Valve Index}) is supported as well.
 }, allowing multiple participants to view and interact with the same \gls*{city} together.
 
 \begin{figure}[hbtp]
@@ -66,11 +67,6 @@ Here, we can also see yellow edges between the components, in this case represen
 	\caption{An example of what edges can look like in \SEE{}. \fxwarning[layout=inline]{Use higher quality image.}}\label{fig:edges}
 \end{figure}
 
-Currently, \glspl{city} in \SEE{} are rendered by reading in pre-made \gls{gxl} files, which can be created by the proprietary Axivion Suite.
-This approach has the disadvantage of only supporting languages supported by the Axivion Suite, as well as making regenerating cities (e.g., if the source code changed) fairly cumbersome.
-Another current shortcoming of \SEE{} is that information about the source code available to the user is limited when compared to an \gls{ide}---for example, quickly displaying documentation for a given component by hovering over it is not supported.
-This is where the Language Server Protocol can help.
-
 \subsection{Language Server Protocol}\label{subsec:lsp}
 
 As stated on its website:
@@ -82,22 +78,22 @@ As stated on its website:
 	The idea behind the \gls*{lsp} is to standardize the protocol for how such servers and development tools communicate. This way, a single \gls{ls} can be re-used in multiple development tools, which in turn can support multiple languages with minimal effort.
 \end{displayquote}
 
-\begin{figure}
-	\begin{center}
-		\subcaptionbox{\gls{ide} development without \gls{lsp}.\label{fig:lspwithout}}{\includegraphics[width=0.95\textwidth]{../figures/overview_lsp_without_lsp}}
-		\subcaptionbox{\gls{ide} development with \gls{lsp}.\label{fig:lspwith}}{\includegraphics[width=0.95\textwidth]{../figures/overview_lsp_with_lsp}}
-	\end{center}
-	\caption{An illustration of how \gls{lsp} can help simplify IDE development.}\label{fig:lsp}
-\end{figure}
-
 \noindent{}Since \gls{lsp}\footnote{%
-	Note that I will often refer to the \glsentrylong{lsp} as just "\gls{lsp}" instead of "the LSP" (e.g., "\glspl{ide} use \gls{lsp}") from now on, as this is how the specification~\cite{lsp} does it as well.
+	Note that I will often refer to the \glsentrylong{lsp} as just "\gls{lsp}" instead of "the LSP" (\eg, "\glspl{ide} use \gls{lsp}") from now on, as this is how the specification~\cite{lsp} does it as well.
 } is a central component of my master's thesis, I have created a diagram in \cref{fig:lsp} in the hope to strengthen intuitions around the motivation and use of the protocol.
 While the \gls{lsp} specification has originally been created by Microsoft, it is by now an open-source project\footnote{
 	Available at \web{https://github.com/Microsoft/language-server-protocol}{2024-09-11}.
 }, where changes can be actively proposed using issues or pull requests.
 Apart from the specification itself, a great number of open-source implementations of \glspl{ls} for all kinds of programming languages from Ada to Zig exist.
 A partial overview of available implementations is listed at \web{https://microsoft.github.io/language-server-protocol/implementors/servers/}{2024-09-11}.
+
+\begin{figure}[hbtp]
+	\begin{center}
+		\subcaptionbox{\gls{ide} development without \gls{lsp}.\label{fig:lspwithout}}{\includegraphics[width=0.95\textwidth]{../figures/overview_lsp_without_lsp}}
+		\subcaptionbox{\gls{ide} development with \gls{lsp}.\label{fig:lspwith}}{\includegraphics[width=0.95\textwidth]{../figures/overview_lsp_with_lsp}}
+	\end{center}
+	\caption{An illustration of how \gls{lsp} can help simplify \gls{ide} development.}\label{fig:lsp}
+\end{figure}
 
 The protocol introduces the concept of so-called \glspl*{capability}, which define a specific set of features a given \gls{ls} (and \gls{lc}) support.
 These include navigational features, like the ability to jump to a variable's declaration, and editing-related features, such as autocomplete.
@@ -111,7 +107,7 @@ A screenshot of this behavior within the \textsc{Neovim} editor is provided in \
 	\begin{center}
 		\includegraphics[width=0.95\textwidth]{../figures/mwe}
 	\end{center}
-	\caption{An example of the \tt{texlab} \gls{ls} running in \textsc{Neovim}.}\label{fig:mwe}
+	\caption[An example of the \texttt{texlab} language server running in \textsc{Neovim}.]{An example of the \tt{texlab} \gls{ls} running in \textsc{Neovim}.}\label{fig:mwe}
 \end{figure}
 
 The counterparts to \glspl{ls} are the \glspl{lc}:
@@ -119,7 +115,11 @@ These are the IDEs and editors that incorporate the \gls{ls} into themselves.
 Examples for IDEs that support acting as a \gls{lc} in the \gls{lsp} context include \emph{Eclipse, Emacs, \emph{\textsc{JetBrains} IntelliJ}} \textsc{(Neo)vim}, and \emph{Visual Studio Code}.
 
 \subsection{Integration}\label{subsec:integration}
-\fxfatal[layout=inline]{Motivate integration}
+Currently, \glspl{city} in \SEE{} are rendered by reading in pre-made \gls{gxl} files, which can be created by the proprietary Axivion Suite.
+This approach has the disadvantage of only supporting languages supported by the Axivion Suite, as well as making regenerating cities (\eg, if the source code changed) fairly cumbersome.
+Another current shortcoming of \SEE{} is that information about the source code available to the user is limited when compared to an \gls{ide}---for example, quickly displaying documentation for a given component by hovering over it is not supported.
+This is where the Language Server Protocol can help.
+
 
 % SEE as it exists right now has two shortcomings relevant for this thesis when compared to a traditional IDE.
 % For example:
@@ -167,9 +167,9 @@ An additional goal of this master's thesis is to enhance the functionality of th
 It should be noted that any \gls{lsp} capabilities which involve modifying the underlying software project is out of scope for this master's thesis.
 Rewriting the \glspl{window} to be editable (in a way that distributes the edits over the network) is complex enough to warrant its own thesis~\cite[see also][]{moritz}, not even taking into account that this would also more than double the number of \glspl{capability} that would then become useful to implement.
 As such, only \glspl{capability} that are "read-only" (\ie, that do not modify the source code or project structure in any way) will be considered when planning which features to implement as part of the thesis.
-Consult \cref{sec:capabilities} for a full list of \gls{lsp} capabilities which I plan to implement.
+Consult \cref{subsec:capabilities} for a full list of \gls{lsp} capabilities which I plan to implement.
 
-Additionally, I will not implement the C\# interface to the \gls{lsp} (\ie, translating between C\# method calls and \gls{jrpc} calls).
+Additionally, I will not implement the C\# interface to the \gls{lsp} (\ie, translating between C\# method calls and \glspl{jrpc}).
 There already exist well-made interfaces for this purpose\footnote{
 	Such as OmniSharp's implementation of \gls{lsp} in C\#, which I plan to use:
 	\web{https://github.com/OmniSharp/csharp-language-server-protocol}{2024-28-01}
