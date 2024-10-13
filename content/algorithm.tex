@@ -1,0 +1,183 @@
+\algrenewcommand\alglinenumber[1]{{\footnotesize\textcolor{Gray}{\tt{#1}}}}
+\algrenewcommand\algorithmicrequire{\textbf{Input: }}
+\algrenewcommand\algorithmicensure{\textbf{Output: }}
+
+
+\begin{algorithm}
+	\small
+
+	\floatname{algorithm}{Algorithm}
+	\caption{How \gls{city} graphs can be generated from \gls{lsp} information.}\label{alg:generate}
+	\begin{algorithmic}[1]
+		\Require  {Family of \textsc{Lsp} functions provided by the \gls{ls}}, {set of documents $D$}
+		\Ensure {Graph $G$ representing the underlying software project}
+		\Statex
+		\State $V, E, a, s, t, \ell \gets \emptyset$ \Comment{Initialize empty graph components.}
+		\ForAll{$d \in D$}
+
+		\State \Call{LspOpenDocument}{$d$} \Comment{Document needs to be opened for all capabilities to work.}
+		\State $v_d \gets$ \Call{AddDocumentNode}{$d$} \Comment{Each document becomes a node\dots}
+		\ForAll{$s \in \textsc{LspDocumentSymbols}(d)$}
+		\State \Call{MakeChild}{\Call{AddSymbolNode}{$s$}, $v_d$} \Comment{\dots with its symbols as children.}
+		\EndFor
+		\State \Call{LspCloseDocument}{$d$}
+		\EndFor
+
+		\ForAll{$v \in V$}
+		\State \Call{ConnectNodeVia}{\textsc{LspGoToDeclaration}, {Declaration}, $v$}
+		\State \Call{ConnectNodeVia}{\textsc{LspGoToDefinition}, {Definition}, $v$}
+		\State \Call{ConnectNodeVia}{\textsc{LspGoToTypeDefinition}, {TypeDefinition}, $v$}
+		\State \Call{ConnectNodeVia}{\textsc{LspGoToImplementation}, {Implementation}, $v$}
+		\State \Call{ConnectNodeVia}{\textsc{LspReferences}, {Reference}, $v$}
+
+		\If{$a(v, \tt{Type}) = \text{Method}$}
+		\Comment{We need to integrate the call hierarchy into the graph.}
+		\State $I \gets \Call{LspPrepareCallHierarchy}{a(v, \tt{Path}), a(v, \tt{Range})}$
+		\LComment{
+			\textsc{GetMatchingItem} just returns the item in $I$ with the same name, kind, and location as $v$.
+		}
+		\State $i \gets \Call{GetMatchingItem}{I, v}$
+		\State $R \gets \Call{LspCallHierarchyOutgoingCalls}{i}$
+		\LComment{\textsc{GetMatchingNode} returns the node in $V$ with the same name, kind, and location as $r$.}
+		\State $V' \gets \{\Call{GetMatchingNode}{r} \mid r \in R\}$
+		\ForAll{$v' \in V'$}
+		\State $\Call{AddEdge}{v, v', \text{Outgoing Call}}$
+		\EndFor
+		% prepare: receive list of items at position.
+		% get item that matches with node.
+		% get outgoing call items.
+		% get nodes matching those items.
+		% create outgoing edge.
+		\ElsIf{$a(v, \tt{Type}) = \text{Type}$}
+		\Comment{We need to integrate the type hierarchy into the graph.}
+		\State $I \gets \Call{LspPrepareTypeHierarchy}{a(v, \tt{Path}), a(v, \tt{Range})}$
+		\State $i \gets \Call{GetMatchingItem}{I, v}$
+		\State $R \gets \Call{LspTypeHierarchySupertypes}{i}$
+		\State $V' \gets \{\Call{GetMatchingNode}{r} \mid r \in R\}$
+		\ForAll{$v' \in V'$}
+		\State $\Call{AddEdge}{v, v', \text{Supertype}}$
+		\EndFor
+		% prepare: receive list of items at position.
+		% get item that matches with node.
+		% get subtype items.
+		% get nodes matching those items.
+		% create subtype edge.
+		\EndIf{}
+		\EndFor
+
+
+		\State \Return $(V, E, a, s, t, \ell)$
+
+		\Statex
+		\algstore{lspcity}
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+	\small
+	\begin{algorithmic}[1]
+		\algrestore{lspcity}
+		\Function{AddDocumentNode}{$d \in D$}
+		\State $v_d \gets$ \Call{NewNode}{\null}
+		\State $a' \gets \emptyset$
+		\State $a'(v_d, \tt{Type}) \gets$ File
+		\State $a'(v_d, \tt{Path}) \gets d$
+		\State $V \gets V \cup \{v_d\}$
+		\State $a \gets a \cup a'$
+		\State \Call{MakeChild}{$v_d$, \Call{AddDirectoryNode}{$d$\tt{.directory}}}
+		\State \Return $v_d$
+		\EndFunction
+
+		\Statex
+		\Function{AddSymbolNode}{$s \in \mathcal{S}$}
+		\State $v \gets \Call{NewNode}{\null}$
+		\State $a' \gets \emptyset$
+		\State $a'(v, \tt{Name}) \gets s\tt{.name}$
+		\State $a'(v, \tt{Type}) \gets s\tt{.kind}$
+		\State $a'(v, \tt{Path}) \gets d$
+		\State $a'(v, \tt{Deprecated}) \gets (\text{deprecated} \in s\tt{.tags})$
+		% \LComment{Note that \tt{range} is composed of a \tt{start} and \tt{end}, each consisting of a \tt{line} and a \tt{column}.}
+		\State $a'(v, \tt{Range}) \gets s\tt{.range}$
+		\LComment{Several other similar attributes omitted here...}
+		% \State $a'(v, \tt{SourceColumn}) \gets s\tt{.range.start.character}$
+		% \State $a'(v, \tt{SourceLineEnd}) \gets s\tt{.range.end.line}$
+		% \State $a'(v, \tt{SourceColumnEnd}) \gets s\tt{.range.end.character}$
+		\State $a'(v, \tt{HoverInfo}) \gets \Call{LspHover}{d, s\tt{.range}}$
+		\If{$a' \nsubseteq a$} \Comment{If node does not already exist...}
+		\State $V \gets V \cup \{v\}$
+		\Comment{...add it and handle its children.}
+		\State $a \gets a \cup a'$
+		\ForAll{$s' \in s$\tt{.children}}
+		\State \Call{MakeChild}{\Call{AddSymbolNode}{$s'$}, $v$}
+		\Comment{Recurse.}
+		\EndFor
+		\EndIf
+		\State \Return{$v$}
+		\EndFunction
+
+		\Statex
+		\Function{MakeChild}{$v_c \in V, v_p \in V$}
+		\LComment{The {partOf} edges must induce a tree structure.
+			Hence, if a node already is a part of another node, we must not add another {partOf} edge.}
+		\If{$\exists e \in E: \ell(e) = \text{partOf} \land s(e) = v_c$}
+		\State \Output{Warning: Hierarchy is cyclic. Some children will be omitted.}
+		\Else
+		\State $\Call{AddEdge}{v_c, v_p, \text{partOf}}$
+		\EndIf
+		\EndFunction
+
+		\Statex
+		\Function{ConnectNodeVia}{$\textsc{LspFun} \in (D \times \mathcal{R})^{D \times \mathcal{R}}, l \in \Sigma, v \in V$}
+		\LComment{Function $\textsc{LspFun}$ only returns locations, so we need to locate the relevant nodes first.}
+		\ForAll{$(d, r) \in \Call{LspFun}{a(v, \tt{Path}), a(v, \tt{Range})}$}
+		\ForAll{$v' \in \Call{FindNodesByLocation}{d, r}$}
+		\State $\Call{AddEdge}{v, v', l}$
+		\EndFor
+		\EndFor
+		\EndFunction
+
+		\Statex
+		\Function{AddEdge}{$v_s \in V, v_t \in V, l \in \Sigma$}
+		\State $e' \gets \Call{NewEdge}{\null}$
+		\State $E \gets E \cup \{e'\}$
+		\State $s(e') \gets v_s$
+		\State $t(e') \gets v_t$
+		\State $\ell(e') \gets l$
+		\EndFunction
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+	\small
+	\begin{algorithmic}[1]
+		\Function{FindNodesByLocation}{$d \in D, r \in \mathcal{R}$}
+		% FIXME: Should use KD tree already maybe?
+		\LComment{We pick the nodes with the most specific range containing the given location.}
+		\State $B \gets \{ v \in V \mid a(v, \tt{Path}) = d \land s_l^r, e_l^r \in [s_l^{a(v, \tt{Range})}, e_l^{a(v, \tt{Range})}]$
+		\Statex $\hphantom{B \gets \{ v \in V \mid a(v, \tt{Path}) = d} \land\ s_c^r \geq s_c^{a(v, \tt{Range})} \land
+			e_c^r \leq e_c^{a(v, \tt{Range})}
+			\}$
+		\State {$B \gets \argmin\limits_{v \in B} e_l^{a(v, \tt{Range})} - s_l^{a(v, \tt{Range})}$}
+		\State \Return{$\argmin\limits_{v \in B} e_c^{a(v, \tt{Range})} - s_c^{a(v, \tt{Range})}$}
+		\EndFunction
+
+		\Statex
+		\Function{AddDirectoryNode}{$p \in \Sigma$}
+		\If{$\exists! v \in V: a(v, \tt{Path}) = p$} \Comment{Check if node exists already.}
+		\State \Return $v$ \Comment{If so, just pick that one.}
+		\EndIf
+		\State $v_p \gets$ \Call{NewNode}{\null}
+		\State $a' \gets \emptyset$
+		\State $a'(v_p, \tt{Type}) \gets$ Directory
+		\State $a'(v_p, \tt{Path}) \gets p$
+		\State $V \gets V \cup \{v_p\}$
+		\State $a \gets a \cup a'$
+		\State $v_p^* \gets$ \Call{AddDirectoryNode}{\Call{GetParentDirectory}{$p$}}
+		\Comment{Recurse to add parent directories.}
+		\If{$v_p \neq v_p^*$}
+		\State \Call{MakeChild}{$v_p$, $v_p^*$}
+		\EndIf
+		\State \Return $v_p$
+		\EndFunction
+	\end{algorithmic}
+\end{algorithm}

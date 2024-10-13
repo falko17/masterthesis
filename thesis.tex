@@ -36,6 +36,7 @@
 \usepackage{wrapfig2}
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{mathtools}
 \usepackage{fontenc}
 \usepackage{lettrine}
 \usepackage{etoolbox}
@@ -121,6 +122,8 @@
   \else
     #3%
   \fi}
+
+\DeclareMathOperator*{\argmin}{arg\,min}
 
 \makeatletter
 \newcommand*{\currentname}{\@currentlabelname{} (\@currentlabel{})}
