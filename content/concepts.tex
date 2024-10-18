@@ -81,9 +81,9 @@ It describes a contiguous portion of source code.
 We formally define the domain of ranges $\mathcal{R}$ as the Cartesian square of positions $\mathcal{P}^2$, whereas the domain of positions $\mathcal{P}$ is defined as the Cartesian square of natural numbers (including zero), that is, $\mathcal{P} = \mathbb{N}^2_0$.
 Hence, as a whole, $\mathcal{R} = \mathcal{P}^2 = \mathbb{N}^4_0$.
 Semantically, a position $(l, c) \in \mathcal{P}$ describes a zero-indexed line $l$ and a zero-indexed character offset $c$, relative to the beginning of the line.
-A range $(s, e) \in \mathcal{R}$ can be understood as a starting position $s$ (inclusive) and an ending position $e$ (exclusive).
-We will also occasionally "decompose" those positions and refer to a range $r$ in decomposed form as $r = (s_l^r, s_c^r, e_l^r, e_c^r)$.
-For example, the interval of lines that the range $r$ (partially or completely) covers is then given by $[s_l^r, e_l^r)$.
+A range $(b, e) \in \mathcal{R}$ can be understood as a beginning position $b$ (inclusive) and an ending position $e$ (exclusive).
+We will also occasionally "decompose" those positions and refer to a range $r$ in decomposed form as $r = \left(b_l^r, b_c^r, e_l^r, e_c^r\right)$.
+For example, the interval of lines that the range $r$ (partially or completely) covers is then given by $\left[b_l^r, e_l^r\right)$.
 
 I should note that the model presented here is a simplification of \SEE{}'s actual data model for source code graphs.
 For example, in reality, edges can have multiple attributes, there can be multiple edge types other than \tt{partOf} that have the \gls{polytree} property, and so on.

@@ -51,8 +51,8 @@ There was not much I had to do in terms of getting \SEE{} ready, so this section
 	\item \Glspl{window} have previously been made editable by \textcite{moritz} in his bachelor thesis, also enabling collaborative editing over the internet.
 	      I unfortunately had to remove these changes because they did not work anymore in the current version of \SEE{}, and additionally caused a lot of complexity overhead in the \gls{window} implementation that would have made the \gls{lsp} integration much harder to accomplish.
 	\item Finally, the attribute space $\mathcal{A}$ in \SEE{} did not allow for \glspl{range} of the form \gls{lsp} needs, so I had to replace the existing attributes (which track the line and column, but not a full range) with a proper set of \gls{range} attributes.
-	      In \cref{subsec:graph}, we have introduced this as a single \texttt{Source.Range} attribute, but in reality, there are four \gls{range} attributes---one per member of the decomposed form.
-	      We will ignore this reality for the rest of this thesis and act like the \gls{range} is a single attribute, that is, for all project graphs with nodes $V$ and attributes $a$, it holds that $\{a(v, \texttt{Source.Range}) \mid v \in V \land (v, \texttt{Source.Range}) \in \mathrm{dom}(a) \} \subseteq \mathcal{R}$.
+	      In \cref{subsec:graph}, we have introduced this as a single \tt{Source.Range} attribute, but in reality, there are four \gls{range} attributes---one per member of the decomposed form.
+	      We will ignore this reality for the rest of this thesis and act like the \gls{range} is a single attribute, that is, for all project graphs with nodes $V$ and attributes $a$, it holds that $\{a(v, \tt{Source.Range}) \mid v \in V \land (v, \tt{Source.Range}) \in \mathrm{dom}(a) \} \subseteq \mathcal{R}$.
 \end{itemize}
 
 All of these changes have been made across two pull requests to \SEE{}.\footnote{
@@ -67,7 +67,7 @@ All of these changes have been made across two pull requests to \SEE{}.\footnote
 % Introduce and explain algorithm roughly first before linking/including it in detail.
 %
 % - LSP functions not by us
-% - Domain specified for parameters (mathcal{S} for symbols)
+% - Domain specified for parameters (mathcal{S} for symbols, mathcal{D} for diagnostics)
 %
 % Explain special formatting of non-math parts:
 % - SmallCaps: Procedures/functions
@@ -80,7 +80,12 @@ All of these changes have been made across two pull requests to \SEE{}.\footnote
 % - Details on adding nodes (e.g., IDs)
 % - Configuration (e.g., excluding certain types)
 % - Progress reporting
-% - Simplification: Path, Range, and Name in SEE are actually Source.-prefixed
+% - Asynchronicity
+%
+% Motivate optimization: Part is in inner loop (once per LSP result per type per edge).
+% Maybe even evaluate in tech eval?
+%
+% Add graphic explaining algorithm steps?
 
 In \cref{alg:generate}.
 
