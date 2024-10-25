@@ -60,44 +60,110 @@ All of these changes have been made across two pull requests to \SEE{}.\footnote
 }
 
 \section{Generating Code Cities using LSP}\label{sec:generate}
-\fxfatal{}
+In this section, we will examine the centerpiece of this thesis:
+The algorithm with which \glspl{city} can be generated using the \glsentrylong{lsp}.
+While going over how the algorithm works, we will take a quick look at \glspl{kdtree} and how they relate to the algorithm, before finally taking a look at what the import process looks like in practice in \SEE{}.
 
 \subsection{Algorithm}
-\fxfatal{}
-% Introduce and explain algorithm roughly first before linking/including it in detail.
-%
-% - LSP functions not by us
-% - Domain specified for parameters (mathcal{S} for symbols, mathcal{D} for diagnostics)
-%
-% Explain special formatting of non-math parts:
-% - SmallCaps: Procedures/functions
-% - Gray italics: Comments
-% - Bold: Keywords
-% - Normal font: Strings
-% - Typewriter: Properties of returned LSP JSON objects and attribute names (elements in A_K)
-% Answer where we get documents for alg from
-% Note what was omitted:
-% - Details on adding nodes (e.g., IDs)
-% - Configuration (e.g., excluding certain types)
-% - Progress reporting
-% - Asynchronicity
-%
-% Motivate optimization: Part is in inner loop (once per LSP result per type per edge).
-% Maybe even evaluate in tech eval?
-%
-% Add graphic explaining algorithm steps?
 
-In \cref{alg:generate}.
+We will take a look at the algorithm in a generalized and programming language independent form here.
+In this form, the algorithm takes as input a set of source code documents, as well as a family of \gls{lsp} functions belonging to a specific instantiation of a \gls{ls}.
+These functions will be used to analyze the documents and extract the required information from them.
+The output of the algorithm, then, is a graph representing the given software project.
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[width=0.95\textwidth]{overview_algorithm}
+	\end{center}
+	\caption{A high-level overview of the basic steps of the algorithm.}\label{fig:alg_overview}
+\end{figure}
+\fxnote{Replace diagram sketch with TikZ picture.}
+
+Before diving into the specifics of \emph{how} the algorithm works, it may help to take a look at the diagram in \cref{fig:alg_overview}, which gives us a high-level overview of \emph{what} it does.
+To summarize, the steps can be broken down into three major parts:
+\begin{enumerate}[label=\bfseries\Roman*]
+	\item \textbf{Node synthesis:} Here, we create the graph's nodes and combine them together into a hierarchy.
+	      \begin{enumerate}[label=\arabic*.]
+		      \item We recreate the parts of the filesystem hierarchy that are relevant to the given documents (\ie, directories the documents are contained in and their relation to each other).
+		      \item For each code symbol within that document, a node will be created as a child to the document.
+		            Any symbols contained within that symbol are recursively added in the same manner as a child to their parent nodes.
+		      \item Finally, we will pull diagnostics for the document\footnote{
+			            In the actual algorithm, we cannot rely on pulling diagnostics alone, since only few \glspl{ls} support this.
+			            Instead, we will collect pushed diagnostics in the background and handle them all at once at the very end.
+		            } and attach their counts to the nodes they correspond to.
+	      \end{enumerate}
+	\item \textbf{Edge synthesis:} Here, we connect the nodes by creating edges between them.
+	      To do this, we go over each node, using \gls{lsp} functions to check for definition locations, references, and so on, and then determine which of our existing nodes best corresponds to that location.
+	      This turns out to be the most difficult and complex part of the algorithm to implement efficiently, as we will later see.
+	\item \textbf{Aggregation:} Finally, we want to aggregate \gls{loc} and diagnostic count metrics upwards in the hierarchy.
+	      This way, we can, for example, see how many diagnostics are contained as a whole in a class, or even a directory.
+\end{enumerate}
+
+Now that we know what it is the algorithm does, we can take a look at its detailed specification.
+The specification is given in \cref{alg:generate} and follows a few special formatting rules that I will briefly list here:
+\begin{itemize}
+	\item Text in \textsc{Small Caps} refers to functions.
+	      Those starting with \textsc{Lsp} specifically refer to functions provisioned by the \gls{ls}.
+	\item Sentences in \textit{\textcolor{gray}{gray italics}} are comments.
+	\item \textbf{Bold} text represents keywords.
+	\item A normal font represents strings (\ie, text that represents itself).
+	\item Finally, text in a \texttt{typewriter font} have two purposes:
+	      They represent attribute keys ($\in \mathcal{A}_K$) as well as properties of \gls{lsp}-returned objects, the latter of which are prefixed by a dot.
+\end{itemize}
+
+\Cpageref{alg:generate} contains the main algorithm.
+We can map \cref{fig:alg_overview} onto it as follows:
+\Crefrange{alg:generate:begin}{alg:generate:end1} contain part I (node synthesis),
+\crefrange{alg:generate:end1}{alg:generate:end2} contain part II (edge synthesis),
+and finally, \crefrange{alg:generate:end2}{alg:generate:end3} contain part III (aggregation) as well as handling of pushed diagnostics.
+
+The following \cpagerefrange{alg:generate:funcstart}{alg:generate:funcend} contain the functions referenced in the main algorithm.
+Here, we represent the "types" of each parameter by specifying the function domain, that is, by noting the sets each parameter must be in.
+Most of these sets are already defined in \cref{ch:concepts} or the algorithm itself, but two exceptions to this are the set of \gls{lsp} code symbols~$\mathcal{S}$ and the set of \gls{lsp} diagnostics~$\mathcal{D}$ (not to be confused with the set of input documents~$D$).
 
 \input{algorithm}
+
+As mentioned before, \cref{alg:generate} is a generalized version of the actual C\# algorithm that was implemented into \SEE{}.
+Hence, a few simplifications\footnote{
+	Apart from the obvious simplifications that occur naturally due to the difference between declarative mathematical notation and imperative programming syntax.
+} were made to not make this section even more technical and longer than it already is .
+Some noteworthy omissions are:
+\begin{itemize}
+	\item Details on adding nodes, such as the definition of the \textsc{NewNode} function, or the unique IDs assigned to each node.
+	\item The configuration of the algorithm. We present it as only having two input parameters, but in reality, there are many additional explicit and implicit parameters (\eg, importing only certain types of nodes).
+	      We will take a look at some of these configuration parameters that are relevant for the user in \cref{subsec:alg_editor}.
+	      \begin{itemize}
+		      \item Actually, even the two input parameters that we did include are simplifications.
+		            In truth, the user selects a directory (instead of a set of documents), with the option to exclude some subdirectories, and we then automatically include every file with an extension that is relevant to the selected \gls{ls}.
+	      \end{itemize}
+	\item Progress reporting.
+	      A progress bar noting the approximate progress (in percent) appears in both the \gls{editor}'s \gls{ui} as well as in-game while the \gls{city} is constructed, so the user has an idea of how long the conversion is going to take.
+	\item Asynchronicity.
+	      Specifically, this refers to the way the algorithm is executed in Unity.
+	      If we were to implement it as a normal synchronous function, the \gls{ui} would become irresponsive to input and freeze until the whole algorithm is done.
+	      Instead, we make use of C\#'s task-based \texttt{async} capabilities~\cite{wagner2023} in combination with the \texttt{UniTask}\footnote{
+		      \web{https://github.com/Cysharp/UniTask}{2024-10-25}
+	      } framework:
+	      We yield control to the Unity event loop when progress is suspended (\eg{}, while we wait for an answer from the \gls{ls}), allowing frames to be rendered while the algorithm is running in the background.
+	      This also allows us to implement cancellation support, making it possible for the user to cancel the algorithm at any time\footnote{
+		      Internally, we do this by checking every so often if a so-called \emph{cancellation token} has been revoked by the user, and, if so, halt execution.
+	      }.
+	      \fxnote{Convert all software mentions to biblatex @software type.}
+\end{itemize}
+
+The full C\# implementation in \SEE{} is available at \web{https://github.com/uni-bremen-agst/SEE/blob/c4e3de908a022d65723bf82d3b350dade8b5f01a/Assets/SEE/DataModel/DG/IO/LSPImporter.cs}{2024-10-25}.
+
+% Motivate optimization: Part is in inner loop (once per LSP result per type per edge).
+% Maybe even evaluate in tech eval?
+\fxfatal{}
+
 
 \subsection{KD-Trees}
 \fxfatal{}
 
-\subsection{Code}
-\fxfatal{}
+% TODO: Example with image (code with highlighted portions and corresponding interval tree)
 
-\subsection{Editor UI}
+\subsection{Editor UI}\label{subsec:alg_editor}
 \fxfatal{}
 
 \subsection{Supported langs and so on}

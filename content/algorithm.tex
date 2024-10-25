@@ -13,12 +13,12 @@
 		\Ensure {Graph $G$ representing the underlying software project}
 		\Statex
 		\State $V, E, a, s, t, \ell, C \gets \emptyset$ \Comment{Initialize empty graph components.}
+		\label{alg:generate:begin}
 		\ForAll{$d \in D$}
-
 		\State \Call{LspOpenDocument}{$d$} \Comment{Document needs to be opened for all capabilities to work.}
 		\State $v_d \gets$ \Call{AddDocumentNode}{$d$} \Comment{Each document becomes a node\dots}
-		\ForAll{$s \in \textsc{LspDocumentSymbols}(d)$}
-		\State \Call{MakeChild}{\Call{AddSymbolNode}{$s$}, $v_d$} \Comment{\dots with its symbols as children.}
+		\ForAll{$x \in \textsc{LspDocumentSymbols}(d)$}
+		\State \Call{MakeChild}{\Call{AddSymbolNode}{$x$}, $v_d$} \Comment{\dots with its symbols as children.}
 		\EndFor
 		\If{\Call{LspLanguageServerSupportsPullDiagnostics}{\null}}
 		\State \Call{HandleDiagnostics}{\Call{LspPullDocumentDiagnostics}{$d$}}
@@ -28,6 +28,7 @@
 		\EndIf{}
 		\State \Call{LspCloseDocument}{$d$}
 		\EndFor
+		\label{alg:generate:end1}
 
 		\Statex
 		\ForAll{$v \in V : (v, \tt{Source.Range}) \in \text{dom}(a)$}
@@ -62,10 +63,14 @@
 		\EndFor
 		\EndIf{}
 		\EndFor
+		\label{alg:generate:end2}
 
 		\Statex
 		\State \Call{HandleDiagnostics}{$C$} \Comment{Handle diagnostics that were collected in the background.}
+		\State \Call{AggregateMetrics}{\{\tt{Metric.LOC}\}}
+		\State \Call{AggregateMetrics}{\{\tt{ErrorCount, WarningCount, InformationCount, HintCount}\}}
 		\State \Return $(V, E, a, s, t, \ell)$
+		\label{alg:generate:end3}
 
 		\Statex
 		\algstore{lspcity}
@@ -76,6 +81,7 @@
 	\small
 	\begin{algorithmic}[1]
 		\algrestore{lspcity}
+		\label{alg:generate:funcstart}
 		\Function{AddDocumentNode}{$d \in D$}
 		\State $v_d \gets$ \Call{NewNode}{\null}
 		\State $a' \gets \emptyset$
@@ -89,26 +95,23 @@
 		\EndFunction
 
 		\Statex
-		\Function{AddSymbolNode}{$s \in \mathcal{S}$}
+		\Function{AddSymbolNode}{$x \in \mathcal{S}$}
 		\State $v \gets \Call{NewNode}{\null}$
 		\State $a' \gets \emptyset$
-		\State $a'(v, \tt{Source.Name}) \gets s\tt{.name}$
+		\State $a'(v, \tt{Source.Name}) \gets x\tt{.name}$
 		\State $a'(v, \tt{Source.Path}) \gets d$
-		\State $a'(v, \tt{Type}) \gets s\tt{.kind}$
-		\State $a'(v, \tt{Deprecated}) \gets (\text{deprecated} \in s\tt{.tags})$
-		\State $a'(v, \tt{Source.Range}) \gets s\tt{.range}$
-		\State $a'(v, \tt{Metric.LOC}) \gets e_l^{s\tt{.range}} - b_l^{s\tt{.range}}$
+		\State $a'(v, \tt{Type}) \gets x\tt{.kind}$
+		\State $a'(v, \tt{Deprecated}) \gets (\text{deprecated} \in x\tt{.tags})$
+		\State $a'(v, \tt{Source.Range}) \gets x\tt{.range}$
+		\State $a'(v, \tt{Metric.LOC}) \gets e_l^{x\tt{.range}} - b_l^{x\tt{.range}}$
 		\LComment{Several other similar attributes omitted here...}
-		% \State $a'(v, \tt{SourceColumn}) \gets s\tt{.range.start.character}$
-		% \State $a'(v, \tt{SourceLineEnd}) \gets s\tt{.range.end.line}$
-		% \State $a'(v, \tt{SourceColumnEnd}) \gets s\tt{.range.end.character}$
-		\State $a'(v, \tt{HoverInfo}) \gets \Call{LspHover}{d, s\tt{.range}}$
+		\State $a'(v, \tt{HoverInfo}) \gets \Call{LspHover}{d, x\tt{.range}}$
 		\If{$a' \nsubseteq a$} \Comment{If an isomorphic node does not already exist...}
 		\State $V \gets V \cup \{v\}$
 		\Comment{...add it and handle its children.}
 		\State $a \gets a \cup a'$
-		\ForAll{$s' \in s$\tt{.children}}
-		\State \Call{MakeChild}{\Call{AddSymbolNode}{$s'$}, $v$}
+		\ForAll{$x' \in x$\tt{.children}}
+		\State \Call{MakeChild}{\Call{AddSymbolNode}{$x'$}, $v$}
 		\Comment{Recurse.}
 		\EndFor
 		\EndIf
@@ -163,7 +166,7 @@
 		\EndFunction
 
 		\Statex
-		\Function{AddDirectoryNode}{$p \in \Sigma$}
+		\Function{AddDirectoryNode}{$p \in \mathcal{A}_V$}
 		\If{$\exists! v \in V: a(v, \tt{Source.Path}) = p$} \Comment{Check if node exists already.}
 		\State \Return $v$ \Comment{If so, just pick that one.}
 		\EndIf
@@ -186,13 +189,36 @@
 		\ForAll{$c \in d$}
 		\State $V_c \gets \Call{FindNodesByLocation}{c\tt{.path}, c\tt{.range}}$
 		\ForAll{$v \in V_c$} \Comment{Save diagnostics count (grouped by severity) in all affected nodes.}
-		\If{$(v, c\tt{.severity}) \in \text{dom}(a)$}
-		\State $a(v, c\tt{.severity}) \gets a(v, c\tt{.severity}) + 1$
+		\State $n \gets c\tt{.severity} + \text{Count}$  \Comment{Concatenate \emph{Count} to attribute name.}
+		\If{$(v, n) \in \text{dom}(a)$}
+		\State $a(v, n) \gets a(v, n) + 1$
 		\Else
-		\State $a(v, c\tt{.severity}) \gets 1$
+		\State $a(v, n) \gets 1$
 		\EndIf
 		\EndFor
 		\EndFor
 		\EndFunction
+
+		\Statex
+		\Function{AggregateMetrics}{$M \subset \mathcal{A}_K$}
+		\ForAll{$v \in V: \nexists e \in E: t(e) = v \land \ell(e) = \text{partOf}$} \Comment{Aggregate from each root node.}
+		\ForAll{$m \in M$}
+		\State \Call{AggregateMetricFromRoot}{$m, v$}
+		\EndFor
+		\EndFor
+		\EndFunction
+
+		\Statex
+		\Function{AggregateMetricFromRoot}{$m \in \mathcal{A}_K, v_r \in V$}
+		\State $V_c \gets \{v \in V \mid \exists e \in E: t(e) = v_r \land s(e) = v \land \ell(e) = \text{partOf}\}$ \Comment{Immediate children.}
+		\ForAll{$v \in V_c$}
+		\State \Call{AggregateMetricFromRoot}{$m, v$}
+		\EndFor
+		\LComment{After the recursion above, immediate children now definitely have attribute $m$.}
+		\If{$(v_r, m) \notin \text{dom}(a)$} \Comment{We don't want to overwrite existing metrics.}
+		\State $a(v_r, m) \gets \sum\limits_{v \in V_c} a(v, m)$
+		\EndIf
+		\EndFunction
+		\label{alg:generate:funcend}
 	\end{algorithmic}
 \end{algorithm}
