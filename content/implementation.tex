@@ -153,12 +153,31 @@ Some noteworthy omissions are:
 
 The full C\# implementation in \SEE{} is available at \web{https://github.com/uni-bremen-agst/SEE/blob/c4e3de908a022d65723bf82d3b350dade8b5f01a/Assets/SEE/DataModel/DG/IO/LSPImporter.cs}{2024-10-25}.
 
-% Motivate optimization: Part is in inner loop (once per LSP result per type per edge).
-% Maybe even evaluate in tech eval?
-\fxfatal{}
+When we analyze this algorithm in terms of complexity, we can quickly see that the most relevant portions are in matching locations to nodes, that is, \textsc{FindNodesByLocation}\footnote{
+	At least, this is the case when we assume the complexity of externally supplied \textsc{Lsp} functions is constant.
+	This is an oversimplification, but the claim that this function is the most expensive part of the algorithm holds up to analyses of real-world test runs of the C\# algorithm.
+}.
+This is only meant to give a quick motivation on why we need the optimization described in \cref{subsec:kd}---a full complexity analysis of the algorithm is outside the scope of this thesis.
+Part I as a whole (ignoring diagnostics, where \textsc{FindNodesByLocation} is called) can be considered to fall in $\Theta(|V|)$, since there is a constant amount of work per added node.
+Part III (again ignoring diagnostics), as written, yields a worst-case runtime in $\mathcal{O}(|V|^2 \cdot |E|)$, because we potentially need to search through all edges for each node to identify child nodes, and this happens once per node while aggregating metrics upwards.
+However, in the actual implementation, child nodes are saved alongside their parent and can be accessed in $\mathcal{O}(1)$, so this reduces to a runtime of $\Theta(|V|)$.
 
+Part II is where things get interesting:
+We are calling \textsc{ConnectNodeVia} a few times for each node (ignoring the handling of the type/call hierarchy, where very similar things happen), so let us look at what happens in here.
+\textsc{ConnectNodeVia} first retrieves all target locations from the given \gls{lsp} function, and then calls \textsc{FindNodesByLocation} for each of those locations to identify the node in our graph to which the connecting edge should be drawn.
+This effectively means \textsc{ConnectNodeVia} is called once per added (non-\tt{partOf}) edge.
+In this function, each node's range is compared to the given location to check whether it is contained therein.
+We then take the minimum over these nodes twice to determine the nodes with the most specific fit, so in total, the runtime of this function is in $\Theta(|V|)$.
+This function is called once per added edge, and also once per diagnostics (because diagnostics also need to be associated to nodes), so part II's runtime can be said to be in $\Theta((|E| + n_d) \cdot |V|)$, where $n_d$ refers to the total number of diagnostics for the project.
 
-\subsection{KD-Trees}
+Hence, the runtime for \cref{alg:generate} as a whole lies in $\Theta(|V| + |E| \cdot |V| + n_d \cdot |V| + |V|)$.
+% TODO: Or \ll and \ggg
+In practice for \gls{lsp}-built \glspl{city}, assuming the default configuration, $n_d < |V|$, but $|E| \gg |V|$.\fxnote{Put in examples or more concrete estimation of how much more edges there are than nodes.} % e.g., |E| > |V|^3.
+Hence, part II with $\Theta(|E| \cdot |V|)$ easily dwarfs the rest of the algorithm's runtime due to the high cost of \textsc{FindNodesByLocation}, which searches through every node for every added edge.
+For this reason, it would be nice to optimize that function somehow.
+\fxwarning{Do actual comparison between two ways of finding target nodes. Also mention example times from eval section at end.}
+
+\subsection{KD-Trees}\label{subsec:kd}  % TODO: Or maybe performance considerations?
 \fxfatal{}
 
 % TODO: Example with image (code with highlighted portions and corresponding interval tree)
