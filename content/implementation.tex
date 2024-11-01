@@ -7,7 +7,7 @@
 \lettrine[lines=3]{\textcolor{Maroon}{R}}{elying} on the foundations of \SEE{} and the \glsentrylong{lsp} established in the previous chapter, we can now turn to the core part of this thesis:
 The integration of \gls{lsp} into \SEE{}, with a special focus on how to build \glspl{city} using \gls{lsp}'s \glspl{capability}.
 We will start by briefly going over some preliminary changes to both \SEE{} and the \gls{lsp} specification.
-Then, we will spend a good chunk of this chapter specifying and explaining the algorithm which "converts" \gls{lsp} information into \glspl{city}, before looking into how additional \glspl{capability} can be integrated into \SEE{}'s \glspl{city} and \glspl{window} specifically.
+Then, we will spend the majority of this chapter specifying and explaining the algorithm which "converts" \gls{lsp} information into \glspl{city}, before looking into how additional \glspl{capability} can be integrated into \SEE{}'s \glspl{city} and \glspl{window} specifically.
 Finally, we will conduct a brief technical evaluation, with a more thorough user study following in the next chapter.
 
 \section{Preliminary Changes}
@@ -62,7 +62,7 @@ All of these changes have been made across two pull requests to \SEE{}.\footnote
 \section{Generating Code Cities using LSP}\label{sec:generate}
 In this section, we will examine the centerpiece of this thesis:
 The algorithm with which \glspl{city} can be generated using the \glsentrylong{lsp}.
-While going over how the algorithm works, we will take a quick look at \glspl{kdtree} and how they relate to the algorithm, before finally taking a look at what the import process looks like in practice in \SEE{}.
+While going over how the algorithm works, we will take a quick look at \glspl{intervaltree} and how they relate to the algorithm, before finally taking a look at what the import process looks like in practice in \SEE{}.
 
 \subsection{Algorithm}
 
@@ -79,6 +79,7 @@ The output of the algorithm, then, is a graph representing the given software pr
 \end{figure}
 \fxnote{Replace diagram sketch with TikZ picture.}
 
+\paragraph{Overview}
 Before diving into the specifics of \emph{how} the algorithm works, it may help to take a look at the diagram in \cref{fig:alg_overview}, which gives us a high-level overview of \emph{what} it does.
 To summarize, the steps can be broken down into three major parts:
 \begin{enumerate}[label=\bfseries\Roman*]
@@ -99,6 +100,7 @@ To summarize, the steps can be broken down into three major parts:
 	      This way, we can, for example, see how many diagnostics are contained as a whole in a class, or even a directory.
 \end{enumerate}
 
+\paragraph{Specification}
 Now that we know what it is the algorithm does, we can take a look at its detailed specification.
 The specification is given in \cref{alg:generate} and follows a few special formatting rules that I will briefly list here:
 \begin{itemize}
@@ -123,10 +125,11 @@ Most of these sets are already defined in \cref{ch:concepts} or the algorithm it
 
 \input{algorithm}
 
+\paragraph{Simplifications}
 As mentioned before, \cref{alg:generate} is a generalized version of the actual C\# algorithm that was implemented into \SEE{}.
 Hence, a few simplifications\footnote{
 	Apart from the obvious simplifications that occur naturally due to the difference between declarative mathematical notation and imperative programming syntax.
-} were made to not make this section even more technical and longer than it already is .
+} were made to not make this section even more technical and longer than it already is.
 Some noteworthy omissions are:
 \begin{itemize}
 	\item Details on adding nodes, such as the definition of the \textsc{NewNode} function, or the unique IDs assigned to each node.
@@ -146,15 +149,16 @@ Some noteworthy omissions are:
 	      } framework:
 	      We yield control to the Unity event loop when progress is suspended (\eg{}, while we wait for an answer from the \gls{ls}), allowing frames to be rendered while the algorithm is running in the background.
 	      This also allows us to implement cancellation support, making it possible for the user to cancel the algorithm at any time\footnote{
-		      Internally, we do this by checking every so often if a so-called \emph{cancellation token} has been revoked by the user, and, if so, halt execution.
+		      Internally, we do this by checking every so often if a so-called \emph{cancellation token} has been revoked by the user. If it has, we halt execution.
 	      }.
 	      \fxnote{Convert all software mentions to biblatex @software type.}
 \end{itemize}
 
 The full C\# implementation in \SEE{} is available at \web{https://github.com/uni-bremen-agst/SEE/blob/c4e3de908a022d65723bf82d3b350dade8b5f01a/Assets/SEE/DataModel/DG/IO/LSPImporter.cs}{2024-10-25}.
 
+\paragraph{Performance Considerations}
 When we analyze this algorithm in terms of complexity, we can quickly see that the most relevant portions are in matching locations to nodes, that is, \textsc{FindNodesByLocation}\footnote{
-	At least, this is the case when we assume the complexity of externally supplied \textsc{Lsp} functions is constant.
+	At least, this is the case when we assume the runtime complexity of externally supplied \textsc{Lsp} functions is constant.
 	This is an oversimplification, but the claim that this function is the most expensive part of the algorithm holds up to analyses of real-world test runs of the C\# algorithm.
 }.
 This is only meant to give a quick motivation on why we need the optimization described in \cref{subsec:kd}---a full complexity analysis of the algorithm is outside the scope of this thesis.
@@ -177,10 +181,135 @@ Hence, part II with $\Theta(|E| \cdot |V|)$ easily dwarfs the rest of the algori
 For this reason, it would be nice to optimize that function somehow.
 \fxwarning{Do actual comparison between two ways of finding target nodes. Also mention example times from eval section at end.}
 
-\subsection{KD-Trees}\label{subsec:kd}  % TODO: Or maybe performance considerations?
-\fxfatal{}
+\subsection{Augmented Interval Trees}\label{subsec:kd}
+To restate the problem outlined in the performance considerations \fxwarning*{Rewrite "the above" to something else, may not be above in printed version}{above:}
+The locations returned by \gls{lsp} functions such as "show references" or "go to location" need to be matched to the nodes in our constructed project graph.
+We cannot simply create a lookup table from locations to nodes, as the locations are not necessarily equal to the location of the nodes, even when they describe the same logical element.
+Instead, we need to match the location to the node with the "tightest fitting range",
+that is: from the nodes whose \gls{range} completely contains the given location, we pick the one whose \gls{range} is the smallest (to find the most specific fitting element).
+The naive solution used in \cref{alg:generate}---simply going over all nodes each time to find the best fit---leads to an unacceptable runtime.
 
-% TODO: Example with image (code with highlighted portions and corresponding interval tree)
+There are a few possible ways to solve this problem (which is in essence a variant of the stabbing problem) more efficiently, such as segment trees or range trees, but we will use augmented \glspl{intervaltree} with \glspl{kdtree} as a base, as this configuration best fits our circumstances—there is no need to update/re-balance the tree (so the high cost associated with that is fine), the membership query should not be in $\Omega(n)$, we need to represent two dimensions (which is possible with a 2d-tree), and so on.
+
+A detailed explanation of augmented \glspl{intervaltree} can be found in \textcite[section~17.3]{cormen2022}, while \glspl{kdtree} are described in a paper by \textcite{bentley1975}.
+In our case, we can create the tree by constructing a 2d-tree\footnote{
+	Note that, in the actual implementation, the construction of the \gls{kdtree} (excluding its augmentation to an \gls{intervaltree}) is handled by the external \tt{Supercluster.KDTree} library (\web{https://github.com/ericreg/Supercluster.KDTree}{2024-10-31}).
+} out of all elements (as explained in the previous sources), where the key is the starting position of the \gls{range}.
+Afterwards, we save in each node the maximum line number and maximum character offset, respectively, for the subtree rooted by that node, thereby turning this \gls{kdtree} into an \gls{intervaltree}.
+
+An updated \textsc{FindNodesByLocationEfficient} is given in \cref{alg:interval}, with these details:
+\begin{itemize}
+	\item An augmented \gls{intervaltree} is modeled here as a quintuple $T = (v, l, c, \lambda, \rho)$.
+	      The set of all such trees is defined as $\mathcal{T}$, so $T \in \mathcal{T}$.
+	      The first element $v \in V$ is the node in the project graph represented by the node in this tree.
+	      The second element $l \in \mathbb{N}_0$ refers to the maximum line number across all nodes within this tree, whereas the third element $c \in \mathbb{N}_0$ analogously refers to the maximum character offset.
+	      The fourth element $\lambda \in \mathcal{T}$ refers to the left subtree rooted by this node, while the fifth element $\rho \in \mathcal{T}$ conversely refers to the right subtree.
+	      Taking a single element $x$ from the tuple $T$ is written as $x_T$.
+	\item We construct such an augmented \gls{intervaltree} for each document (directly after part~I in \cref{alg:generate}) and save them all in a hash table $H$ (modeled as a function $H: D \rightarrow \mathcal{T}$), where each document maps to its \gls{intervaltree}.
+	\item Checking whether a \gls{range} $r_1$ is contained in another \gls{range} $r_2$ is written as $r_1 \subseteq r_2$.
+	\item We need a way to compare two \glspl{range} against each other to check which one is "more specific".
+	      The difficulty here is that the character offsets are hard to compare to each other, since the lines can be of different lengths---handling different line lengths correctly would be both algorithmically more expensive and harder to implement, so we have to give up transitivity:
+	      We define a homogeneous relation $\lesssim$ on $\mathcal{R}$ that is anti-reflexive and asymmetric (but not necessarily transitive), where $r_1 \lesssim r_2$ implies that $r_1$ is more specific than $r_2$.
+	      Similarly, $\simeq$ is a homogeneous relation on $\mathcal{R}$ that is reflexive and symmetric (but also not necessarily transitive), where $r_1 \simeq r_2$ if they are both "equally as specific".\footnote{
+		      My actual implementation of the \texttt{CompareTo} function can be found here: \web{https://github.com/uni-bremen-agst/SEE/blob/c4e3de908a022d65723bf82d3b350dade8b5f01a/Assets/SEE/DataModel/DG/Range.cs}{2024-10-31}.
+	      }
+\end{itemize}
+
+\begin{algorithm}
+	\small
+
+	\caption{Efficiently associating \gls{lsp}-returned \glspl{range} to existing elements using an already constructed augmented \gls{intervaltree}.}\label{alg:interval}
+	\begin{algorithmic}[1]
+		\Function{FindNodesByLocationEfficientEfficient}{$d \in D, r \in \mathcal{R}$}
+		\State \Return \Call{QueryTree}{$H(d), r, \emptyset$}
+		\EndFunction
+
+		\Statex
+		\Function{QueryTree}{$T \in \mathcal{T}, q \in \mathcal{R}, R \subseteq V$}
+		\State $r \gets a(v_T, \tt{Source.Range})$
+		\If{$b^q_l > l_T \lor (b^q_l = l_T \land b^q_c \geq c_T)$}
+		\Comment{Range is to the right of all nodes in this subtree.}
+		\State \Return $R$
+		\EndIf
+		\If{$q \subseteq r$}
+		\Comment{Range is contained in this node, but we want only minimal fits.}
+		\State $m \gets \{v \in R \mid r \lesssim a(v, \tt{Source.Range}) \}$
+		\If{$|m| > 0$} \Comment{This range is smaller than other results.}
+		\State $R \gets (R \setminus m) \cup \{v_T\}$
+		\ElsIf{$\forall v \in R: a(v, \tt{Source.Range}) \simeq r$} \Comment{Other ranges are equally minimal.}
+		\State $R \gets R \cup \{v_T\}$
+		\EndIf
+		\LComment{Otherwise, $r$ is not minimal, so we don't add the node.}
+		\EndIf
+
+		\State $R \gets \Call{QueryTree}{\lambda_T, q, R}$
+		\If{$e^q_l \geq b^r_l \land (e^q_l \neq b^r_l \lor e^q_c > b^r_c))$} \Comment{Range could be contained in right subtree.}
+		\State $R \gets \Call{QueryTree}{\rho_T, q, R}$
+		\EndIf
+		\State \Return $R$
+		\EndFunction
+	\end{algorithmic}
+\end{algorithm}
+\fxwarning{So how much does it help in practice? Reference tech eval here}
+
+\begin{codebox}[minted options={linenos,escapeinside=++,firstnumber=0}]{csharp}{lst:interval}{Example C\# source code with demarcated symbol ranges.}
++\textcolor{red}{|}+public class Example {
+  +\textcolor{Emerald}{|}+const char someValue = 'A'+\textcolor{Emerald}{|}+;
+
+  +\textcolor{Peach}{|}+public static long pow(+\textcolor{OliveGreen}{|}+int num+\textcolor{OliveGreen}{|}+) {
+    +\textcolor{Brown}{|}+long result = num * num+\textcolor{Brown}{|}+;
+    return result;
+  }+\textcolor{Peach}{|}+
+}+\textcolor{red}{|}+
+\end{codebox}
+
+As a concrete example on how this works, take a look at the example code in \cref{lst:interval}.
+Here, we have the following elements:
+\begin{itemize}
+	\item The \tt{Example} class with range \textcolor{red}{$(0,0,7,1)$}.
+	\item The \tt{someValue} field with range \textcolor{Emerald}{$(1,2,1,28)$}.
+	\item The \tt{pow} method with range \textcolor{Peach}{$(3,2,6,3)$}.
+	\item The \tt{num} parameter with range \textcolor{OliveGreen}{$(3,25,3,32)$}.
+	\item The \tt{result} variable with range \textcolor{Brown}{$(4,4,4,27)$}.
+\end{itemize}
+
+Now, if we were to convert this into an augmented 2-d \gls{intervaltree}, it might look like \cref{fig:example_kd}.
+Here, the key refers to the starting position of each element and the max value refers to the maximum line and maximum character offset in the subtree rooted by each node.
+Let us say we want to find out what the range $(1,13,1,22)$ (comprising just the name of \tt{someValue}) belongs to.
+We will start by checking the root node \tt{pow}:
+\begin{enumerate}
+	\item $b^q_l < \textcolor{Peach}{l_{\tt{pow}}}$ because $1 < \textcolor{red}{7}$, so the range is not to the right of all nodes.
+	\item It is not contained by \textcolor{Peach}{\texttt{pow}}'s range.
+	\item We query the left subtree $\textcolor{Peach}{\lambda_{\tt{pow}}} = \textcolor{Emerald}{\tt{someValue}}$:
+	      \begin{enumerate}
+		      \item $b^q_l < \textcolor{Emerald}{l_{\tt{someValue}}}$ because $1 < \textcolor{red}{7}$, so the range is not to the right of all nodes.
+		      \item It is contained by \textcolor{Emerald}{\tt{someValue}}'s range, so now $R = \{\textcolor{Emerald}{v_{\tt{someValue}}}\}$.
+		      \item We query the left subtree $\textcolor{Emerald}{\lambda_{\tt{someValue}}} = \textcolor{red}{\tt{Example}}$.
+		            \begin{enumerate}
+			            \item $b^q_l < \textcolor{red}{l_{\tt{Example}}}$ because $1 < \textcolor{red}{7}$, so the range is not to the right of all nodes.
+			            \item It is contained by \textcolor{red}{\tt{Example}}'s range, but $\textcolor{red}{r_{\tt{Example}}} \gtrsim \textcolor{Emerald}{r_{\tt{someValue}}}$, so \textcolor{Emerald}{\tt{someValue}} is still the tightest fit and $R$ stays as it is.
+			            \item There are no subtrees.
+		            \end{enumerate}
+		      \item There is no right subtree.
+	      \end{enumerate}
+	\item $e^q_l \ngeq \textcolor{Peach}{b^r_l}$ because $1 < \textcolor{Peach}{3}$, so there is no need to check the right subtree.
+	\item Our final result is $R = \{\textcolor{Emerald}{v_{\tt{someValue}}}\}$, which is intuitively the right answer.
+\end{enumerate}
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[width=0.95\textwidth]{example_kd}
+	\end{center}
+	\caption{An augmented \gls{intervaltree} using a \gls{kdtree}, representing the elements in \cref{lst:interval}.}\label{fig:example_kd}
+\end{figure}
+\fxwarning{Convert to TikZ diagram and use colors from listing!}
+
+This new and improved \textsc{FindNodesByLocation} implementation in \cref{alg:interval} has a runtime that is in both $\Omega(1)$ and $\mathcal{O}(k + \log |V|)$, where $k$ is the number of \glspl{range} that a node is contained in---however, its worst-case runtime is still in $\mathcal{O}(|V|)$, because in the worst case, the queried range is contained in every element in the tree, meaning $k = |V|$.
+Still, this case is almost impossible in real-world generated graphs.
+In actuality, a given range is only going to be contained by very few elements compared to the number of total elements within a given document tree.
+Taking into account that in almost all situations, $k \ll |V|$, and especially $k < \log |V|$, our average-case runtime reduces to an upper bound of $\mathcal{O}(\log |V|)$.
+Hence, while the theoretical worst-case runtime complexity stays the same, the average-case runtime of \cref{alg:generate} reduces from $\Theta(|V| + n_d \cdot |V| + |E| \cdot |V|)$ to $\mathcal{O}(|V| + n_d \cdot \log |V| + |E| \cdot \log |V|)$.
+Since it is easy to make mistakes here due to the inherent complexity of this part, unit tests have also been implemented to make sure both normal and edge cases are handled correctly.
 
 \subsection{Editor UI}\label{subsec:alg_editor}
 \fxfatal{}

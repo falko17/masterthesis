@@ -154,11 +154,10 @@
 	\small
 	\begin{algorithmic}[1]
 		\Function{FindNodesByLocation}{$d \in D, r \in \mathcal{R}$}
-		% FIXME: Should use KD tree already maybe?
 		\LComment{We pick the nodes with the most specific range containing the given location.}
 		\State $\text{getR}(v) = a(v, \tt{Source.Range})$
 		\State $N \gets \{ v \in V \mid a(v, \tt{Source.Path}) = d \land b_l^r, e_l^r \in \left[b_l^{\text{getR}(v)}, e_l^{\text{getR}(v)}\right]$
-		\Statex $\hphantom{B \gets \{ v \in V \mid a(v, \tt{Path}) = d} \land\ b_c^r \geq b_c^{\text{getR}(v)} \land
+		\Statex $\hphantom{N \gets \{ v \in V \mid a(v, \tt{Source.Path}) = d} \land\ b_c^r \geq b_c^{\text{getR}(v)} \land
 			e_c^r \leq e_c^{\text{getR}(v)}
 			\Big\}$
 		\State {$N \gets \argmin\limits_{v \in N} e_l^{\text{getR}(v)} - b_l^{\text{getR}(v)}$}

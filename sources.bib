@@ -19,6 +19,45 @@
   abstract = {Software development is a complex undertaking composed of several activities that include reading, writing, and modifying source code. Indeed, previous studies have shown that the majority of the effort invested in software development is dedicated to understanding code. This includes understanding the static structure, dynamic behaviour, and evolution of the code. Given these particular characteristics, as well as the high complexity of source code, it is reasonable to consider how visualisation can facilitate source code understanding. This work proposes to extend existing software development tools with visualisations that can be used to encode the various complex features within a source code document. Further, this work establishes a design space which includes a series of visualisations that are meant to complement existing textual views of source code, as found in source code editors. Several prototype visualisations are presented in this work which utilise various visualisation techniques, such as tree visualisations techniques and visualisation techniques based on the code-map metaphor. This work also presents several experiments, where the results of these experiments indicate that combining existing software development tools with visualisations can have a positive effect on source code understanding. Additionally, the result of the experiments show that the less a visualisation is abstracted from the original textural representation of a source code document, in terms of line, token, ordering, and character information, the more likely it is that viewers can link the visualisation to the code and back.}
 }
 
+@article{bentley1975,
+  title = {Multidimensional Binary Search Trees Used for Associative Searching},
+  author = {Bentley, Jon Louis},
+  date = {1975-09},
+  journaltitle = {Communications of the ACM},
+  shortjournal = {Commun. ACM},
+  volume = {18},
+  number = {9},
+  pages = {509--517},
+  issn = {0001-0782, 1557-7317},
+  doi = {10.1145/361002.361007},
+  abstract = {This paper develops the multidimensional binary search tree (or               k               -d tree, where               k               is the dimensionality of the search space) as a data structure for storage of information to be retrieved by associative searches. The               k               -d tree is defined and examples are given. It is shown to be quite efficient in its storage requirements. A significant advantage of this structure is that a single data structure can handle many types of queries very efficiently. Various utility algorithms are developed; their proven average running times in an               n               record file are: insertion,               O               (log               n               ); deletion of the root,               O               (               n                                (                 k                 -1)/                 k                              ); deletion of a random node,               O               (log               n               ); and optimization (guarantees logarithmic performance of searches),               O               (               n               log               n               ). Search algorithms are given for partial match queries with               t               keys specified [proven maximum running time of               O               (               n                                (                 k                 -                 t                 )/                 k                              )] and for nearest neighbor queries [empirically observed average running time of               O               (log               n               ).] These performances far surpass the best currently known algorithms for these tasks. An algorithm is presented to handle any general intersection query. The main focus of this paper is theoretical. It is felt, however, that               k               -d trees could be quite useful in many applications, and examples of potential uses are given.},
+  langid = {english}
+}
+
+@book{cormen2022,
+  title = {Introduction to Algorithms},
+  author = {Cormen, Thomas H. and Leiserson, Charles Eric and Rivest, Ronald Linn and Stein, Clifford},
+  date = {2022},
+  edition = {Fourth edition},
+  publisher = {The MIT Press},
+  location = {Cambridge, Massachusetts London},
+  abstract = {A comprehensive update of the leading algorithms text, with new material on matchings in bipartite graphs, online algorithms, machine learning, and other topics. Some books on algorithms are rigorous but incomplete; others cover masses of material but lack rigor. Introduction to Algorithms uniquely combines rigor and comprehensiveness. It covers a broad range of algorithms in depth, yet makes their design and analysis accessible to all levels of readers, with self-contained chapters and algorithms in pseudocode. Since the publication of the first edition, Introduction to Algorithms has become the leading algorithms text in universities worldwide as well as the standard reference for professionals. This fourth edition has been updated throughout. New for the fourth edition New chapters on matchings in bipartite graphs, online algorithms, and machine learning New material on topics including solving recurrence equations, hash tables, potential functions, and suffix arrays 140 new exercises and 22 new problems Reader feedback-informed improvements to old problems Clearer, more personal, and gender-neutral writing style Color added to improve visual presentation Notes, bibliography, and index updated to reflect developments in the field Website with new supplementary material},
+  isbn = {978-0-262-04630-5 978-0-262-36750-9},
+  langid = {english},
+  pagetotal = {1}
+}
+
+@software{cysharpunitask2024,
+  title = {Cysharp/{{UniTask}}},
+  date = {2024-10-25T08:26:04Z},
+  origdate = {2019-05-19T16:09:55Z},
+  url = {https://github.com/Cysharp/UniTask},
+  urldate = {2024-10-25},
+  abstract = {Provides an efficient allocation free async/await integration for Unity.},
+  organization = {Cysharp, Inc.},
+  keywords = {coroutine,csharp,task,thread,unity}
+}
+
 @thesis{damerau2024,
   type = {mathesis},
   title = {Combining {{Static}} and {{Dynamic Analysis}} in {{Code Cities}}},
@@ -386,6 +425,16 @@
   keywords = {Conferences,developer interactions,human factors,Inspection,Navigation,program comprehension,Programming,Software,software maintenance,Tools,visualisation,Visualization}
 }
 
+@online{wagner2023,
+  title = {The {{Task Asynchronous Programming}} ({{TAP}}) Model with Async and Await' - {{C}}\#},
+  author = {Wagner, Bill},
+  date = {2023-02-13},
+  url = {https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/task-asynchronous-programming-model},
+  urldate = {2024-10-25},
+  abstract = {Learn when and how to use Task-based async programming, a simplified approach to asynchronous programming in C\#.},
+  langid = {american}
+}
+
 @inproceedings{wettel2007,
   title = {Visualizing {{Software Systems}} as {{Cities}}},
   booktitle = {2007 4th {{IEEE International Workshop}} on {{Visualizing Software}} for {{Understanding}} and {{Analysis}}},
@@ -413,15 +462,4 @@
   isbn = {978-1-4503-0445-0},
   langid = {english},
   keywords = {idecomparison}
-}
-
-@online{wagner2023,
-  title = {The {{Task Asynchronous Programming}} ({{TAP}}) Model with Async and Await' - {{C}}\#},
-  author = {Wagner, Bill},
-  date = {2023-02-13},
-  url = {https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/task-asynchronous-programming-model},
-  urldate = {2024-10-25},
-  abstract = {Learn when and how to use Task-based async programming, a simplified approach to asynchronous programming in C\#.},
-  langid = {american},
-  file = {/home/falko17/Zotero/storage/RWKDWNQS/task-asynchronous-programming-model.html}
 }

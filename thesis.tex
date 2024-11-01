@@ -131,7 +131,7 @@
 \makeatother
 
 \AtBeginDocument{
-  \newtcblisting[blend into=listings]{codebox}[3][csharp]{%
+  \newtcblisting[blend into=listings]{codebox}[4][]{%
     colback=Blue!15!white,colframe=Blue!75!black,
     width=\textwidth, arc=0mm,
     left=2mm, right=1mm, 
@@ -141,9 +141,10 @@
     enhanced, drop fuzzy shadow,
     listing only,
     %breakable,
-    minted language=#1,
-    label=#2,
-    adjusted title=#3,
+    minted language=#2,
+    label=#3,
+    adjusted title=#4,
+    #1
   }
 }
 
@@ -268,10 +269,12 @@
   breakaftersymbolpre=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
   breaklines,
   fontsize=\footnotesize,
-  numberblanklines=false,
+  numberblanklines=true,
   mathescape,
   texcomments,
 }
+
+\renewcommand{\theFancyVerbLine}{\textcolor{Gray}{\scriptsize \arabic{FancyVerbLine}}}
 
 \setmintedinline{
   fontsize=\normalsize,

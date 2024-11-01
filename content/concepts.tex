@@ -146,7 +146,7 @@ From this example, we can also see that locations within documents\footnote{
 } are represented as a \gls*{uri} representing the document along with a \gls{range} (which we have formalized in \cref{subsec:graph}).
 The corresponding method name for this example is \tt{textDocument/hover}.
 
-\begin{codebox}[TypeScript]{lst:lspex}{Example specification of request and response objects for the Hover {capability}.}
+\begin{codebox}{TypeScript}{lst:lspex}{Example specification of request and response objects for the Hover {capability}.}
 interface HoverParams {
   textDocument: string; /** The text document's URI in string form */
   position: { line: uinteger; character: uinteger; };
