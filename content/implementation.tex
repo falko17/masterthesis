@@ -208,7 +208,7 @@ An updated \textsc{FindNodesByLocationEfficient} is given in \cref{alg:interval}
 	\item We construct such an augmented \gls{intervaltree} for each document (directly after part~I in \cref{alg:generate}) and save them all in a hash table $H$ (modeled as a function $H: D \rightarrow \mathcal{T}$), where each document maps to its \gls{intervaltree}.
 	\item Checking whether a \gls{range} $r_1$ is contained in another \gls{range} $r_2$ is written as $r_1 \subseteq r_2$.
 	\item We need a way to compare two \glspl{range} against each other to check which one is "more specific".
-	      The difficulty here is that the character offsets are hard to compare to each other, since the lines can be of different lengths---handling different line lengths correctly would be both algorithmically more expensive and harder to implement, so we have to give up transitivity:
+	      The difficulty here is that the character offsets are hard to compare to each other, since the lines can be of different lengths---handling different line lengths correctly would be both algorithmically more expensive and harder to implement, so we have given up transitivity:
 	      We define a homogeneous relation $\lesssim$ on $\mathcal{R}$ that is anti-reflexive and asymmetric (but not necessarily transitive), where $r_1 \lesssim r_2$ implies that $r_1$ is more specific than $r_2$.
 	      Similarly, $\simeq$ is a homogeneous relation on $\mathcal{R}$ that is reflexive and symmetric (but also not necessarily transitive), where $r_1 \simeq r_2$ if they are both "equally as specific".\footnote{
 		      My actual implementation of the \texttt{CompareTo} function can be found here: \web{https://github.com/uni-bremen-agst/SEE/blob/c4e3de908a022d65723bf82d3b350dade8b5f01a/Assets/SEE/DataModel/DG/Range.cs}{2024-10-31}.
@@ -311,11 +311,67 @@ Taking into account that in almost all situations, $k \ll |V|$, and especially $
 Hence, while the theoretical worst-case runtime complexity stays the same, the average-case runtime of \cref{alg:generate} reduces from $\Theta(|V| + n_d \cdot |V| + |E| \cdot |V|)$ to $\mathcal{O}(|V| + n_d \cdot \log |V| + |E| \cdot \log |V|)$.
 Since it is easy to make mistakes here due to the inherent complexity of this part, unit tests have also been implemented to make sure both normal and edge cases are handled correctly.
 
-\subsection{Editor UI}\label{subsec:alg_editor}
-\fxfatal{}
+\subsection{Usage in Practice}\label{subsec:alg_editor}
+Now, we will have a quick look at how to actually use the algorithm in \SEE{}.
+As explained before in \cref{subsec:seeother}, the \gls{lsp} importer---referring to the component responsible for using \cref{alg:generate} to generate a \gls{city}---is implemented as a \gls{provider}.
+The \gls{ui} of that \gls{provider} in the \gls{editor} is shown in \cref{fig:unity_lsp_provider}.
 
-\subsection{Supported langs and so on}
-\fxerror{Or maybe in tech eval instead}
+\begin{figure}
+	\begin{center}
+		\includegraphics[width=0.95\textwidth]{unity_lsp_provider}
+	\end{center}
+	% Beware of sentences like the below, where all words except "for" and "the" are glossary terms.
+	\caption{\gls{editor} \gls{ui} for the \gls{lsp} \gls{provider}}\label{fig:unity_lsp_provider}
+\end{figure}
+
+In that figure, we can see a configuration for the \tt{dcaf-rs} project\footnote{
+	This is one of the sample projects we use in \cref{sec:techeval}'s technical evaluation.
+}, where the \gls{ls} is the Rust Analyzer.
+At the top, we can see that the path to the source project has been set, and that the \emph{Rust Analyzer}\footnote{
+	The menu is grouped by language when opening it, hence the \texttt{Rust/} in front in \cref{fig:unity_lsp_provider}.
+} has been selected as a \gls{ls}.
+Below that, there is a field for "Source Paths".
+This refers to the directories that shall be scanned for relevant documents, whereas a document's relevance is determined by its file extension.
+This is distinct from the "Project Path" as that is instead used by the \gls{ls} to, for example, scan for project configuration files that describe dependencies.
+Conversely, "Excluded Source Paths" can be used for those paths within the configured source paths that should be ignored (\eg, generated files, tests).
+
+The selectable \glspl{ls} are only those that I have explicitly tested and confirmed to work with the algorithm---many servers are unusable, for example, due to required \glspl{capability} missing (such as the document symbols one).
+All in all, there are working\footnote{
+	There may well be more, I could not test some of the available \glspl{ls} either due to setup problems, or (like in the case of Wolfram Mathematica) because I do not have a license for the language in question.
+} \glspl{ls} for the programming languages
+C,
+C++,
+C\#,
+Dart,
+Go,
+Haskell,
+Java,
+JavaScript,
+Kotlin,
+Lua,
+MATLAB,
+PHP,
+Python,
+Ruby,
+Rust,
+TypeScript,
+and Zig.
+There are also functioning \gls{ls} configurations for the miscellaneous languages
+JSON,
+\LaTeX{},
+Markdown,
+and XML.
+A \gls{city} of a markup language like \LaTeX{}, for example, would have nodes for each section, figure, and so on, with edges representing references between these elements.
+
+Next down the list in \cref{fig:unity_lsp_provider}, we have the import settings, which can be used to further refine the \gls{lsp}-generated data that is used for the project graph.
+Specifically, we can select what kinds of nodes and edges we want to import, and which diagnostics we want to include.
+Additionally, for the edges, there is the option to exclude loops and edges (excluding \tt{partOf}) to a node's direct parent.
+The purpose behind this option is that otherwise, there are going to be a lot of definition/declaration edges from elements to their immediate parents, which happens because the locations returned by these \gls{lsp} functions often extend slightly outside the node's actual locations.
+For example, a quirk of many \glspl{ls} is that a returned location may begin at \tt{\textcolor{red}{i}nt value;}, while the actual node for this variable starts at \tt{int \textcolor{red}{v}alue;}---in that case, the returned location would instead resolve to the outer container, such as the function it is contained in.
+
+Finally, there is an option to enable the \gls{lsp} functions for \glspl{window} that are detailed in \cref{sec:intowindow}, a setting to generate log files for the transferred \gls{jrpc} messages, and a slider to adjust the maximum time we should wait for a \gls{ls}'s response to a request.
+With all of these options configured, the graph can be loaded and drawn (and optionally exported to a \gls{gxl} file), where a bar displays the approximate progress of the process.
+At this point, we will once again refer back to the explanatory video \fxnote*{Link to video again here}{TODO}, which goes over the implemented functionality in a bit more detail and may be easier to follow along than this textual description.
 
 \section{Integrating LSP Functionality into Code Cities}\label{sec:intocity}
 \fxfatal{}
@@ -326,7 +382,38 @@ Since it is easy to make mistakes here due to the inherent complexity of this pa
 \section{Technical Evaluation}\label{sec:techeval}
 \fxfatal{}
 
+% Sample projects:
+% dcaf-rs
+% JabRef
+% SpotBugs
+% My master's thesis
+
 \section{Interim Conclusion}
 \fxfatal{}
-\fxerror{Also recap all written code/PRs here, maybe with LOC/links, maybe in a table.}
+
+% TODO: Reference table
+
+\begin{table*}[htbp]
+	\newcommand{\githubpr}[2]{\href{https://github.com/#1/pull/#2}{\proptt{#1\##2}}}
+	\newcommand{\diffsum}[2]{\textcolor{Green}{\ensuremath{#1}} & \textcolor{Red}{\ensuremath{#2}}}
+	\caption{All submitted pull requests done as part of this thesis.}\label{tab:code}
+	\begin{tabular}{@{}llrl@{}}
+		\toprule
+		\multicolumn{1}{c}{\multirow{2}{*}{\textbf{Summary}}} & \multicolumn{1}{c}{\multirow{2}{*}{\textbf{Pull Request URI}}} & \multicolumn{2}{c}{\>\> $\mathbf{\Delta}$ \textbf{LOC}}                \\
+		                                                      &                                                                & $\mathbf{+}$                                            & $\mathbf{-}$ \\
+		\midrule
+		Cleanup of \gls{lsp} specification                    & \githubpr{microsoft/language-server-protocol}{1886}            & \diffsum{475}{453}                                                     \\
+		Preparing \SEE{} for \gls{lsp} integration            & \githubpr{uni-bremen-agst/SEE}{687}                            & \diffsum{282}{2773}                                                    \\
+		Introducing \tt{Source.\Gls{range}}                   & \githubpr{uni-bremen-agst/SEE}{715}                            & \diffsum{392}{313}                                                     \\
+		Generating \glspl{city} using \gls{lsp}               & \githubpr{uni-bremen-agst/SEE}{727}                            & \diffsum{3475}{180}                                                    \\
+		\gls{lsp} functions in \glspl{city}                   & \githubpr{uni-bremen-agst/SEE}{747}                            & \diffsum{1139}{432}                                                    \\
+		\gls{lsp} functions in \glspl{window}                 & \githubpr{uni-bremen-agst/SEE}{751}                            & \diffsum{4080}{2024}                                                   \\
+		Preparing \SEE{} for user evaluation                  & \githubpr{uni-bremen-agst/SEE}{772}                            & \diffsum{541}{150}                                                     \\
+		\bottomrule
+	\end{tabular}
+	\caption*{\footnotesize Only C\# line changes have been counted in \SEE{} pull requests.\\
+		GitHub pull requests are specified in the format \tt{namespace/repository\#PR\_number}.
+	}
+
+\end{table*}
 
