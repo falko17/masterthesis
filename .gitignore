@@ -304,3 +304,8 @@ TSWLatexianTemp*
 *.ist
 *.fln
 *.glg-abr
+
+# Not included for privacy reasons.
+analysis/SEE-VSCode.csv
+analysis/VSCode-SEE.csv
+analysis/src/__pycache__
