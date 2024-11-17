@@ -1,4 +1,7 @@
 import code
+import json
+import os
+from collections import defaultdict
 from math import ceil
 
 import polars as pl
@@ -43,13 +46,13 @@ def clean_data(df: DataFrame) -> DataFrame:
         "a2_dispersed": "Name any of the dispersed test classes.",
         "a2_other": "Please specify how the unit tests are organized.",
         "a3_class": "What is the base class of **OptionalReturnNull**?",
-        "a4_class1": '^<span style=""display:none"">j1b class</span>$',
+        "a4_class1": '<span style=""display:none"">j1b class</span>',
         "a4_class2": '<span style=""display:none"">j2b class</span>',
         "a4_class3": '<span style=""display:none"">j3b class</span>',
         "a5_convention": "According to which convention were unit tests organized in JabRef?",
-        "a5_centralized": "What is the full name of the root package (the topmost package) for test classes?",
-        "a5_dispersed": "Name any of the dispersed test classes.",
-        "a5_other": "Please specify how the unit tests are organized.",
+        "a5_centralized": "What is the full name of the root package (the topmost package) for test classes?_duplicated_0",
+        "a5_dispersed": "Name any of the dispersed test classes._duplicated_0",
+        "a5_other": "Please specify how the unit tests are organized._duplicated_0",
         "a6_class": "What is the base class of **GenderEditorViewModel**?",
         "see_comment": "Regarding SEE, do you have any other suggestions for improvement, things that you noticed, or general comments?",
         "vs_comment": "Regarding VSCode, do you have any other suggestions for improvement, things that you noticed, or general comments?",
@@ -68,8 +71,8 @@ def clean_data(df: DataFrame) -> DataFrame:
         + [pl.col(v).alias(k) for k, v in rename_cols.items()]
         + [handle_times(*v).alias(k) for k, v in time_cols.items()]
         + [x for i in range(1, 7) for x in asq(i)]
-        + sus("SEE")
-        + sus("VSCode")
+        + sus_columns("SEE")
+        + sus_columns("VSCode")
         + [(pl.col("end") - pl.col("start")).alias("total_time")]
     )
     asq_cols = {f"a{i}_asq_easy" for i in range(1, 7)} | {
@@ -108,7 +111,7 @@ def clean_data(df: DataFrame) -> DataFrame:
 
 
 def task_time(task_num: int) -> tuple[str, str, str]:
-    result_col = f"time_a{task_num}"
+    result_col = f"a{task_num}_time"
     task_inner_num = ((task_num - 1) % 3) + 1
     part_num = ceil(task_num / 3)
     assert part_num in (1, 2) and task_inner_num in range(1, 4)
@@ -128,7 +131,7 @@ def handle_times(start: str, end: str) -> Expr:
     return pl.max_horizontal(end) - pl.col(start)
 
 
-def sus(app: str) -> list[Expr]:
+def sus_columns(app: str) -> list[Expr]:
     columns = (
         "I think that I would like to use {0} frequently.",
         "I found {0} unnecessarily complex.",
@@ -142,7 +145,7 @@ def sus(app: str) -> list[Expr]:
         "I needed to learn a lot of things before I could get going with {0}.",
     )
 
-    return [
+    sus_cols = [
         pl.col(x.format(app))
         .cast(pl.String)
         .str.head(1)
@@ -150,6 +153,23 @@ def sus(app: str) -> list[Expr]:
         .alias(f"sus_{app.lower()}_{i+1}")
         for i, x in enumerate(columns)
     ]
+    return sus_cols
+
+
+def sus_total(df, app):
+    # And then we add one for the actual SUS score.
+    return df.with_columns(
+        (
+            2.5
+            * (
+                20
+                + sum(
+                    ((-1) ** (i + 1)) * pl.col(f"sus_{app.lower()}_{i}")
+                    for i in range(1, 11)
+                )
+            )
+        ).alias(f"sus_{app.lower()}")
+    )
 
 
 def asq(task_num: int) -> list[Expr]:
@@ -173,3 +193,75 @@ def asq(task_num: int) -> list[Expr]:
         .str.to_integer()
         .alias(f"a{task_num}_asq_time"),
     ]
+
+
+def set_correctness(df, name):
+    if os.path.isfile(f"./correctness_values_{name}.json"):
+        with open(f"./correctness_values_{name}.json") as f:
+            values = json.load(f)
+    else:
+        # Prompt user interactively whether each value is correct.
+        keys = [
+            "a1_class1",
+            "a1_class2",
+            "a1_class3",
+            "a2_convention",
+            "a3_class",
+            "a4_class1",
+            "a4_class2",
+            "a4_class3",
+            "a5_convention",
+            "a6_class",
+        ]
+        values = defaultdict(list)
+        for key in keys:
+            print(df[key])
+            for i, value in enumerate(df[key]):
+                if key.endswith("_convention"):
+                    # Needs special treatment, we need to see what was entered for other nearby fields.
+                    prefix = key.split("_")[0]
+                    print(
+                        df.select(
+                            pl.col(
+                                f"{prefix}_centralized",
+                                f"{prefix}_dispersed",
+                                f"{prefix}_other",
+                            )
+                        )[i].glimpse()
+                    )
+                print(f"{value} (#{i+1})")
+                correct = input("Is this correct? [Y/n/x]: ")
+                values[key].append("y" if correct == "" else correct)
+
+        # === ANSWER KEY ===
+        # Original FindBugs study by Wettel:
+        # A1 = unit test dispersion (FB: Dispersed)
+        # A4.1 = 3 classes with highest num methods (FB: AbstractFrameModelingVisitor, MainFrame, BugInstance/TypeFrameModelingVisitor)
+        # SpotBugs:
+        # 1) AbstractFrameModelingVisitor (198), BugInstance (165), TypeFrameModelingVisitor (126)
+        # 2) EITHER centralized spotbugs-test, OR allow dispersed TestDataflowAnalysis OR none
+        #    => SpotBugs detects tests (and "tests" things for bugs), so participants might have been confused due to that.
+        # 3) BetterVisitor/Visitor
+        # JabRef:
+        # 4) BibTexParserTest (143), JabRefPreferences (136), AuthorListTest (127)
+        # 5) Centralized: src.test.java.org.jabref (or src.test, or test)
+        # 6) AbstractViewModel
+
+        with open(f"./correctness_values_{name}.json", "w") as f:
+            json.dump(values, f)
+
+    def as_series(col):
+        return pl.Series([x == "y" for x in values[col]], dtype=pl.Boolean)
+
+    return df.with_columns(
+        a1_c=sum(
+            [as_series(x).cast(int) for x in ["a1_class1", "a1_class2", "a1_class3"]]
+        ),
+        a2_c=as_series("a2_convention"),
+        a3_c=as_series("a3_class"),
+        a4_c=sum(
+            [as_series(x).cast(int) for x in ["a4_class1", "a4_class2", "a4_class3"]]
+        ),
+        a5_c=as_series("a5_convention"),
+        a6_c=as_series("a6_class"),
+    )

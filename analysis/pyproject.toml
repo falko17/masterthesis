@@ -3,6 +3,7 @@ name = "masterthesis-analysis"
 version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = [
+    "colorama>=0.4.6",
     "polars>=1.12.0",
     "scipy>=1.14.1",
 ]

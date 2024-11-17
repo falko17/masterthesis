@@ -1,16 +1,23 @@
 import code
+import json
+import readline
+from collections import defaultdict
 
 import polars as pl
+from colorama import init as colorama_init
+from genericpath import isfile
 from polars import DataFrame, Datetime, Expr, String
+from scipy.special import os
 from scipy.stats import fisher_exact, mannwhitneyu
 
-from src.cleanup import clean_data
-
-P_VALUE = 0.05
+from src.cleanup import clean_data, set_correctness, sus_total
+from src.demographics import check_demographics, check_effects
+from src.util import print_comments, print_statistic, write_dat
 
 
 def main():
-    print("Analyzing evaluation results...")
+    colorama_init()
+    print("Analyzing evaluation results...\n")
     sv = pl.read_csv(
         "SEE-VSCode.csv",
         separator=";",
@@ -44,20 +51,90 @@ def main():
     sv = clean_data(sv)
     vs = clean_data(vs)
 
-    # Reminder: SpotBugs first, then JabRef (for both).
+    # Reminder: SpotBugs first, then JabRef (for both SV and VS).
     # We choose Mann-Whitney U test for time/correctness/usability (no normal requirements, ordinal/interval DV, 2 independent groups in 1 IV).
-    # Then, if we have time for that, check for effects of some IVs (experience, age, etc) on DVs.
-    # MUST CHECK: programming, opensource, knowsee [sign. diff] and knowide, knowjava [important]
-    #
-    # Also, first, check for significant differences between two groups in terms of:
-    # age, gender, degree, programming, opensource, knowsee, knowvs, knowide, knowgame, knowspotbugs, knowjabref, knowjava, start/end/total_time
-    code.interact(local=dict(globals(), **locals()))
     check_demographics(sv, vs)
 
+    sv = set_correctness(sv, "sv")
+    vs = set_correctness(vs, "vs")
+    both = pl.concat([sv, vs])
+    both = sus_total(sus_total(both, "SEE"), "VSCode")
 
-def check_demographics(sv, vs):
-    interval = ["age", "start", "end", "total_time"]
-    ordinal = [
+    # code.interact(local=dict(globals(), **locals()))
+
+    check_correctness(sv, vs)
+    check_time(sv, vs)
+    check_usability(sv, vs, both)
+    check_effects(sv, vs)
+
+    write_data(sv, vs, both)
+
+    # Finally, print comments.
+    for key in ["see_comment", "vs_comment", "general_comment"]:
+        print_comments(key.split("_")[0].upper(), both.select(pl.col(key)))
+
+
+def check_correctness(sv, vs):
+    print("\n=== CORRECTNESS ===")
+    # We use MWU here because these columns are numerical (but not normally distr.).
+    for key in ["a1_c", "a4_c"]:
+        print_statistic(f"A{key[1]} Correctness", mannwhitneyu(sv[key], vs[key]))
+    # Other columns are booleans (correct vs not), so we create 2x2 contingency tables and
+    # analyze those with Fisher's exact test. The tables look like this:
+    #  ┌──────────────────┬───────────┐
+    #  │         Group SV │ Group VS  │
+    #  ├───────┬──────────┴───────────┤
+    #  │ Right │    A          B      │
+    #  │ Wrong │    C          D      │
+    #  └───────┴──────────────────────┘
+    for i in (2, 3, 5, 6):
+        key = f"a{i}_c"
+        table = [
+            [
+                len(sv.filter(pl.col(key))),
+                len(vs.filter(pl.col(key))),
+            ],
+            [
+                len(sv.filter(pl.col(key).not_())),
+                len(vs.filter(pl.col(key).not_())),
+            ],
+        ]
+        print_statistic(f"A{i} Correctness", fisher_exact(table))
+
+
+def check_time(sv, vs):
+    print("\n=== TIME ===")
+    for i in range(1, 7):
+        key = f"a{i}_time"
+        if i in (1, 4):
+            # At least 1 has to be correct.
+            correct_sv = sv.filter(pl.col(f"a{i}_c") > 1)
+            correct_vs = vs.filter(pl.col(f"a{i}_c") > 1)
+        else:
+            correct_sv = sv.filter(pl.col(f"a{i}_c"))
+            correct_vs = vs.filter(pl.col(f"a{i}_c"))
+        print_statistic(f"A{i} Time", mannwhitneyu(correct_sv[key], correct_vs[key]))
+
+
+def check_usability(sv, vs, both):
+    print("\n=== USABILITY ===")
+    # ASQ first.
+    for i in range(1, 7):
+        for kind in ("easy", "time"):
+            print_statistic(
+                f"A{i} ASQ {kind.title()}",
+                mannwhitneyu(sv[f"a{i}_asq_{kind}"], vs[f"a{i}_asq_{kind}"]),
+            )
+
+    # Then the SUS.
+    print_statistic(
+        "SUS (SEE vs VSCode)", mannwhitneyu(both["sus_see"], both["sus_vscode"])
+    )
+
+
+def write_data(sv, vs, both):
+    demo_keys = [
+        "age",
         "degree",
         "programming",
         "opensource",
@@ -69,58 +146,63 @@ def check_demographics(sv, vs):
         "knowjabref",
         "knowjava",
     ]
+    write_dat(
+        "alphabeta",
+        pl.concat(
+            [
+                df.select(
+                    [
+                        pl.col(key).to_physical().alias(f"{key}{i+1}")
+                        for key in demo_keys
+                    ]
+                    + [
+                        (pl.col("total_time").dt.total_minutes() / 60).alias(
+                            f"total_time{i+1}"
+                        )
+                    ]
+                )
+                for i, df in enumerate([sv, vs])
+            ],
+            how="horizontal",
+        ),
+    )
 
-    # No normal distr. can be assumed for any of these, so we use Mann-Whitney for ordinal and interval data,
-    # and Fisher's exact test for categorical data with 2 levels (gender in this case).
-
-    # We build a 2x2 contingency table:
-    #  ┌──────────────┬───────────┐
-    #  │     Group SV │ Group VS  │
-    #  ├───┬──────────┴───────────┤
-    #  │ M │    A          B      │
-    #  │ F │    C          D      │
-    #  └───┴──────────────────────┘
-    gender_table = [
-        [
-            len(sv.filter(pl.col("gender") == "Male")),
-            len(vs.filter(pl.col("gender") == "Male")),
-        ],
-        [
-            len(sv.filter(pl.col("gender") == "Female")),
-            len(vs.filter(pl.col("gender") == "Female")),
-        ],
+    comp_keys = [
+        f"a{i}_{suffix}" for i in range(1, 7) for suffix in ["asq_easy", "asq_time"]
     ]
-    print(
-        f"Gender: {fisher_exact(gender_table)}"
-    )  # returns infinity because we have a 0 in group SV, oh well.
+    comp_keys_bool = [f"a{i}_c" for i in range(1, 7)]
+    comp_keys_time = [f"a{i}_time" for i in range(1, 7)]
+    write_dat(
+        "seevs",
+        pl.concat(
+            [
+                df.select(
+                    [
+                        pl.col(key).to_physical().alias(f"{key}{i+1}")
+                        for key in comp_keys
+                    ]
+                    + [
+                        pl.col(key).cast(dtype=int).alias(f"{key}{i+1}")
+                        for key in comp_keys_bool
+                    ]
+                    + [
+                        (pl.col(key).dt.total_seconds() / 60).alias(f"{key}{i+1}")
+                        for key in comp_keys_time
+                    ]
+                )
+                for i, df in enumerate([sv, vs])
+            ],
+            how="horizontal",
+        ),
+    )
 
-    # Warn if there is anyone not familiar with IDEs or Java.
-    noide = pl.concat([sv, vs]).filter(pl.col("knowide") != "Yes")
-    nojava = pl.concat([sv, vs]).filter(pl.col("knowjava") != "Yes")
-    if not noide.is_empty():
-        print(f"! WARNING: {len(noide)} participants are not familiar with IDEs!")
-    if not nojava.is_empty():
-        print(f"! WARNING: {len(nojava)} participants are not familiar with Java!")
-
-    for key in interval:
-        print_u_result(
-            key.replace("_", " ").capitalize(), mannwhitneyu(sv[key], vs[key])
-        )
-
-    for key in ordinal:
-        print_u_result(
-            key.replace("_", " ").capitalize(),
-            mannwhitneyu(sv[key].to_physical(), vs[key].to_physical()),
-        )
-
-
-def print_u_result(name, res):
-    text = ""
-    if res.pvalue < P_VALUE:
-        text += "!!! SIGNIFICANT !!! "
-
-    text += f"{name}: U = {res.statistic} (p = {res.pvalue})"
-    print(text)
+    # SUS needs to be separate due to different number of rows.
+    write_dat(
+        "seevs-sus",
+        both.select(
+            [pl.col("sus_see").alias("sus1"), pl.col("sus_vscode").alias("sus2")]
+        ),
+    )
 
 
 if __name__ == "__main__":
