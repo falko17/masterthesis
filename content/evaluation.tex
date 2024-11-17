@@ -2,11 +2,53 @@
 \graphicspath{{\subfix{../figures/}}}
 
 \begin{document}
-\chapter{Evaluation}\label{ch:evaluation}
+\chapter{User Study}\label{ch:evaluation}
 
-\lettrine[lines=3]{\textcolor{Maroon}{X}}{} \fxfatal{}
+\lettrine[lines=3]{\textcolor{Maroon}{D}}{espite} having already done a technical evaluation in \cref{sec:techeval}, it is usually also a good idea to compare new approaches with existing state-of-the-art tools in a user study.
+In our case, we want to compare \SEE{}'s \gls{lsp}-generated \glspl{city} with the \glspl{capability} a normal \gls{lsp}-enabled \gls{ide} offers.
+For the latter, the Microsoft-developed \gls{ide} \gls{vscode} is a good fit, given that the \glsentrylong{lsp} itself originates here (see \cref{sec:lsp}) and that it still has a deep integration with it.
 
-\section{Plan}
+First, we will outline the general aim of this study by going over some existing related research, explaining important aspects of \gls{vscode}, and then enumerating our hypotheses.
+Next, we will explain the details of the design of the study itself, before analyzing its results with the \participants{} participants in detail.
+Finally, we describe some relevant threats to validity.
+
+\section{Plan}  % TODO: Different title?
+Our main aim here is to answer our second research question that we defined in \cref{sec:goals}:
+\begin{displayquote}
+	Are \glspl{city} a suitable means to present \gls{lsp} information to developers as compared to \glspl{ide} + tables (on the dimensions of speed, accuracy, and usability)?
+\end{displayquote}
+
+To empirically evaluate this research question, we will devise a series of short software engineering related tasks.
+Participants then get randomly assigned to either use \SEE{} (along with our implementation from \cref{ch:implementation}) or \gls{vscode} (with an active \gls{ls}).
+However, evaluating the supported \glspl{capability} (see \cref{tab:capabilities}) in this way turns out to be quite difficult---for example, how would one evaluate the \emph{Hover} \gls{capability}, let alone features like \glspl{token} which are almost identically implemented across \SEE{} and \gls{vscode}?
+For this reason, we will abstain from incorporating the \gls{window}-related \glspl{capability} from \cref{sec:intowindow}.
+Limiting ourselves, then, to the \gls{city}-related changes from \cref{sec:intocity}, we have:
+\begin{enumerate}
+	\item \emph{Diagnostics} being displayed as erosion icons above corresponding nodes.
+	      \begin{itemize}
+		      \item This feature was essentially already evaluated in my bachelor's thesis, albeit with the Axivion Dashboard as a data source instead of \gls{lsp}~\cite{galperin2021,galperin2022}.
+	      \end{itemize}
+	\item \emph{Hover} details being displayed when the user hovers the mouse above a node.
+	      \begin{itemize}
+		      \item Since this is used here almost identically as in \glspl{window}, it does not make much sense to compare it against \gls{vscode}.
+	      \end{itemize}
+	\item \emph{Go to location}, \emph{references}, and \emph{call/type hierarchy} being used for rendered edges and context menu actions.
+	      \begin{itemize}
+		      \item The context menu actions are not interesting to evaluate for the same reasons as above, though this does not apply to the generated edges.
+	      \end{itemize}
+\end{enumerate}
+
+It appears that the only \gls{capability} reasonably evaluable in a user study of this form are actually the ones used in the generation of the \gls{city} in \cref{sec:generate}.
+Besides, the bulk of the implementation pertains to the generation of \glspl{city}, so it makes sense to focus on them here.
+As a result, the user study is now actually of a form (directly comparing \glspl{city} with \glspl{ide}) that has been researched in previous literature before, so let us take a look at that research first before designing our own study.
+
+\subsection{Existing Research}
+\fxfatal{}
+
+\subsection{VSCode}
+\fxfatal{}
+
+\subsection{Hypotheses}
 \fxfatal{}
 
 \section{Structure}
@@ -19,6 +61,44 @@
 \fxfatal{}
 
 \section{Results}
+\fxfatal{}
+
+\subsection{Demographics}
+\fxfatal{}
+
+\pgfplotsset{every axis/.append style={
+			%axis line style={-stealth},
+			%label style={font=\itseries},
+			tick label style={font=\footnotesize,text=gray!50!black},
+		}}
+
+\violinab{age}{Age}{20}{40}
+
+\violinab{total-time}{Total Participation Time (hours)}{0}{5}
+
+% TODO: ordinal data
+
+\violinsv{a1-time}{Time (Minutes)}{0}{20}
+\violinsv{a2-time}{Time (Minutes)}{0}{20}
+\violinsv{a3-time}{Time (Minutes)}{0}{10}
+\violinsv{a4-time}{Time (Minutes)}{0}{10}
+\violinsv{a5-time}{Time (Minutes)}{0}{20}
+\violinsv{a6-time}{Time (Minutes)}{0}{10}
+
+\violinsus{}
+
+\subsection{Correctness}
+\fxfatal{}
+
+\subsection{Time}
+\fxfatal{}
+
+\subsection{Usability}
+\fxfatal{}
+
+\fxfatal{Also a section on the effect of experience (and others)}
+
+\subsection{Comments}
 \fxfatal{}
 
 \section{Threats to Validity}

@@ -53,6 +53,7 @@
 \usepackage{morewrites}
 \usepackage{enumitem}
 \usepackage{multirow}
+\usepackage{pgfplots}
 
 \tcbuselibrary{skins,minted,breakable}
 
@@ -78,6 +79,9 @@
 \usepackage[scaled=1.05]{zlmtt}
 \usepackage[type1]{cabin}
 \usepackage[utopia,vvarbb]{newtxmath}
+
+% FIXME: Using my fork here until the PR regarding jitter is merged.
+\usepackage{../tikzviolinplots/tikzviolinplots}
 
 %%% COMMANDS %%%
 \newcommand{\myTitle}{%
@@ -124,6 +128,67 @@
   \else
     #3%
   \fi}
+
+\newcommand{\violin}[8]{
+  \begin{tikzpicture}
+    \violinsetoptions[data points,scaled,averages]{
+      xmin=0,xmax=3,
+      ymin=#7,ymax=#8,
+      xlabel={#5},
+      xlabel style={
+        yshift={-0.5cm},
+      },
+      ylabel={#6},
+      ymajorgrids=true
+    }
+
+    \violinplot[%
+      index=\expandafter#4\expandafter1,%
+      col sep=tab,%
+      color=Maroon,%
+      dataset size=3pt,%
+      average size=4pt,%
+      average opacity=0.8,%
+      average color=black,%
+      dataset opacity=0.8,%
+      dataset jitter=0.1,%
+      relative position=1,%
+      average fill opacity=0.5,%
+      average fill=ForestGreen,%
+      average mark=otimes*,%
+      dataset color=black,%
+      dataset fill=black,%
+      dataset fill opacity=0.5,%
+      label={#2}
+    ]{analysis/dat/#1.dat}
+    \violinplot[%
+      index=\expandafter#4\expandafter2,%
+      col sep=tab,%
+      color=black,%
+      dataset size=3pt,%
+      average size=4pt,%
+      average opacity=0.8,%
+      average color=black,%
+      average fill opacity=0.5,%
+      average fill=ForestGreen,%
+      average mark=otimes*,%
+      dataset opacity=0.5,%
+      dataset jitter=0.1,%
+      relative position=2,%
+      dataset fill=white,%
+      dataset fill opacity=0.5,%
+      label={#3}
+    ]{analysis/dat/#1.dat}
+  \end{tikzpicture}
+}
+
+% key, ylabel, ymin, ymax
+\newcommand{\violinab}[4]{\violin{alphabeta}{$\alpha$}{$\beta$}{#1}{Group}{#2}{#3}{#4}}
+\newcommand{\violinsv}[4]{\violin{seevs}{\SEE{}}{VSCode}{#1}{System}{#2}{#3}{#4}}
+\newcommand{\violinsus}{\violin{seevs-sus}{\SEE{}}{VSCode}{sus}{System}{SUS}{40}{100}}
+
+% TODO: Optional param (?) for ordinal data on Y axes
+% TODO: Sign. difference => highlight somehow (maybe X label)
 
 \DeclareMathOperator*{\argmin}{arg\,min}
 
@@ -291,6 +356,10 @@
 \crefname{lstlisting}{listing}{listings}
 \Crefname{lstlisting}{Listing}{Listings}
 
+% Plots setup
+\pgfplotsset{compat=1.9,width=10cm}
+
+
 %%% CONTENTS %%%
 
 \input{content/glossary}
@@ -416,15 +485,15 @@ All passages that have been quoted verbatim or paraphrased from published source
 
 \appendix
 
-% \renewcommand{\ctchapternumber}[1]{%
-% 	\usekomafont{chapter}%
-% 	\begin{minipage}[t]{0.3\textwidth}%
-% 		\raggedleft{%
-% 			{\color{ctcolorchapterline}\rule[-5pt]{2pt}{5cm}}%
-% 			\quad%
-% 			{\color{ctcolorchapternum}\fontsize{60}{60}\letterfamily\selectfont#1}%
-% 		}%
-% 	\end{minipage}}
+\renewcommand{\ctchapternumber}[1]{%
+	\usekomafont{chapter}%
+	\begin{minipage}[t]{0.3\textwidth}%
+		\raggedleft{%
+			{\color{ctcolorchapterline}\rule[-5pt]{2pt}{5cm}}%
+			\quad%
+			{\color{ctcolorchapternum}\fontsize{60}{60}\letterfamily\selectfont#1}%
+		}%
+	\end{minipage}}
 
 \makeatletter
 \renewcommand\listoffigures{%
