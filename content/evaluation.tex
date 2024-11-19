@@ -24,26 +24,121 @@ However, evaluating the supported \glspl{capability} (see \cref{tab:capabilities
 For this reason, we will abstain from incorporating the \gls{window}-related \glspl{capability} from \cref{sec:intowindow}.
 Limiting ourselves, then, to the \gls{city}-related changes from \cref{sec:intocity}, we have:
 \begin{enumerate}
-	\item \emph{Diagnostics} being displayed as erosion icons above corresponding nodes.
-	      \begin{itemize}
-		      \item This feature was essentially already evaluated in my bachelor's thesis, albeit with the Axivion Dashboard as a data source instead of \gls{lsp}~\cite{galperin2021,galperin2022}.
-	      \end{itemize}
-	\item \emph{Hover} details being displayed when the user hovers the mouse above a node.
-	      \begin{itemize}
-		      \item Since this is used here almost identically as in \glspl{window}, it does not make much sense to compare it against \gls{vscode}.
-	      \end{itemize}
-	\item \emph{Go to location}, \emph{references}, and \emph{call/type hierarchy} being used for rendered edges and context menu actions.
-	      \begin{itemize}
-		      \item The context menu actions are not interesting to evaluate for the same reasons as above, though this does not apply to the generated edges.
-	      \end{itemize}
+	\item \emph{Diagnostics} being displayed as erosion icons above corresponding nodes.\\
+	      $\Rightarrow$ This feature was essentially already evaluated in my bachelor's thesis, albeit with the Axivion Dashboard as a data source instead of \gls{lsp}~\cite{galperin2021,galperin2022}.
+	\item \emph{Hover} details being displayed when the user hovers the mouse above a node.\\
+	      $\Rightarrow$ Since this is used here almost identically as in \glspl{window}, it does not make much sense to compare it against \gls{vscode}.
+	\item \emph{Go to location}, \emph{references}, and \emph{call/type hierarchy} being used for rendered edges and context menu actions.\\
+	      $\Rightarrow$ The context menu actions are not interesting to evaluate for the same reasons as above, though this does not apply to the generated edges.
 \end{enumerate}
 
-It appears that the only \gls{capability} reasonably evaluable in a user study of this form are actually the ones used in the generation of the \gls{city} in \cref{sec:generate}.
+It appears that the only \glspl{capability} that are reasonably evaluable in a user study of this form are actually the ones used in the generation of the \gls{city} in \cref{sec:generate}.
 Besides, the bulk of the implementation pertains to the generation of \glspl{city}, so it makes sense to focus on them here.
 As a result, the user study is now actually of a form (directly comparing \glspl{city} with \glspl{ide}) that has been researched in previous literature before, so let us take a look at that research first before designing our own study.
 
 \subsection{Existing Research}
-\fxfatal{}
+Across various bachelor's and master's theses, a number of user studies have been performed about \SEE{}'s usability in various aspects~\cite{davidwagner2020, felixgaebler2021, hannesmasuch2020, kevindoehl2020, maximilianwick2022, michelkrause2024, robertbohnsack2020, rubensmidt2021} as well as about its effectiveness compared to traditional tools~\cite{galperin2021, lennartkipka2020, moritz, nicoweiser2021, rohlfing2024, schramm2022, sulanabubakarov2021, yannisrohloff2021}.
+Especially relevant among the latter kind of studies are the three that compare \SEE{} with traditional \glspl{ide}, as that is very close to our own planned evaluation.
+Two of these evaluate debugging capabilities that have been implemented into \SEE{}:
+\textcite{lennartkipka2020} compares those with Eclipse\footnote{
+	\web{https://www.eclipse.org/}{2024-11-17}
+}'s debugger, while \textcite{rohlfing2024} uses the debugger of \gls{vscode} as a baseline.
+The final of these studies has \textcite{schramm2022} compare pure \gls{ide} usage (in this case, Microsoft's Visual Studio) with a combination of Visual Studio and \SEE{} in which Visual Studio has a plugin setup that integrates it with \SEE{}.
+The result here was a significant improvement for usability and a partial improvement for efficiency in favor of the combination of Visual Studio and \SEE{}.
+Almost all of these \SEE{}-related studies measure its usability in the form of the \gls{sus}---which we will do in our own study, as well.
+I have collected the existing scores of those studies in a violin plot in \cref{fig:seesus}.
+
+\begin{figure}
+	\begin{center}
+		\begin{tikzpicture}
+			\violinsetoptions[data points,scaled,averages]{
+				xmin=0,xmax=2,
+				ymin=55,ymax=95,
+				ylabel={SUS},
+				ymajorgrids=true
+			}
+
+			\violinplot[%
+				index=sus,%
+				col sep=tab,%
+				color=Maroon,%
+				dataset size=3pt,%
+				average size=5pt,%
+				average opacity=0.8,%
+				average color=black,%
+				dataset opacity=0.8,%
+				dataset jitter=0.1,%
+				relative position=1,%
+				average fill opacity=0.5,%
+				average fill=ForestGreen,%
+				average mark=otimes*,%
+				dataset color=black,%
+				dataset fill=black,%
+				dataset fill opacity=0.5,%
+				label={SEE}
+			]{analysis/dat/sus.dat}
+
+			% \violinplot[index=sus]{analysis/dat/sus.dat}
+		\end{tikzpicture}
+	\end{center}
+	\caption{\Gls{sus} results for \SEE{} across various studies~\cite{davidwagner2020, felixgaebler2021, galperin2021, hannesmasuch2020, kevindoehl2020, lennartkipka2020, maximilianwick2022, michelkrause2024, moritz, nicoweiser2021, robertbohnsack2020, rohlfing2024, rubensmidt2021, schramm2022, sulanabubakarov2021, yannisrohloff2021}.}\label{fig:seesus}
+\end{figure}
+
+Outside of \SEE{}, there are a number of other \gls{city} implementations, such as \emph{CodeCity}~\cite{wettel2007} or \emph{Software World}~\cite{knight2000} (see also the overview by \textcite{jeffery2019}).
+In their evaluations, these papers often compare different platforms (such as Desktop to VR/AR)~\cite[\eg,][]{merino2017,fittkau2015, merino2018}, but as with the \SEE{}-related theses above, we are most interested in those that have controlled experiments comparing a \gls{city} implementation with a traditional \gls{ide}.
+
+One such study was done by \textcite{wettel2011} and compares \emph{CodeCity} against the Eclipse \gls{ide}, with the caveat that participants using Eclipse can also access an Excel spreadsheet of software metrics, as the \gls{city} implementation would otherwise have an unfair advantage.
+He based his study on an extensive survey of existing empirical work on software visualization, constructing a "wishlist" of desiderata for such studies~\cite[chapter 7]{wettel2011}.
+We will refer back to this wishlist, and to his experiment design in general, in \cref{sec:design} for our own study.
+The study was later replicated by \textcite{romano2019} with a subset of tasks.
+
+Similarly, \textcite{mortara2024} supplied \gls{csv} files for \gls{ide} users in a comparison against \emph{VariCity}, although here, participants were allowed to choose whatever \gls{ide} they are most comfortable with.
+\textcite{mehra2020} gave participants who were using Eclipse an additional 2D graph tool when evaluating the augmented reality \textsc{XRaSE} \gls{city} visualization.
+On the other hand, the category of comparative user studies between \glspl{city} and \glspl{ide} without any other helper tools (which our own study will also fall into) includes ones by \textcite{khaloo2017,rohlfing2024,lennartkipka2020}.
+The results of their experiments, and all others cited here, are listed in the color-coded \cref{tab:compresults}.
+
+\colorlet{LightMaroon}{Maroon!30!white}
+\colorlet{LightBlue}{Cyan!30!white}
+
+% Maybe also for non-IDE comp for SEE?
+% yellow: mixed, gray: no sig. diff., (light) maroon favor of CC, (light) blue: favor of IDE
+% with legend
+
+\newcommand{\reside}[1]{\cellcolor{Blue}\textcolor{White}{#1}}
+\newcommand{\rescc}[1]{\cellcolor{Maroon}\textcolor{White}{#1}}
+\newcommand{\residel}[1]{\cellcolor{LightBlue}#1}  % e.g., < 50% of tasks
+\newcommand{\resccl}[1]{\cellcolor{LightMaroon}#1}
+\newcommand{\resmixed}[1]{\cellcolor{Goldenrod}#1}  % Mixed between tasks
+\newcommand{\resnone}[1]{\cellcolor{Gray!70!white}No diff.}  % No sig. diff.
+% White: not measured
+\newcommand{\resna}[1]{\textcolor{Gray}{\textit{N/A}}}
+
+\begin{table}
+	\begin{center}
+		\caption{Results of various studies comparing \glspl{city} (CC) against \glspl{ide}. $x/y$ indicates an advantage in $x$ out of $y$ tasks or questions.}\label{tab:compresults}
+		{
+			\footnotesize
+			\def\arraystretch{1.3}
+			\begin{tabular}{|l|l|l|l|l|l|l|}
+				\hline
+				Study                   & $n$ & Correctness         & Time                           & Usability                      & \gls{ide}          & Code City      \\ \hline
+				\cite{wettel2011}       & 45  & \rescc{$p = 0.001$} & \rescc{$p=0.043$}              & \resna{}                       & Eclipse + metrics  & CodeCity       \\ \hline
+				\cite{khaloo2017}       & 28  & \resna{}            & \reside{$3/5$ IDE}             & \resccl{$6/20$ CC; $1/20$ IDE} & Visual Studio (VS) & Code Park      \\ \hline
+				\cite{romano2019}       & 54  & \rescc{$p= 0.005$}  & \rescc{$p < 0.001\%$}          & \resnone{}                     & Eclipse + metrics  & Code2City      \\ \hline
+				\cite{lennartkipka2020} & 10  & \resnone{}          & \resnone{}                     & \resnone{}                     & Eclipse            & \SEE{}         \\ \hline
+				\cite{mehra2020}        & 20  & \rescc{$p= 0.005$}  & \resccl{$3/5$ CC; $1/5$ IDE}   & \resccl{Preliminary only}      & Eclipse + 2D graph & \textsc{XRaSE} \\ \hline
+				\cite{galperin2022}     & 20  & \residel{$2/6$ IDE} & \rescc{$4/6$ CC}               & \reside{$p = 0.028$}           & Axivion Dashboard  & \SEE{}         \\ \hline
+				\cite{schramm2022}      & 10  & \resnone{}          & \resccl{$1/3$ CC}              & \rescc{$p = 0.002$}            & VS + Axivion       & VS + \SEE{}    \\ \hline
+				\cite{mortara2024}      & 49  & \rescc{$6/11$ CC}   & \resccl{$4/11$ CC; $1/11$ IDE} & \resccl{$4/11$ CC}             & Various + metrics  & VariCity       \\ \hline
+			\end{tabular}
+		}
+		\caption*{\footnotesize Legend: \legendsquare{Maroon} \Gls{city} advantage, \legendsquare{LightMaroon} Slight \gls{city} advantage, \legendsquare{Blue} \Gls{ide} advantage, \mbox{\legendsquare{LightBlue} Slight \gls{ide} advantage}, \mbox{\legendsquare{Gray} No significant difference}, \mbox{{\normalsize $\Box$} Not measured}
+		}
+	\end{center}
+\end{table}
+
+
+% correctness/time/usability is common
 
 \subsection{VSCode}
 \fxfatal{}
@@ -51,8 +146,10 @@ As a result, the user study is now actually of a form (directly comparing \glspl
 \subsection{Hypotheses}
 \fxfatal{}
 
-\section{Structure}
+\section{Design}\label{sec:design}
 \fxfatal{}
+
+\fxnote{Refer back to Wettel's wish list}
 
 \subsection{Questionnaire}
 \fxfatal{}
@@ -66,26 +163,54 @@ As a result, the user study is now actually of a form (directly comparing \glspl
 \subsection{Demographics}
 \fxfatal{}
 
-\pgfplotsset{every axis/.append style={
-			%axis line style={-stealth},
-			%label style={font=\itseries},
-			tick label style={font=\footnotesize,text=gray!50!black},
-		}}
+%
+% \violinab{age}{Age}{20}{40}
+%
+% \violinab{total-time}{Total Participation Time (hours)}{0}{5}
+%
+% % TODO: ordinal data
+%
+% \violinsv{a1-time}{Time (Minutes)}{0}{20}
+% \violinsv{a2-time}{Time (Minutes)}{0}{20}
+% \violinsv{a3-time}{Time (Minutes)}{0}{10}
+% \violinsv{a4-time}{Time (Minutes)}{0}{10}
+% \violinsv{a5-time}{Time (Minutes)}{0}{20}
+% \violinsv{a6-time}{Time (Minutes)}{0}{10}
+%
+% \violinsus{}
 
-\violinab{age}{Age}{20}{40}
-
-\violinab{total-time}{Total Participation Time (hours)}{0}{5}
-
-% TODO: ordinal data
-
-\violinsv{a1-time}{Time (Minutes)}{0}{20}
-\violinsv{a2-time}{Time (Minutes)}{0}{20}
-\violinsv{a3-time}{Time (Minutes)}{0}{10}
-\violinsv{a4-time}{Time (Minutes)}{0}{10}
-\violinsv{a5-time}{Time (Minutes)}{0}{20}
-\violinsv{a6-time}{Time (Minutes)}{0}{10}
-
-\violinsus{}
+% \begin{tikzpicture}
+% 	\violinsetoptions[data points,scaled,averages]{
+% 		xmin=0,xmax=3,
+% 		ymin=50,ymax=100,
+% 		xlabel={Sys},
+% 		xlabel style={
+% 				yshift={-0.5cm},
+% 			},
+% 		ylabel={SUS},
+% 		ymajorgrids=true
+% 	}
+%
+% 	\violinplot[%
+% 		index=sus,%
+% 		col sep=tab,%
+% 		color=Maroon,%
+% 		dataset size=3pt,%
+% 		average size=4pt,%
+% 		average opacity=0.8,%
+% 		average color=black,%
+% 		dataset opacity=0.8,%
+% 		dataset jitter=0.1,%
+% 		relative position=1,%
+% 		average fill opacity=0.5,%
+% 		average fill=ForestGreen,%
+% 		average mark=otimes*,%
+% 		dataset color=black,%
+% 		dataset fill=black,%
+% 		dataset fill opacity=0.5,%
+% 		label={SEE}
+% 	]{analysis/dat/sus.dat}
+% \end{tikzpicture}
 
 \subsection{Correctness}
 \fxfatal{}

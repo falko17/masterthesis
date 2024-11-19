@@ -10,7 +10,7 @@
 	listof=totocnumbered,   % include listof entries in toc
 	titlepage=on,           % own page for each title page
 	captions=tableabove,    % display table captions above the float env
-  draft   % if neither is specified, "draft for review mode"
+  %draft   % if neither is specified, "draft for review mode"
   %final
 ]{scrbook}
 
@@ -24,6 +24,7 @@
 \usepackage{graphicx}
 \usepackage{xifthen}
 \usepackage{xspace}
+\usepackage[table]{xcolor}
 \usepackage[english]{babel}
 \usepackage{subfiles}
 \usepackage[nopatch=footnote]{microtype}
@@ -54,10 +55,12 @@
 \usepackage{enumitem}
 \usepackage{multirow}
 \usepackage{pgfplots}
+\usepackage[perpage]{manyfoot}
 
 \tcbuselibrary{skins,minted,breakable}
 
-\usetikzlibrary{shadows}
+\usetikzlibrary{shadows,external}
+\tikzexternalize[mode=list and make]
 
 \PassOptionsToClass{listof=numbered}{scrreprt}
 
@@ -81,6 +84,7 @@
 \usepackage[utopia,vvarbb]{newtxmath}
 
 % FIXME: Using my fork here until the PR regarding jitter is merged.
+\usepackage{stringstrings}
 \usepackage{../tikzviolinplots/tikzviolinplots}
 
 %%% COMMANDS %%%
@@ -129,6 +133,12 @@
     #3%
   \fi}
 
+\pgfplotsset{every axis/.append style={
+			%axis line style={-stealth},
+			%label style={font=\itseries},
+			tick label style={font=\footnotesize,text=gray!50!black},
+		}}
+
 \newcommand{\violin}[8]{
   \begin{tikzpicture}
     \violinsetoptions[data points,scaled,averages]{
@@ -147,7 +157,7 @@
       col sep=tab,%
       color=Maroon,%
       dataset size=3pt,%
-      average size=4pt,%
+      average size=5pt,%
       average opacity=0.8,%
       average color=black,%
       dataset opacity=0.8,%
@@ -166,7 +176,7 @@
       col sep=tab,%
       color=black,%
       dataset size=3pt,%
-      average size=4pt,%
+      average size=5pt,%
       average opacity=0.8,%
       average color=black,%
       average fill opacity=0.5,%
@@ -184,8 +194,11 @@
 
 % key, ylabel, ymin, ymax
 \newcommand{\violinab}[4]{\violin{alphabeta}{$\alpha$}{$\beta$}{#1}{Group}{#2}{#3}{#4}}
-\newcommand{\violinsv}[4]{\violin{seevs}{\SEE{}}{VSCode}{#1}{System}{#2}{#3}{#4}}
-\newcommand{\violinsus}{\violin{seevs-sus}{\SEE{}}{VSCode}{sus}{System}{SUS}{40}{100}}
+\newcommand{\violinsv}[4]{\violin{seevs}{SEE}{VSCode}{#1}{System}{#2}{#3}{#4}}
+\newcommand{\violinsus}{\violin{seevs-sus}{SEE}{VSCode}{sus}{System}{SUS}{40}{100}}
+
+\newcommand{\legendsquare}[1]{\textcolor{#1}{\rule{1.1ex}{1.1ex}}}
+
 
 % TODO: Optional param (?) for ordinal data on Y axes
 % TODO: Sign. difference => highlight somehow (maybe X label)
@@ -216,6 +229,8 @@
 
 %%% OPTIONS %%%
 
+\tcbset{shield externalize}  % Required for externalization to work.
+
 \let\oldmarginpar\marginpar
 \renewcommand{\marginpar}[2][]{%
   \oldmarginpar[#1]{\Ifthispageodd{#2}{\hspace*{-4mm}\parbox{23mm}{#2}}}
@@ -238,6 +253,8 @@
 \renewcommand{\FXLayoutContentsLine}[3]{\oldFxLox{#1}{\ifempty{#2}{Unfinished section\ifempty{\currentname}{}{: \currentname}}{#2}}{#3}}
 
 %\definecolor{fxnote}{rgb}{0.9000,0.0000,0.0000}
+
+\counterwithout{footnote}{chapter}
 
 \renewcommand\LettrineFontHook{\initfamily}
 

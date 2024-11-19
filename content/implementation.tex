@@ -217,6 +217,7 @@ An updated \textsc{FindNodesByLocationEfficient} is given in \cref{alg:interval}
 
 \begin{algorithm}
 	\small
+	\tikzexternaldisable
 
 	\caption{Efficiently associating \gls{lsp}-returned \glspl{range} to existing elements using an already constructed augmented \gls{intervaltree}.}\label{alg:interval}
 	\begin{algorithmic}[1]
@@ -249,6 +250,7 @@ An updated \textsc{FindNodesByLocationEfficient} is given in \cref{alg:interval}
 		\State \Return $R$
 		\EndFunction
 	\end{algorithmic}
+	\tikzexternalenable
 \end{algorithm}
 \fxwarning{So how much does it help in practice? Reference tech eval here}
 
@@ -391,6 +393,8 @@ At this point, we will once again refer back to the explanatory video \fxnote*{L
 \section{Interim Conclusion}
 \fxfatal{}
 
+% TODO: Mention PR for user study changes
+
 % TODO: Reference table
 
 \begin{table*}[htbp]
@@ -408,7 +412,7 @@ At this point, we will once again refer back to the explanatory video \fxnote*{L
 		Generating \glspl{city} using \gls{lsp}               & \githubpr{uni-bremen-agst/SEE}{727}                            & \diffsum{3475}{180}                                                    \\
 		\gls{lsp} functions in \glspl{city}                   & \githubpr{uni-bremen-agst/SEE}{747}                            & \diffsum{1139}{432}                                                    \\
 		\gls{lsp} functions in \glspl{window}                 & \githubpr{uni-bremen-agst/SEE}{751}                            & \diffsum{4080}{2024}                                                   \\
-		Preparing \SEE{} for user evaluation                  & \githubpr{uni-bremen-agst/SEE}{772}                            & \diffsum{541}{150}                                                     \\
+		Preparing \SEE{} for user study                       & \githubpr{uni-bremen-agst/SEE}{772}                            & \diffsum{541}{150}                                                     \\
 		\bottomrule
 	\end{tabular}
 	\caption*{\footnotesize Only C\# line changes have been counted in \SEE{} pull requests.\\

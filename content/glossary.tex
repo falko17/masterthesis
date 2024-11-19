@@ -28,6 +28,9 @@
 	\end{info@box}
 }
 
+\DeclareNewFootnote{G}
+\renewcommand*{\thefootnoteG}{\firstuseformat{\fnsymbol{footnoteG}}}
+
 % No links for description
 \let\oldglsdesc\glsdesc
 \renewcommand{\glsdesc}[1]{\oldglsdesc*{#1}}
@@ -50,8 +53,8 @@
 
 % Full name on first time
 \setabbreviationstyle[acronym]{long-postshort-user}
-% Also color acronym itself
-\renewcommand{\glsfirstabbrvuserfont}[1]{\textcolor{Maroon}{#1}}
+% Also color acronym itself (or not)
+% \renewcommand{\glsfirstabbrvuserfont}[1]{\textcolor{Maroon}{#1}}
 
 \newcommand{\glossterm}[1]{%
 	\ifglshaslong{#1}%
@@ -60,15 +63,15 @@
 }
 
 % Only color for the first time
-\newcommand{\firstuseformat}[1]{\textcolor{Maroon}{{\emph{#1}}}}
+\newcommand{\firstuseformat}[1]{\textcolor{Maroon}{{#1}}}
 \newcommand{\seconduseformat}[1]{\textcolor{black}{{#1}}}
 \newcommand{\mainformat}[1]{%
 	\ifglsused{#1}{}{\glslinkvar{%
 			\let\fc\uppercase%
-			\begin{infobox}{\glossterm{#1}}
-				% TODO: Full title for acronyms
-				\glsentrydesc{#1}
-			\end{infobox}%
+			% \begin{infobox}{\glossterm{#1}}
+			% 	\glsentrydesc{#1}
+			% \end{infobox}%
+			\footnoteG{\firstuseformat{\Glsentrytext{#1}}: \glsentrydesc{#1}}%
 			\let\fc\lowercase}{}{}%
 	}%
 }
@@ -87,7 +90,7 @@
 	{\let\glstextformat\firstuseformat}%
 }
 
-% Bei Symbol spezielle Randnotiz
+% Special margin note for symbols
 \newcommand{\glsmarginpar}[1]{
 	\let\fc\uppercase%
 	\marginpar{%
@@ -100,6 +103,8 @@
 
 \newacronym[description={\fc{A} protocol that can be viewed as the analogue to LSP for debuggers, with the goal to make it easier to integrate debuggers into development tools.}]{dap}{DAP}{Debug Adapter Protocol}
 
+\newacronym[description={\fc{A} file format in which tabular data is stored as comma-separated columns.}]{csv}{CSV}{Comma-Separated Values}
+
 \newacronym[description={A syntax in which context-free grammars can be formally expressed.}]{ebnf}{EBNF}{Extended Backus–Naur Form}
 
 \newacronym[description={\fc{A} file format for graphs, used in \gls{see} for representing dependency and hierarchy graphs of software projects.}]{gxl}{GXL}{Graph eXchange Language}
@@ -110,11 +115,13 @@
 
 \newacronym[description={\fc{T}he number of lines in a source code file.}]{loc}{LOC}{Lines of Code}
 
-\newacronym[description={\fc{A} format which language servers can emit to persist LSP-based information about a software project.},seealso=lsp]{lsif}{LSIF}{Language Server Index Format}
+\newacronym[description={\fc{A} format which language servers can emit to persist LSP-based information about a software project.}]{lsif}{LSIF}{Language Server Index Format}
 
 \newacronym[description={\fc{A} protocol which specifies how language servers can provide language-specific features to IDEs, such as hover information, go to definition, or diagnostics.}]{lsp}{LSP}{Language Server Protocol}
 
 \newacronym[description={\fc{A}n interactive software visualization tool using the code city metaphor in 3D, developed in the Unity game engine at the University of Bremen.}]{see}{SEE}{Software Engineering Experience}
+
+\newacronym[description={A simple questionnaire by \textcite{brooke1996} with ten Likert-scale questions that are supposed to measure the usability of a system.}]{sus}{SUS}{System Usability Scale}
 
 \newacronym{ui}{UI}{User Interface}
 
@@ -125,7 +132,7 @@
 
 %%% GLOSSARY HERE %%%
 
-\newglossaryentry{city}{name=\fc{c}ode \fc{c}ity,
+\newglossaryentry{city}{name={c}ode \fc{c}ity,
 	description={\fc{I}n the code city metaphor, software components are visualized as buildings within a city, where various metrics of the software are represented visually (\eg, the height of a building could represent the lines of code of the component).},
 	plural=code cities}
 
