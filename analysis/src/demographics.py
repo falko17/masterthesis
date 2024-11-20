@@ -223,4 +223,3 @@ def check_effects(sv, vs):
     mat_total = mat_total.with_columns(
         p_adjusted=pl.Series(false_discovery_control(mat_total["p"], method="bh"))
     )
-    breakpoint()
