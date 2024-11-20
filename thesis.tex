@@ -111,6 +111,8 @@
 \newcommand{\tt}[1]{\monott{#1}}
 
 \newcommand{\keystroke}[1]{%
+  % Externalization here causes the shadows to be cut off.
+  \tikzexternaldisable
   \tikz[baseline=(key.base)]
     \node[%
       draw,
@@ -123,7 +125,8 @@
       line width=0.5pt,
       font=\footnotesize\sffamily
     ](key) {#1\strut}
-  ;
+  ;\hspace{-0.5ex}
+  \tikzexternalenable
 }
 
 \newcommand{\ifempty}[3]{%
@@ -139,16 +142,16 @@
 			tick label style={font=\footnotesize,text=gray!50!black},
 		}}
 
-\newcommand{\violin}[8]{
+\newcommand{\violin}[9]{
   \begin{tikzpicture}
     \violinsetoptions[data points,scaled,averages]{
       xmin=0,xmax=3,
-      ymin=#7,ymax=#8,
-      xlabel={#5},
-      xlabel style={
-        yshift={-0.5cm},
-      },
-      ylabel={#6},
+      ymin=#6,ymax=#7,
+      % xlabel={#5},
+      % xlabel style={
+      %   yshift={-0.5cm},
+      % },
+      ylabel={#5},
       ymajorgrids=true
     }
 
@@ -166,6 +169,7 @@
       average fill opacity=0.5,%
       average fill=ForestGreen,%
       average mark=otimes*,%
+      bandwidth=#8,%
       dataset color=black,%
       dataset fill=black,%
       dataset fill opacity=0.5,%
@@ -182,6 +186,7 @@
       average fill opacity=0.5,%
       average fill=ForestGreen,%
       average mark=otimes*,%
+      bandwidth=#9,%
       dataset opacity=0.5,%
       dataset jitter=0.1,%
       relative position=2,%
@@ -192,10 +197,10 @@
   \end{tikzpicture}
 }
 
-% key, ylabel, ymin, ymax
-\newcommand{\violinab}[4]{\violin{alphabeta}{$\alpha$}{$\beta$}{#1}{Group}{#2}{#3}{#4}}
-\newcommand{\violinsv}[4]{\violin{seevs}{SEE}{VSCode}{#1}{System}{#2}{#3}{#4}}
-\newcommand{\violinsus}{\violin{seevs-sus}{SEE}{VSCode}{sus}{System}{SUS}{40}{100}}
+% key, ylabel, ymin, ymax, bw1, bw2
+\newcommand{\violinab}[6]{\violin{alphabeta}{$\alpha$}{$\beta$}{#1}{#2}{#3}{#4}{#5}{#6}}
+\newcommand{\violinsv}[6]{\violin{seevs}{SEE}{VSCode}{#1}{#2}{#3}{#4}{#5}{#6}}
+\newcommand{\violinsus}{\violin{seevs-sus}{SEE}{VSCode}{sus}{SUS}{40}{100}{7.4}{7.2153}}
 
 \newcommand{\legendsquare}[1]{\textcolor{#1}{\rule{1.1ex}{1.1ex}}}
 

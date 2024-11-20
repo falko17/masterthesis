@@ -28,8 +28,19 @@
 	\end{info@box}
 }
 
+\makeatletter
+\newcommand*{\starsymfn}[1]{%
+	\expandafter\@starsymfn\csname c@#1\endcsname%
+}
+
+\newcommand*{\@starsymfn}[1]{%
+	$\ifcase#1 \or*\or**\or\dagger\or\ddagger\or\S\or\|%
+		\else\@ctrerr\fi$%
+}
+\makeatother
+
 \DeclareNewFootnote{G}
-\renewcommand*{\thefootnoteG}{\firstuseformat{\fnsymbol{footnoteG}}}
+\renewcommand*{\thefootnoteG}{\firstuseformat{\starsymfn{footnoteG}}}
 
 % No links for description
 \let\oldglsdesc\glsdesc
@@ -101,9 +112,11 @@
 
 %%% ACRONYMS HERE %%%
 
-\newacronym[description={\fc{A} protocol that can be viewed as the analogue to LSP for debuggers, with the goal to make it easier to integrate debuggers into development tools.}]{dap}{DAP}{Debug Adapter Protocol}
+\newacronym[description={\fc{A} three-item questionnaire asking participants for satisfaction with ease, completion time, and support information~\cite{lewis1991}.}]{asq}{ASQ}{After-Scenario Questionnaire}
 
 \newacronym[description={\fc{A} file format in which tabular data is stored as comma-separated columns.}]{csv}{CSV}{Comma-Separated Values}
+
+\newacronym[description={\fc{A} protocol that can be viewed as the analogue to LSP for debuggers, with the goal to make it easier to integrate debuggers into development tools.}]{dap}{DAP}{Debug Adapter Protocol}
 
 \newacronym[description={A syntax in which context-free grammars can be formally expressed.}]{ebnf}{EBNF}{Extended Backus–Naur Form}
 
@@ -164,6 +177,12 @@ description={\fc{A} source code viewer in \SEE{} which supports very basic \gls{
 \newglossaryentry{editor}{name={U}nity Editor,
 	description={\fc{T}he main \gls{ui} of the Unity game engine, in which scenes can be set up, components can be configured, the game itself can be run, etc. Note that it is only used for development purposes, and hence not included within generated builds of a game.}}
 
+\newglossaryentry{poststudy}{name=post-study,
+	description={\fc{A} questionnaire for participants which is answered at the end of the study, after every task has been completed.}}
+
+\newglossaryentry{posttask}{name=post-task,
+	description={\fc{A} questionnaire for participants which is answered after each task.}}
+
 \newglossaryentry{provider}{name=\fc{G}raph provider,
 	description={\fc{A} component in \SEE{} that produces or transforms a project graph by some means. Can optionally take configuration parameters by users.}}
 
@@ -176,6 +195,12 @@ description={\fc{A} source code viewer in \SEE{} which supports very basic \gls{
 
 \newglossaryentry{token}{name=\fc{s}emantic token, text=semantic token,
 	description={An \gls{lsp} \gls{capability} that returns tokens for a document, with the intention that those tokens can be used to apply syntax highlighting to the file. Apart from token types, it also offers token \emph{modifiers}, which can be used to apply additional formatting on top of the colors from the types.}}
+
+\newglossaryentry{violin}{name=violin plot,
+	description={A plot visualizing the distribution of a collection of data points along with an estimated probability density~\cite{hintze1998}.
+			The black/white data points are randomly "jittered" along the $x$-axis to make them more differentiable from one another.
+			A bigger, green point marks the average of the dataset.
+		}}
 
 %%% DIGITAL HERE %%%
 \newglossaryentry{seezip}{name={\tt{SEE.zip}}, type=file,
