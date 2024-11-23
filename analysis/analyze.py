@@ -55,12 +55,16 @@ def main():
     # We choose Mann-Whitney U test for time/correctness/usability (no normal requirements, ordinal/interval DV, 2 independent groups in 1 IV).
     check_demographics(sv, vs)
 
-    sv = set_correctness(sv, "sv")
-    vs = set_correctness(vs, "vs")
     both = pl.concat([sv, vs])
     both = sus_total(sus_total(both, "SEE"), "VSCode")
+    sv = set_correctness(sv, "sv").filter(
+        pl.col("knowjava") != "No, not really", pl.col("knowide") != "No, not really"
+    )
+    vs = set_correctness(vs, "vs").filter(
+        pl.col("knowjava") != "No, not really", pl.col("knowide") != "No, not really"
+    )
 
-    # code.interact(local=dict(globals(), **locals()))
+    code.interact(local=dict(globals(), **locals()))
 
     check_correctness(sv, vs)
     check_time(sv, vs)

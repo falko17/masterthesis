@@ -18,7 +18,7 @@ Here, we use an algorithm by \textcite{sheather1991} that has been improved to b
 The \emph{Improved Sheather--Jones} method, which is a robust choice when one cannot assume normality~\cite{akinshin2020}.
 As the algorithm for this method, we use \tt{KDEpy}~\cite{odland2018}, whose implementation of the method is based on \textcite[326--328]{kroese2011}.
 A drawback here is that this algorithm does not necessarily converge.
-In those cases, we fall back to using Silverman's rule of thumb~\cite{silverman1986}, the implementation of which is integrated in the library we use to draw these plots~\cite{callil-soares2024}.
+In those cases, we fall back to using Silverman's rule of thumb~\cite{silverman1986}, the implementation of which is integrated into the library we use to draw these plots~\cite{callil-soares2024}.
 
 \section{Plan}  % TODO: Different title?
 Our main aim here is to answer our second research question that we defined in \cref{sec:goals}:
@@ -26,18 +26,28 @@ Our main aim here is to answer our second research question that we defined in \
 	Are \glspl{city} a suitable means to present \gls{lsp} information to developers as compared to \glspl{ide} + tables (on the dimensions of speed, accuracy, and usability)?
 \end{displayquote}
 
-To empirically evaluate this research question, we will devise a series of short software engineering related tasks.
+To empirically evaluate this research question, we will devise a series of short software engineering related tasks on the real-world software projects \emph{JabRef}\footnote{
+	\web{https://github.com/JabRef/jabref}{2024-11-22}
+} and \emph{SpotBugs}\footnote{
+	\web{https://github.com/spotbugs/spotbugs}{2024-11-22}
+}.
 Participants then get randomly assigned to either use \SEE{} (along with our implementation from \cref{ch:implementation}) or \gls{vscode} (with an active \gls{ls}).
 However, evaluating the supported \glspl{capability} (see \cref{tab:capabilities}) in this way turns out to be quite difficult---for example, how would one evaluate the \emph{Hover} \gls{capability}, let alone features like \glspl{token} which are almost identically implemented across \SEE{} and \gls{vscode}?
 For this reason, we will abstain from incorporating the \gls{window}-related \glspl{capability} from \cref{sec:intowindow}.
 Limiting ourselves, then, to the \gls{city}-related changes from \cref{sec:intocity}, we have:
 \begin{enumerate}
-	\item \emph{Diagnostics} being displayed as erosion icons above corresponding nodes.\\
-	      $\Rightarrow$ This feature was essentially already evaluated in my bachelor's thesis, albeit with the Axivion Dashboard as a data source instead of \gls{lsp}~\cite{galperin2021,galperin2022}.
-	\item \emph{Hover} details being displayed when the user hovers the mouse above a node.\\
-	      $\Rightarrow$ Since this is used here almost identically as in \glspl{window}, it does not make much sense to compare it against \gls{vscode}.
-	\item \emph{Go to location}, \emph{references}, and \emph{call/type hierarchy} being used for rendered edges and context menu actions.\\
-	      $\Rightarrow$ The context menu actions are not interesting to evaluate for the same reasons as above, though this does not apply to the generated edges.
+	\item \emph{Diagnostics} being displayed as erosion icons above corresponding nodes.
+	      \begin{description}
+		      \item[\follows{}] This feature was essentially already evaluated in my bachelor's thesis, albeit with the Axivion Dashboard as a data source instead of \gls{lsp}~\cite{galperin2021,galperin2022}.
+	      \end{description}
+	\item \emph{Hover} details being displayed when the user hovers the mouse above a node.
+	      \begin{description}
+		      \item[\follows{}] Since this is used here almost identically as in \glspl{window}, it does not make much sense to compare it against \gls{vscode}.
+	      \end{description}
+	\item \emph{Go to location}, \emph{references}, and \emph{call/type hierarchy} being used for rendered edges and context menu actions.
+	      \begin{description}
+		      \item[\follows{}] The context menu actions are not interesting to evaluate for the same reasons as above, though this does not apply to the generated edges.
+	      \end{description}
 \end{enumerate}
 
 It appears that the only \glspl{capability} that are reasonably evaluable in a user study of this form are actually the ones used in the generation of the \gls{city} in \cref{sec:generate}.
@@ -56,12 +66,15 @@ The result here was a significant improvement for usability and a partial improv
 Almost all of these \SEE{}-related studies measure its usability in the form of the \gls{sus}---which we will do in our own study, as well.
 I have collected the existing scores of those studies in a \gls{violin} in \cref{fig:seesus}.
 
+\pgfplotsset{axis line style={draw=none}}
+
 \begin{figure}
 	\begin{center}
 		\begin{tikzpicture}
 			\violinsetoptions[data points,scaled,averages]{
 				xmin=0,xmax=2,
 				ymin=55,ymax=95,
+				xticklabel style={yshift={-2cm}},
 				ylabel={SUS},
 				ymajorgrids=true
 			}
@@ -84,11 +97,24 @@ I have collected the existing scores of those studies in a \gls{violin} in \cref
 				dataset color=black,%
 				dataset fill=black,%
 				dataset fill opacity=0.5,%
-				label={SEE}
+				label={}
 			]{analysis/dat/sus.dat}
+
+			\node(xlabel) at ($(violin.south) + (0,-0.5)$) {\small \textcolor{Gray!50!Black}{SEE}};
+
+			\node[shift={(0.44,-0.47)}](CNW) at (violin.north west) {\pgfornament[color=Gray,width=1cm]{41}};
+			\node[shift={(-0.44,-0.47)}](CNE) at (violin.north east) {\pgfornament[color=Gray,width=1cm,symmetry=v]{41}};
+			\node[shift={(0.44,0.47)}](CSW) at (violin.south west) {\pgfornament[color=Gray,width=1cm,symmetry=h]{41}};
+			\node[shift={(-0.44,0.47)}](CSE) at (violin.south east) {\pgfornament[color=Gray,width=1cm,symmetry=c]{41}};
+
+
+			\draw[transform canvas={yshift=-1.8mm},line width=1pt,color=Gray] ([xshift=-1.5mm]CNW.north east) -- ([xshift=1.5mm]CNE.north west);
+			\draw[transform canvas={yshift=1.8mm},line width=1pt,color=Gray] ([xshift=-1.5mm]CSW.south east) -- ([xshift=1.5mm]CSE.south west);
+			\draw[transform canvas={xshift=2.05mm},line width=1pt,color=Gray] ([yshift=1.6mm]CNW.south west) -- ([yshift=-1.6mm]CSW.north west);
+			\draw[transform canvas={xshift=-2.05mm},line width=1pt,color=Gray] ([yshift=1.6mm]CNE.south east) -- ([yshift=-1.6mm]CSE.north east);
 		\end{tikzpicture}
 	\end{center}
-	\caption{\Gls{sus} results for \SEE{} across various studies~\cite{davidwagner2020, felixgaebler2021, galperin2021, hannesmasuch2020, kevindoehl2020, lennartkipka2020, maximilianwick2022, michelkrause2024, moritz, nicoweiser2021, robertbohnsack2020, rohlfing2024, rubensmidt2021, schramm2022, sulanabubakarov2021, yannisrohloff2021}.}\label{fig:seesus}
+	\caption{\Gls{sus} results for \SEE{} across sixteen studies~\cite{davidwagner2020, felixgaebler2021, galperin2021, hannesmasuch2020, kevindoehl2020, lennartkipka2020, maximilianwick2022, michelkrause2024, moritz, nicoweiser2021, robertbohnsack2020, rohlfing2024, rubensmidt2021, schramm2022, sulanabubakarov2021, yannisrohloff2021}.}\label{fig:seesus}
 \end{figure}
 
 Outside of \SEE{}, there are a number of other \gls{city} implementations, such as \emph{CodeCity}~\cite{wettel2007} or \emph{Software World}~\cite{knight2000} (see also the overview by \textcite{jeffery2019}).
@@ -180,7 +206,9 @@ The table is hosted on Google Spreadsheets\footnote{
 
 \subsection{Hypotheses}\label{subsec:hypotheses}
 
-To answer \textsf{RQ2} (see \cref{sec:goals}), we would like to know whether there is any significant difference between the approaches on the dimensions of \emph{speed}, \emph{correctness}, and \emph{usability}, similar to most other studies mentioned in \cref{subsec:research}.
+To answer \textsf{RQ2} (see \cref{sec:goals}), we would like to know whether there is any significant\footnote{
+	Any mention of "significance" in this chapter refers to statistical significance.
+} difference between the approaches on the dimensions of \emph{speed}, \emph{correctness}, and \emph{usability}, similar to most other studies mentioned in \cref{subsec:research}.
 We will now create more concrete hypotheses for each of these dimensions.
 
 \begin{enumerate}[label=\alph*)]
@@ -220,37 +248,254 @@ For the \textbf{usability}, we need to differentiate between the \gls{poststudy}
 		            } $A^c_S$ for \SEE{} and $A^c_V$ for \gls{vscode}.
 		            \begin{itemize}
 			            \item \emph{Null hypothesis} $H_{d_0}$:
-			                  The \gls{asq} score for complexity when using \SEE{} is the same as when using \gls{vscode}.
+			                  The \gls{asq} score for complexity when using \SEE{} is the same as when using \gls{vscode}: $A^c_S = A^c_V$
 			            \item \emph{Alternative hypothesis} $H_{d_1}$:
-			                  The \gls{asq} score for complexity when using \SEE{} is different when using \gls{vscode}.
+			                  The \gls{asq} score for complexity when using \SEE{} is different when using \gls{vscode}: $A^c_S \neq A^c_V$
 		            \end{itemize}
 		      \item We call the \gls{asq} score for \emph{effort}\footnote{
 			            Again, a higher score indicates less required effort.
 		            } $A^e_S$ for \SEE{} and $A^e_V$ for \gls{vscode}.
 		            \begin{itemize}
 			            \item \emph{Null hypothesis} $H_{e_0}$:
-			                  The \gls{asq} score for effort when using \SEE{} is the same as when using \gls{vscode}.
+			                  The \gls{asq} score for effort when using \SEE{} is the same as when using \gls{vscode}: $A^e_S = A^e_V$
 			            \item \emph{Alternative hypothesis} $H_{e_1}$:
-			                  The \gls{asq} score for effort when using \SEE{} is different when using \gls{vscode}.
+			                  The \gls{asq} score for effort when using \SEE{} is different when using \gls{vscode}: $A^e_S \neq A^e_V$
 		            \end{itemize}
 	      \end{enumerate}
 \end{enumerate}
 
-We will use a significance level of $\alpha = 0.05$ for \fxwarning*{Except maybe effects!}{all} of our tests.
+We will use a significance level of $\alpha = 0.05$ for \fxwarning*{Except maybe effects!}{all} of our tests, though this will get halved to $0.025$ since we are using two-sided tests.
 
 \section{Design}\label{sec:design}
+Since all the hypotheses we just listed compare \SEE{} to \gls{vscode}, the general form of our study should be to have participants solve representative software engineering related tasks, with one group solving tasks in \SEE{} and the other using \gls{vscode}.
+There are going to be six tasks, which we will go over in \cref{subsec:tasks}.
+To maximize the number of collected datapoints, we will have each group use both tools.
+Specifically, group $\alpha$ will use \SEE{} for the first three tasks and \gls{vscode} for the last three tasks, while this will be switched around for group $\beta$.
+We will then have $\frac{n}{2}$ datapoints per tool for each task, which we can then compare against each other to test for significant differences.
+This flow is illustrated in \cref{fig:taskflow}.
+
+We have several constraints for our study.
+It should be possible to partake in the study online and asynchronously (\ie, without me needing to be present) to facilitate participation and reduce the \gls{hawthorne} (though this will not completely eliminate it~\cite[\eg][]{evans2010}).
+To not overexert participants and thus confound any results, the study should also be of a reasonable length (ideally, not longer than an hour).
+Finally, we cannot assume famility with either \SEE{} or \gls{vscode}, so we need to explain the core concepts of each and verify that the participant understood them before starting the actual tasks.
+
+Additionally, we would like to follow the "wish list" compiled by \textcite[122--124]{wettel2011}:
+\newcommand{\cyes}{\textcolor{ForestGreen}{\textbf{[\ding{51}]}}}
+\newcommand{\chmm}{\textcolor{BurntOrange}{\textbf{[\textit{?}]}}}
+\newcommand{\cno}{\textcolor{Maroon}{\textbf{[\ding{55}]}}}
+\begin{enumerate}
+	\item \textbf{\enquote{Avoid comparing using a technique against not using it.}}
+	      We are comparing \gls{vscode} against \SEE{}. \cyes
+	\item \textbf{\enquote{Involve participants from industry.}}
+	      Roughly half of our participants have reported working on bigger software projects (either within a company or as open-source contributions) for at least 3 years. \cyes
+	\item \textbf{\enquote{Provide a not-so-short tutorial of the experimental tool to the participants.}}
+	      We do give a tutorial of each tool to participants, but it only covers the essentials required for the tasks (since we do not want to drag out the participation longer than necessary.) \chmm
+	\item \textbf{\enquote{Avoid, whenever possible, to give the tutorial right before the test.}}
+	      Unfortunately, we cannot really avoid this.
+	      Wettel suggests performing the training a few days before the study, but this is intractable for this study. \cno
+	\item \textbf{\enquote{Use the tutorial to cover both the research behind the approach and the implementation.}}
+	      The motivation here would be to provide another incentive to participate out of interest in furthering the research.
+	      We have left out the research both to keep the participation short and to avoid biasing participants (\eg, by claiming beforehand that developers find \glspl{city} much nicer to use than \glspl{ide}). \cno
+	\item \textbf{\enquote{Find a set of relevant tasks.}}
+	      Our tasks are representative of real-world activities (see \cref{subsec:tasks}), but some may turn out to have been too easy, as we will see in the analysis in \cref{subsec:correct}. \chmm
+	\item \textbf{\enquote{Choose real object systems that are relevant for the tasks.}}
+	      We have chosen \emph{SpotBugs} (3.5k GitHub stars, $\approx$ 216 k\gls{loc}) and \emph{JabRef} (3.6k GitHub stars, $\approx$ 179 k\gls{loc}). \cyes
+	\item \textbf{\enquote{Include more than one subject system in the [experiment].}}
+	      See first item. \cyes
+	\item \textbf{\enquote{Provide the same data to all participants.}}
+	      The tasks for both participants (and accompanying data) are identical, and \gls{vscode} participants get access to a table of metrics so that the same data is present. \cyes
+	\item \textbf{\enquote{Limit the amount of time allowed for solving each task.}}
+	      Integrating a limit like this into the tool we used for the questionnaire would have proved difficult, but the tasks were comparatively simple and participants were aware that their completion time was measured, so we should hopefully have avoided the effects Wettel references here. \chmm
+	\item \textbf{\enquote{Provide all the details needed to make the experiment replicable.}}
+	      I have included (pseudonymized) participation data, the full definition of the questionnaire, and the analysis script which performed data cleanup and statistical tests. \cyes
+	      \fxwarning{Link to appendix here.}
+	\item \textbf{\enquote{Report results on individual tasks.}}
+	      We are going over each task individually when reporting results in \cref{sec:results}. \cyes
+	\item \textbf{\enquote{Take into account the possible wide range of experience level of the participants.}}
+	      We are taking a detailed look at the effects of experience in \cref{subsec:experience}. \cyes
+\end{enumerate}
+
+In total, we were able to fulfill 7/13 items on the wish list, with 3/13 being questionably/partially fulfilled and 2/12 not being implemented, with the reasoning for the latter two being that it would otherwise lengthen the participation time and may strain participants.
+
+\subsection{Questionnaires}\label{subsec:question}
+There are three questionnaires that we are going to use for this study:
+A demographic questionnaire, a \gls{posttask} questionnaire and a \gls{poststudy} questionnaire, where we will use the latter two to get an estimation on usability.
+We are also going to take a look at \emph{KoboToolbox}, the tool we are using to asynchronously conduct our survey.
+An important general consideration is that we will offer our study in both English and German, so any questionnaire we choose (which is usually given in English) needs to have a validated German translation to make results comparable.
+This section partially mirrors similar considerations from my bachelor's thesis, which the interested reader can peruse for more details~\cite{galperin2021}.
+For a comprehensive overview and evaluation of other \gls{poststudy} and \gls{posttask} questionnaires covered neither here nor in my bachelor's thesis, see the review by \textcite{hodrien2021}.
+
+\paragraph{Demographics}
+We ask each participant various demographic questions to (among other reasons) address the threat to validity of selection bias:
+While participants are randomly assigned into groups $\alpha$ and $\beta$, it is of course possible due to our moderate sample size of $n = \participants$ that there is a significant difference in any independent variable.
+A difference like this would then matter if it acts as a confounder for one of the dependent variables---for example, age or experience can have a sizable impact on \gls{sus} scores~\cites[585]{bangor2008}{mclellan2012}.
+
+To catch this, we ask for some properties that could be relevant, namely
+gender, age, programming experience, professional programming experience, knowledge of \SEE{}, knowledge of \gls{vscode}, knowledge of JabRef, knowledge of SpotBugs, and experience with 3D video games.
+We ask the last question since \SEE{} uses some typical video game paradigms for its controls, so a familiarity with such controls may make \SEE{} more intuitive to use for those people.
+Additionally, we ask if the participant has ever used \glspl{ide} before, and if they are able to use the Java programming language.
+If the answer to either of those questions is "no," we display a warning telling the participant that this study is not intended for them and may be too difficult (as both JabRef and SpotBugs are Java projects).
+We will later filter participations with "no" answers out of our dataset to avoid these problems.
+
+\paragraph{\Gls{posttask}: \gls{asq}}
+This questionnaire will be filled out by the participant after each task---since there are six tasks, this will be six times total.
+For this reason, we should keep this one short, that is, no more than three questions long, which eliminates questionnaires such as NASA's \gls{tlx}.
+There are also the rather unconventional \gls{ume} (which we exclude since it often confuses its users~\cite[1607--1608]{sauro2009b}) or \gls{smeq} (which we exclude because this would be hard to implement in our online questionnaire).
+Instead, we choose the \emph{\glsentrylong{asq}}, which consists of three statements for which users give answers on a \gls{likert}:
+\begin{enumerate}
+	\item \enquote{Overall, I am satisfied with the ease of completing the tasks in this scenario.}
+	\item \enquote{Overall, I am satisfied with the amount of time it took to complete the tasks in this scenario.}
+	\item \enquote{Overall, I am satisfied with the support information (on-line help, messages, documentation) when completing the tasks.}
+\end{enumerate}
+
+We exclude the last question since we neither offer nor want to measure usage of such support information.
+However, the rest is ideal for our case:
+The \gls{asq} is short, easy to understand, and distinguishes between cognitive and temporal ease---we will call "cognitive ease" \emph{complexity} and "temporal ease" \emph{effort} (as in \cref{subsec:hypotheses}).
+The translation by \textcite[32]{roegele2020} will serve as the German version.
+
+\paragraph{\Gls{poststudy}: \gls{sus}}
+We will present this questionnaire once after the \SEE{} section and once after the \gls{vscode} section, and will use it to collect a general usability score of each system.
+Since the questionnaire is filled out twice, we set an upper limit of twenty questions.
+This eliminates both the \gls{sumi} and \gls{quis} from consideration.
+Because we need a validated German translation, we can also strike out the English-only \gls{pssuq} as an option.
+
+This leaves the \emph{\glsentrylong{sus}} as a fitting option:
+It has a validated German translation~\cite{reinhardt2015}, is the most used \gls{poststudy} questionnaire for this purpose~\cites[1615]{sauro2009}[577]{lewis2018}, and is very well-suited for comparing two systems or interfaces~\cites[195]{peres2013}[590--591]{bangor2008}.
+It consists of ten \gls{likert} questions which alternate between positive and negative aspects of the system and returns a score between 0 and 100, representing the system's usability~\cite{brooke1996}.
+Existing measured \gls{sus} scores for \SEE{} are given in \cref{fig:seesus}.
+
+\paragraph{KoboToolbox}
+The tool with which we manage the survey needs to handle our requirements for it to be feasible to conduct it asynchronously.
+Specifically, we need to:
+\begin{itemize}
+	\item reliably measure the time each task takes to solve,
+	\item provide both an English and a German version of the questionnaire,
+	\item ask questions with numerical, text-based, selection, and \gls{likert}-based input, and
+	\item conditionally show fields or bar the user from continuing (\eg, until the tutorial question is answered correctly) depending on existing input.
+\end{itemize}
+Among the tools that can handle this for free, \textit{KoboToolbox}\footnote{
+	\web{https://www.kobotoolbox.org/}{2024-11-23}
+} seems like the most mature, robust option.
+It accepts form based on the \gls{xlsform} specification, which makes forms (relatively) easy to create with a spreadsheet editor.
+
+Before each task, we tell the user beforehand that their time will be measured as soon as they advance to the next page.
+Then, we keep a timestamp for each editable field in the task, including a checkbox the user can check to indicate they have finished the task.
+Using the set of those timestamps $T$ and the timestamp $t_0$ of when they started the task, the time for the task can then be calculated as $\max T - t_0$.
+This also ensures we catch "cheating" in the form of participants editing fields after they have indicated they are finished with the task.
+The survey in \gls{xlsform} is linked in \fxwarning*{Link to questionnaire in appendix}{TODO}, and a screenshot of the starting page is shown in \cref{fig:kobo}.
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[width=0.95\textwidth]{Kobo.png}
+	\end{center}
+	\caption{Starting page of the survey built with KoboToolbox.}\label{fig:kobo}
+\end{figure}
+
+
+To equally partition participants into two groups, we create two versions of the survey, one for group $\alpha$ and one for group $\beta$.
+We then access KoboToolbox's REST API to redirect the participants to version $\alpha$ or $\beta$---the algorithm we are using is given in \cref{alg:redirect}, or can alternatively be seen in \fxwarning*{Link to script in appendix}{TODO}.
+Inviting others to participate then becomes as simple as passing the link to the redirection script around\footnote{
+	\url{https://falko.de/master-evaluation}, but this link may not stay up forever.
+}.
+
+\begin{algorithm}
+	\tikzexternaldisable
+	\caption{How participants are redirected to the two versions of the survey.}\label{alg:redirect}
+	\begin{algorithmic}[1]
+		\small
+		\Require{Participant ID $p$ retrieved from cookie in request, or $\varnothing$ if it does not exist.}
+		\Ensure{Tuple consisting of the participation ID to be set as a cookie and a survey link.}
+		\LComment{Global state: $P$ is an initially empty mapping from IDs to links, $i$ is initially zero.}
+		\If{$p \notin P$}
+		\If{$p = \varnothing$}
+		\State $p = \Call{NewRandomID}{\null}$
+		\EndIf
+		\State $n_{\alpha}, n_{\beta} \gets \Call{GetKoboParticipations}{\null}$
+		\If{$n_{\alpha} = \varnothing \lor n_{\beta} = \varnothing$}
+		\Comment{API request failed, so just alternate using index $i$.}
+		\If{$i = 0$}
+		\State $P(p) \gets \alpha$
+		\Else
+		\State $P(p) \gets \beta$
+		\EndIf
+		\State $i \gets (i + 1) \bmod 2$
+		\ElsIf{$n_{\alpha} \leq n_{\beta}$}
+		\State $P(p) \gets \alpha$
+		\Else
+		\State $P(p) \gets \beta$
+		\EndIf
+		\EndIf
+		\State \Return $(p, P(p))$
+	\end{algorithmic}
+	\tikzexternalenable
+\end{algorithm}
+
+\subsection{Tasks}\label{subsec:tasks}
 \fxfatal{}
 
-\fxnote{Refer back to Wettel's wish list}
+% TODO: Prepared builds of SEE and VSCode
 
-\subsection{Questionnaire}\label{subsec:question}
+\begin{figure}
+	\begin{center}
+		\begin{tikzpicture}[
+			box/.style={draw, rounded corners, text width=6cm, align=center, minimum height=2cm},
+			scalebox/.style={draw, rounded corners, text width=4.5cm, align=center, minimum height=1cm},
+			heading/.style={font=\Large\bfseries\boldmath},
+			nextarrow/.style={draw=Maroon, line width=0.5mm,-{Latex[length=3mm]}}
+			]
+
+			\newcommand{\taskbox}[5][]{\node[box,#1] (#2) at (#3) {{\large\bfseries\boldmath \underline{#4}}\\\vspace{1.5mm}\small#5}}
+
+			% Left title box.
+			\node[draw, thick, minimum width=7cm, minimum height=14.5cm] (left) at (0,0) {};
+			\node[heading,align=center] at (0,6.4) {Group $\alpha$: SEE\\Group $\beta$: Dashboard};
+
+			% Boxes for tasks to the left.
+			\node[scalebox] (D) at (0, 4.4) {\itshape\color{Gray!50!Black}Demographics};
+			\taskbox{A1}{$(D) + (0, -2.3)$}{Task $A_1$}{Find the three classes with the highest number of methods in SpotBugs.};
+			\taskbox{B1}{$(A1) + (0, -3)$}{Task $B_1$}{Identify the convention used by the developers to organize the unit tests in SpotBugs.};
+			\taskbox{C1}{$(B1) + (0, -3)$}{Task $C_1$}{Find the base type for class \texttt{OptionalReturnNull} in SpotBugs.};
+			\node[scalebox] (S1) at ($(C1) + (0,-2.3)$) {\itshape\large\glsentrylong{sus}};
+
+			% Right title box.
+			\node[draw, thick, minimum width=7cm, minimum height=14.5cm] (right) at (8,0) {};
+			\node[heading,align=center] at (8,6.4) {Group $\alpha$: Dashboard\\Group $\beta$: SEE};
+
+			% Boxes for tasks to the right.
+			\taskbox[anchor=north]{A2}{8, |- D.north}{Task $A_2$}{Find the three classes with the highest number of methods in JabRef.};
+			\taskbox{B2}{$(A2) + (0, -3)$}{Task $B_2$}{Identify the convention used by the developers to organize the unit tests in JabRef.};
+			\taskbox{C2}{$(B2) + (0, -3)$}{Task $C_2$}{Find the base type for class \texttt{GenderEditorViewModel} in JabRef.};
+			\node[scalebox] (S2) at ($(C2) + (0, -2.3)$) {\itshape\large\glsentrylong{sus}};
+			\node[scalebox] (C) at (S2 |-, |- S1) {\itshape\color{Gray!50!Black}Final comments};
+
+			% Lines below heading at top
+			\node[inner sep=0pt] at ($(left.north east)!.5!(left.north west) + (0,-1.8)$) {\pgfornament[width=7cm]{88}} ;
+			\node[inner sep=0pt] at ($(right.north east)!.5!(right.north west) + (0,-1.8)$) {\pgfornament[width=7cm]{88}} ;
+
+			% And the arrows.
+			\draw[nextarrow] (D) -- (A1);
+			\draw[nextarrow] (A1) -- (B1);
+			\draw[nextarrow] (B1) -- (C1);
+			\draw[nextarrow] (C1) -- (S1);
+			\draw[nextarrow] (A2) -- (B2);
+			\draw[nextarrow] (B2) -- (C2);
+			\draw[nextarrow] (C2) -- (S2);
+			\draw[nextarrow] (S2) -- (C);
+			\draw[nextarrow] (S1.east) to[out=0,in=180] (A2.west);
+		\end{tikzpicture}
+	\end{center}
+	\caption{Flow of the tasks the participants worked on.
+		$A^c$ and $A^e$ were gathered after each task.
+	}\label{fig:taskflow}
+\end{figure}
+
+
+\section{Results}\label{sec:results}
 \fxfatal{}
 
-\subsection{Tasks}
-\fxfatal{}
+% FIXME: Before you do anything: Chance of alpha error >50% after 14 checks, so fix this first!
 
-\section{Results}
-\fxfatal{}
+% TODO: Mention three participating groups (students, SEE developers, Axivion).
 
 \subsection{Demographics}
 \fxfatal{}
@@ -304,7 +549,7 @@ We will use a significance level of $\alpha = 0.05$ for \fxwarning*{Except maybe
 % 	]{analysis/dat/sus.dat}
 % \end{tikzpicture}
 
-\subsection{Correctness}
+\subsection{Correctness}\label{subsec:correct}
 \fxfatal{}
 
 \subsection{Time}
@@ -313,7 +558,10 @@ We will use a significance level of $\alpha = 0.05$ for \fxwarning*{Except maybe
 \subsection{Usability}
 \fxfatal{}
 
-\fxfatal{Also a section on the effect of experience (and others)}
+% TODO: SUS: Measure learnability and usability (see galperin2021)
+
+\subsection{The Effects of Experience}\label{subsec:experience}
+\fxfatal{}
 
 \subsection{Comments}
 \fxfatal{}

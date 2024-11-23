@@ -1,13 +1,15 @@
+import random
+
 import polars as pl
 from colorama import Back, Fore, Style
-from KDEpy.bw_selection import improved_sheather_jones
+from KDEpy.bw_selection import improved_sheather_jones, silvermans_rule
 
 P_VALUE = 0.05
 
 
 def print_statistic(name, res, onlysig=False):
     text = ""
-    sig = res.pvalue < P_VALUE
+    sig = res.pvalue < P_VALUE / 2
     if sig:
         text += f"{Fore.RED}!!! SIGNIFICANT !!!{Fore.RESET} "
     text += f"{name}: {res.statistic} (p = {Fore.RED if sig else Fore.RESET}{res.pvalue}{Fore.RESET})"
@@ -29,10 +31,12 @@ def write_dat(name: str, df: pl.DataFrame):
     )
     print(f"\n{Style.BRIGHT}Optimal bandwidth (ISJ) for {name}.dat:{Style.RESET_ALL}")
     for col in df.iter_columns():
+        data = col.to_numpy().reshape(-1, 1).astype(float)
         try:
-            bw = improved_sheather_jones(col.to_numpy().reshape(-1, 1).astype(float))
+            bw = improved_sheather_jones(data)
             print(f"{col.name}: {Fore.BLUE}{bw}{Fore.RESET}")
         except ValueError:
-            print(f"No convergence for {col.name}.")
+            bw = silvermans_rule(data)
+            print(f"{col.name}: {Fore.CYAN}{bw}{Fore.RESET} (SV)")
     print()
     df.write_csv(f"dat/{name}.dat", separator="\t")

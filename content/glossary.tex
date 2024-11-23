@@ -34,7 +34,7 @@
 }
 
 \newcommand*{\@starsymfn}[1]{%
-	$\ifcase#1 \or*\or**\or\dagger\or\ddagger\or\S\or\|%
+	$\ifcase#1 \or*\or**\or\dagger\or\ddagger\or\mathsection\or\mathparagraph\or\|%
 		\else\@ctrerr\fi$%
 }
 \makeatother
@@ -132,11 +132,23 @@
 
 \newacronym[description={\fc{A} protocol which specifies how language servers can provide language-specific features to IDEs, such as hover information, go to definition, or diagnostics.}]{lsp}{LSP}{Language Server Protocol}
 
+\newacronym[description={\fc{A} questionnaire that measures usability in sixteen questions across the three factors \emph{usefulness}, \emph{information quality}, and \emph{interface quality}.~\cite{lewis1992,lewis2002}}]{pssuq}{PSSUQ}{Post-Study System Usability Questionnaire}
+
+\newacronym[description={\fc{A} \gls{poststudy} questionnaire measuring usability across 41 questions in its short version and 122 questions in its long version.~\cite{chin1988}}]{quis}{QUIS}{Questionnaire for User Interaction Satisfaction}
+
 \newacronym[description={\fc{A}n interactive software visualization tool using the code city metaphor in 3D, developed in the Unity game engine at the University of Bremen.}]{see}{SEE}{Software Engineering Experience}
+
+\newacronym[description={A single question intended to estimate usability which uses a scale with 150 options.~\cite[53\psqq]{zijlstra1985a}}]{smeq}{SMEQ}{Subjective Mental Effort Question}
+
+\newacronym[description={\fc{A} 50-item questionnaire measuring usability on the axes of efficiency, affect, help and support, steerability, and learnability.~\cite{kirakowski1994}}]{sumi}{SUMI}{Software Usability Measurement Inventory}
 
 \newacronym[description={A simple questionnaire by \textcite{brooke1996} with ten Likert-scale questions that are supposed to measure the usability of a system.}]{sus}{SUS}{System Usability Scale}
 
+\newacronym[description={A post-task questionnaire developed by NASA consisting of six questions asking about mental, physical, and temporal demand, as well as about performance, effort, and frustration level.~\cite[169]{hart1988}}]{tlx}{TLX}{Task Load IndeX}
+
 \newacronym{ui}{UI}{User Interface}
+
+\newacronym[description={A post-task questionnaire which does not depend on any pre-defined scale. Instead, numbers given by each user are put in relation to each other, with the resulting ratios serving as the usability measure.~\cite{mcgee2003}}]{ume}{UME}{Usability Magnitude Estimation}
 
 \newacronym[description={A string that uniquely identifies some resource.}]{uri}{URI}{Uniform Resource Identifier}
 
@@ -162,6 +174,9 @@ description={\fc{A} development tool, such as an \gls{ide}, that supports \gls{l
 \newglossaryentry{window}{name=\fc{c}ode {w}indow, text=code window,
 description={\fc{A} source code viewer in \SEE{} which supports very basic \gls{ide}-like functionality.}}
 
+\newglossaryentry{likert}{name=likert scale,
+	description={\fc{A} psychometric scale in which users indicate their agreement on a linear scale from "strongly agree" to "strongly disagree"~\cite{likert1932}.}}
+
 \newglossaryentry{kdtree}{name={$k$-d tree},
 	description={\fc{A} data structure (using a binary tree as a basis) with which certain spatial data in $k$ dimensions can be efficiently stored and retrieved.}}
 
@@ -176,6 +191,11 @@ description={\fc{A} source code viewer in \SEE{} which supports very basic \gls{
 
 \newglossaryentry{editor}{name={U}nity Editor,
 	description={\fc{T}he main \gls{ui} of the Unity game engine, in which scenes can be set up, components can be configured, the game itself can be run, etc. Note that it is only used for development purposes, and hence not included within generated builds of a game.}}
+
+\newglossaryentry{hawthorne}{name=Hawthorne effect,
+	description={\fc{T}he effect through which participants in a study behave differently when under observation by a researcher.
+			The name is based on experiments conducted at the Hawthorne Plant in the 1930's~\cite{hawthorne1939}, although the effects observed have later turned out to be likely unrelated to the observation~\cite{jones1992}.
+		}}
 
 \newglossaryentry{poststudy}{name=post-study,
 	description={\fc{A} questionnaire for participants which is answered at the end of the study, after every task has been completed.}}
@@ -201,6 +221,10 @@ description={\fc{A} source code viewer in \SEE{} which supports very basic \gls{
 			The black/white data points are randomly "jittered" along the $x$-axis to make them more differentiable from one another.
 			A bigger, green point marks the average of the dataset.
 		}}
+
+\newglossaryentry{xlsform}{name=XLSForm,
+	description={\fc{A} form standard based on human-readable Excel spreadsheets, which allows for complex forms (\eg, conditionals, skip logic) to be built~\cite{marder2024}.
+			The forms can then be converted into the open ODK XForm format, which is compatible with a number of data collection tools~\cite{odkcommunity2019}.}}
 
 %%% DIGITAL HERE %%%
 \newglossaryentry{seezip}{name={\tt{SEE.zip}}, type=file,

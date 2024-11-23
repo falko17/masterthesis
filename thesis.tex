@@ -55,11 +55,12 @@
 \usepackage{enumitem}
 \usepackage{multirow}
 \usepackage{pgfplots}
+\usepackage{pgfornament}
 \usepackage[perpage]{manyfoot}
 
 \tcbuselibrary{skins,minted,breakable}
 
-\usetikzlibrary{shadows,external}
+\usetikzlibrary{shadows,external,arrows.meta}
 \tikzexternalize[mode=list and make]
 
 \PassOptionsToClass{listof=numbered}{scrreprt}
@@ -82,6 +83,8 @@
 \usepackage[scaled=1.05]{zlmtt}
 \usepackage[type1]{cabin}
 \usepackage[utopia,vvarbb]{newtxmath}
+\usepackage{bm}
+\usepackage{pifont}
 
 % FIXME: Using my fork here until the PR regarding jitter is merged.
 \usepackage{stringstrings}
@@ -109,6 +112,9 @@
 \newcommand{\code}[1]{\fxerror{Use lstinline here!}}
 \newcommand{\web}[2]{\url{#1} \textit{(last access: #2)}}
 \newcommand{\tt}[1]{\monott{#1}}
+
+%\newcommand{\follows}{\tikzexternaldisable\pgfornament[scale=0.5,ydelta=-1mm]{155}\tikzexternalenable}
+\newcommand{\follows}{\raisebox{-0.7mm}{\scalebox{1.4}{\textcolor{Maroon}{\ding{43}}}}}
 
 \newcommand{\keystroke}[1]{%
   % Externalization here causes the shadows to be cut off.
@@ -280,6 +286,12 @@
 
 \graphicspath{{figures/}}
 
+\algrenewcommand\alglinenumber[1]{{\footnotesize\textcolor{Gray}{\tt{#1}}}}
+\algrenewcommand\algorithmicrequire{\textbf{Input: }}
+\algrenewcommand\algorithmicensure{\textbf{Output: }}
+
+\setlist[description]{leftmargin=\widthof{\follows{}\enspace}}
+
 % Allow using " for quotes.
 \MakeOuterQuote{"}
  
@@ -323,7 +335,8 @@
 \renewcommand{\thesischapterfont}{\color{ctcolorblack}\nobreak\normalfont\Huge \cabin\selectfont}
 \renewcommand{\thesissectionfont}{\color{ctcolorsection}\nobreak\normalfont\LARGE \cabin}
 \renewcommand{\thesissubsectionfont}{\color{ctcolorsubsection}\nobreak\normalfont\Large \cabin}
-\renewcommand{\thesisparagraphfont}{\color{ctcolorparagraph}\nobreak\cabin\small\bfseries}
+\renewcommand{\thesisparagraphfont}{\color{ctcolorparagraph}\nobreak\scshape}
+%\renewcommand{\thesisparagraphfont}{\color{ctcolorparagraph}\nobreak\cabin\small\bfseries}
 
 \renewcommand{\ctfontfootertext}{%
     \color{ctcolorfootertitle}%

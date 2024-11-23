@@ -1,7 +1,3 @@
-\algrenewcommand\alglinenumber[1]{{\footnotesize\textcolor{Gray}{\tt{#1}}}}
-\algrenewcommand\algorithmicrequire{\textbf{Input: }}
-\algrenewcommand\algorithmicensure{\textbf{Output: }}
-
 \tikzexternaldisable
 
 \begin{algorithm}
@@ -13,7 +9,7 @@
 		\Require  {Family of \textsc{Lsp} functions provided by the \gls{ls}}, {set of documents $D$}
 		\Ensure {Graph $G$ representing the underlying software project}
 		\Statex
-		\State $V, E, a, s, t, \ell, C \gets \emptyset$ \Comment{Initialize empty graph components.}
+		\State $V, E, a, s, t, \ell, C \gets \varnothing$ \Comment{Initialize empty graph components.}
 		\label{alg:generate:begin}
 		\ForAll{$d \in D$}
 		\State \Call{LspOpenDocument}{$d$} \Comment{Document needs to be opened for all capabilities to work.}
@@ -85,7 +81,7 @@
 		\label{alg:generate:funcstart}
 		\Function{AddDocumentNode}{$d \in D$}
 		\State $v_d \gets$ \Call{NewNode}{\null}
-		\State $a' \gets \emptyset$
+		\State $a' \gets \varnothing$
 		\State $a'(v_d, \tt{Type}) \gets$ File
 		\State $a'(v_d, \tt{Source.Path}) \gets d$
 		\State $a'(v_d, \tt{Metric.LOC}) \gets |\Call{ReadLines}{d}|$ \Comment{\textsc{ReadLines} returns the set of lines in the file.}
@@ -98,7 +94,7 @@
 		\Statex
 		\Function{AddSymbolNode}{$x \in \mathcal{S}$}
 		\State $v \gets \Call{NewNode}{\null}$
-		\State $a' \gets \emptyset$
+		\State $a' \gets \varnothing$
 		\State $a'(v, \tt{Source.Name}) \gets x\tt{.name}$
 		\State $a'(v, \tt{Source.Path}) \gets d$
 		\State $a'(v, \tt{Type}) \gets x\tt{.kind}$
@@ -171,7 +167,7 @@
 		\State \Return $v$ \Comment{If so, just pick that one.}
 		\EndIf
 		\State $v_p \gets$ \Call{NewNode}{\null}
-		\State $a' \gets \emptyset$
+		\State $a' \gets \varnothing$
 		\State $a'(v_p, \tt{Type}) \gets$ Directory
 		\State $a'(v_p, \tt{Source.Path}) \gets p$
 		\State $V \gets V \cup \{v_p\}$

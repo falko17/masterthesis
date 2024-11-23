@@ -88,12 +88,11 @@ def check_demographics(sv, vs):
 
 
 def check_effects(sv, vs):
-    # TODO: Maybe, to avoid concerns of p-hacking, use p=0.01 here?
-    #
     # Check for effects of some IVs (experience, age, etc) on DVs.
     # MUST CHECK: programming, opensource, knowsee [sign. diff] and knowide, knowjava [important]
     print("\n=== EFFECTS ===")
 
+    # TODO: Aggregate along SEE/VS
     dv_categorical = [f"a{i}_c" for i in (2, 3, 5, 6)]
     dv_interval = (
         ["a1_c", "a4_c"]
@@ -182,41 +181,7 @@ def check_effects(sv, vs):
     # write_dat("corr-ktau", mat)
     mat_total = pl.concat([mat_total, mat])
     mat = mat.clear()
-    # - Point-biserial correlation coefficient (since we only have 2 categories) for Interval-Categorical
-    for key1, key2 in product(iv_interval, dv_categorical):
-        corr_sv = pointbiserialr(sv[key1], sv[key2])
-        corr_vs = pointbiserialr(vs[key1], vs[key2])
-        mat = pl.concat(
-            [
-                mat,
-                pl.DataFrame(
-                    {
-                        "IV": key1,
-                        "DV": key2 + "_sv",
-                        "Correlation": corr_sv.statistic,
-                        "p": corr_sv.pvalue,
-                    },
-                ),
-                pl.DataFrame(
-                    {
-                        "IV": key1,
-                        "DV": key2 + "_vs",
-                        "Correlation": corr_vs.statistic,
-                        "p": corr_vs.pvalue,
-                    },
-                ),
-            ]
-        )
-        # print_statistic(
-        #     f"{key1} x {key2} (SV)", , True
-        # )
-        # print_statistic(
-        #     f"{key1} x {key2} (VS)", pointbiserialr(vs[key1], vs[key2]), True
-        # )
-    # - Rank-biserial correlation coefficient for Ordinal-Categorical
-    # for key1, key2 in product(iv_ordinal, dv_categorical):
-    #     print_statistic(f"{key1} x {key2}", pointbiserialr(sv[key1], sv[key2]))
-    #     print_statistic(f"{key1} x {key2}", pointbiserialr(vs[key1], vs[key2]))
+
     mat_total = pl.concat([mat_total, mat])
 
     mat_total = mat_total.filter(pl.col("p").is_not_nan())
