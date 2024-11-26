@@ -20,7 +20,7 @@ As the algorithm for this method, we use \tt{KDEpy}~\cite{odland2018}, whose imp
 A drawback here is that this algorithm does not necessarily converge.
 In those cases, we fall back to using Silverman's rule of thumb~\cite{silverman1986}, the implementation of which is integrated into the library we use to draw these plots~\cite{callil-soares2024}.
 
-\section{Plan}  % TODO: Different title?
+\section{Plan}\label{sec:plan}
 Our main aim here is to answer our second research question that we defined in \cref{sec:goals}:
 \begin{displayquote}
 	Are \glspl{city} a suitable means to present \gls{lsp} information to developers as compared to \glspl{ide} + tables (on the dimensions of speed, accuracy, and usability)?
@@ -127,7 +127,7 @@ The study was later replicated by \textcite{romano2019} with a subset of tasks.
 
 Similarly, \textcite{mortara2024} supplied \gls{csv} files for \gls{ide} users in a comparison against \emph{VariCity}, although here, participants were allowed to choose whatever \gls{ide} they are most comfortable with.
 \textcite{mehra2020} gave participants who were using Eclipse an additional 2D graph tool when evaluating the augmented reality \textsc{XRaSE} \gls{city} visualization.
-On the other hand, the category of comparative user studies between \glspl{city} and \glspl{ide} without any other helper tools (which our own study will also fall into) includes ones by \textcite{khaloo2017,rohlfing2024,lennartkipka2020}.
+On the other hand, the category of comparative user studies between \glspl{city} and \glspl{ide} without any other helper tools includes ones by \textcite{khaloo2017,galperin2022,lennartkipka2020}.
 The results of their experiments, and all others cited here, are listed in the color-coded \cref{tab:compresults}.
 
 \colorlet{LightMaroon}{Maroon!30!white}
@@ -203,6 +203,7 @@ In \SEE{}, we could simply visualize that by encoding it as the size of each bui
 The table is hosted on Google Spreadsheets\footnote{
 	\web{https://docs.google.com/spreadsheets/d/1Z2AQDk2-XeVBB1kAtcpc18mFkPI5ZSsSz\_yOwS4pQ88}{2024-11-20} and \web{https://docs.google.com/spreadsheets/d/1erJZTwYtG-CQfZJPT-zt-chX\_VHL9jLrVfWAWZMFvEo}{2024-11-20}.
 } and can be sorted by any column as well as searched.
+The script with which the metrics were extracted is attached as \fxwarning*{Attach script in appendix.}{TODO}.
 
 \subsection{Hypotheses}\label{subsec:hypotheses}
 
@@ -268,7 +269,7 @@ We will use a significance level of $\alpha = 0.05$ for \fxwarning*{Except maybe
 
 \section{Design}\label{sec:design}
 Since all the hypotheses we just listed compare \SEE{} to \gls{vscode}, the general form of our study should be to have participants solve representative software engineering related tasks, with one group solving tasks in \SEE{} and the other using \gls{vscode}.
-There are going to be six tasks, which we will go over in \cref{subsec:tasks}.
+There are going to be six tasks, each taking no longer than ten minutes, which we will go over in \cref{subsec:tasks}.
 To maximize the number of collected datapoints, we will have each group use both tools.
 Specifically, group $\alpha$ will use \SEE{} for the first three tasks and \gls{vscode} for the last three tasks, while this will be switched around for group $\beta$.
 We will then have $\frac{n}{2}$ datapoints per tool for each task, which we can then compare against each other to test for significant differences.
@@ -276,7 +277,7 @@ This flow is illustrated in \cref{fig:taskflow}.
 
 We have several constraints for our study.
 It should be possible to partake in the study online and asynchronously (\ie, without me needing to be present) to facilitate participation and reduce the \gls{hawthorne} (though this will not completely eliminate it~\cite[\eg][]{evans2010}).
-To not overexert participants and thus confound any results, the study should also be of a reasonable length (ideally, not longer than an hour).
+To not overexert participants and thus confound any results, the study should also be of a reasonable length---ideally, not longer than an hour (hence the number of six tasks).
 Finally, we cannot assume famility with either \SEE{} or \gls{vscode}, so we need to explain the core concepts of each and verify that the participant understood them before starting the actual tasks.
 
 Additionally, we would like to follow the "wish list" compiled by \textcite[122--124]{wettel2011}:
@@ -431,9 +432,52 @@ Inviting others to participate then becomes as simple as passing the link to the
 \end{algorithm}
 
 \subsection{Tasks}\label{subsec:tasks}
-\fxfatal{}
+As explained in \cref{sec:plan}, we cannot feasibly evaluate most implemented \gls{lsp} \glspl{capability} except for the generation of the \gls{city} itself.
+This means we are actually comparing a \gls{city} against an \gls{ide}, with \gls{lsp} only playing the role of providing us with those \glspl{city}, for which there are a number of existing experiments that we went over in \cref{subsec:research}.
+Thus, we should base our own study design on the existing literature established in that section.
+Specifically, out of the similar studies collected in \cref{tab:compresults}, the study by \textcites{wettel2011} (replicated by \textcite{romano2019}) seems most fitting for us:
+It compares a Desktop \gls{city} implementation against a traditional \gls{ide} along with providing \gls{csv} metrics to make the comparison fair.
+In addition, it provides a great number of details, including detailed task definitions, and a wish list which we went over at the beginning of \cref{sec:design}.
 
-% TODO: Prepared builds of SEE and VSCode
+Wettel uses two kinds of tasks~\cite[128--130]{wettel2011}:
+Those concerened with program comprehension and those concerned with design quality assessment.
+Of these, the latter requires deeper software engineering knowledge that may not be present in all participants, since a large proportion of them are still going to be students.
+Thus, we will focus on tasks from the first group:
+\begin{enumerate}
+	\item \enquote{Locate all the unit test classes of the system and identify the convention (or lack of convention) used by the system’s developers to organize the unit tests.}
+	      \begin{description}
+		      \item[\follows{}] This task seems like a nice fit to realistically evaluate usage of both tools, so we include it.
+		            We will call it \textbf{task $\bm{B}$}.
+	      \end{description}
+	\item \enquote{Look for the term $T$ in the names of the classes and their attributes and methods, and describe the spread of these classes in the system.}
+	      \begin{description}
+		      \item[\follows{}] The concept of "spread" would take time to properly introduce and may be misunderstood by some participants, so we exclude this task.
+	      \end{description}
+	\item \enquote{Evaluate the change impact of class $C$ defined in package $P$, by considering its caller classes. The assessment is done in terms of both intensity and dispersion.}
+	      \begin{description}
+		      \item[\follows{}] This seems like a complex task that takes time both to properly understand it and then also to execute it, so we exclude it.
+	      \end{description}
+	\item \enquote{Find the three classes with the highest \gls{nom} in the system.}
+	      \begin{description}
+		      \item[\follows{}] This task also seems simple to understand and probably will not take too long, so we include it.
+		            We will call it \textbf{task $\bm{A}$}.
+	      \end{description}
+\end{enumerate}
+
+Note, however, that none of the tasks we selected above test any edge-related behavior, so we will add one task of our own.
+This task will be \enquote{Find the \gls{base} for class $C$ in the system.}
+Its drawback is that it requires a short explanation of \glspl{base} before the task, but its upsides are that it is both a realistic task and additionally forces participants to have more than a cursory interaction with the edges (specifically, the \tt{Extend} edges\footnote{
+	We should also note that the \glspl{city} for this study \emph{only} contain \tt{Extend} edges---otherwise, there are too many edges for \SEE{} to handle in a performant manner.
+}) without having any unfair disadvantage in \gls{vscode}, where participants can navigate up the inheritance tree by repeatedly \keystroke{Ctrl}-clicking on the superclass.
+
+Now we only need to choose a fitting $C$ for both JabRef and SpotBugs, our two object systems.
+To make sure the task is not too easy, we choose the class which is deepest in the inheritance tree for both system.
+For JabRef, this is \tt{GenderEditorViewModel} (five levels deep), while for SpotBugs, this is \tt{OptionalReturnNull} (seven levels deep).
+This way, we can also evaluate the transitive edge animations we added in \fxwarning*{Where?}{some section}.
+
+We should also mention that, for task $B$, like Wettel, we give multiple choice options for the various kinds of conventions along with brief descriptions to make sure they are understood correctly.
+If one of the options is then chosen (\eg, \enquote{Centralized}), users have to give follow-up information (\eg, \enquote{What is the full name of the root package for test classes?}) to make sure the correct answer was not just guessed.
+A full visual overview of our study along with its tasks is given in \cref{fig:taskflow}.
 
 \begin{figure}
 	\begin{center}
@@ -495,7 +539,13 @@ Inviting others to participate then becomes as simple as passing the link to the
 
 % FIXME: Before you do anything: Chance of alpha error >50% after 14 checks, so fix this first!
 
+% TODO: Prepared builds of SEE and VSCode
+
 % TODO: Mention three participating groups (students, SEE developers, Axivion).
+
+% TODO: Pilot study, participants I got from where
+%
+% TODO: In Appendix, give answer key.
 
 \subsection{Demographics}
 \fxfatal{}
