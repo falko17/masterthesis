@@ -76,7 +76,8 @@ I have collected the existing scores of those studies in a \gls{violin} in \cref
 				ymin=55,ymax=95,
 				xticklabel style={yshift={-2cm}},
 				ylabel={SUS},
-				ymajorgrids=true
+				ymajorgrids=true,
+				name=violin
 			}
 
 			\violinplot[%
@@ -102,16 +103,7 @@ I have collected the existing scores of those studies in a \gls{violin} in \cref
 
 			\node(xlabel) at ($(violin.south) + (0,-0.5)$) {\small \textcolor{Gray!50!Black}{SEE}};
 
-			\node[shift={(0.44,-0.47)}](CNW) at (violin.north west) {\pgfornament[color=Gray,width=1cm]{41}};
-			\node[shift={(-0.44,-0.47)}](CNE) at (violin.north east) {\pgfornament[color=Gray,width=1cm,symmetry=v]{41}};
-			\node[shift={(0.44,0.47)}](CSW) at (violin.south west) {\pgfornament[color=Gray,width=1cm,symmetry=h]{41}};
-			\node[shift={(-0.44,0.47)}](CSE) at (violin.south east) {\pgfornament[color=Gray,width=1cm,symmetry=c]{41}};
-
-
-			\draw[transform canvas={yshift=-1.8mm},line width=1pt,color=Gray] ([xshift=-1.5mm]CNW.north east) -- ([xshift=1.5mm]CNE.north west);
-			\draw[transform canvas={yshift=1.8mm},line width=1pt,color=Gray] ([xshift=-1.5mm]CSW.south east) -- ([xshift=1.5mm]CSE.south west);
-			\draw[transform canvas={xshift=2.05mm},line width=1pt,color=Gray] ([yshift=1.6mm]CNW.south west) -- ([yshift=-1.6mm]CSW.north west);
-			\draw[transform canvas={xshift=-2.05mm},line width=1pt,color=Gray] ([yshift=1.6mm]CNE.south east) -- ([yshift=-1.6mm]CSE.north east);
+			\plotornaments{violin}
 		\end{tikzpicture}
 	\end{center}
 	\caption{\Gls{sus} results for \SEE{} across sixteen studies~\cite{davidwagner2020, felixgaebler2021, galperin2021, hannesmasuch2020, kevindoehl2020, lennartkipka2020, maximilianwick2022, michelkrause2024, moritz, nicoweiser2021, robertbohnsack2020, rohlfing2024, rubensmidt2021, schramm2022, sulanabubakarov2021, yannisrohloff2021}.}\label{fig:seesus}
@@ -535,19 +527,101 @@ A full visual overview of our study along with its tasks is given in \cref{fig:t
 
 
 \section{Results}\label{sec:results}
-\fxfatal{}
+In this section, we can finally report on the results of the study.
+We will first go over the Ablauf %FIXME
+before taking a look at the results themselves.
+For the latter, we start by analyzing the answers to the demographics questionnaire, and then go on to interpret the dependent variables relevant to our hypotheses, namely, correctness, time, and usability, in that order.
+We will then also investigate the role of experience (and some other independent variables) and the influence it had on how tasks were handled.
+Finally, we handle the various comments that were left during the study.
+
+% TODO: Maybe mention alpha error stuff here already if relevant?
+%       As well as alpha=0.05. Don't call it alpha due to confusion with alphabeta. 
+%       And some stats stuff here maybe, such as why MWU.
+
+\subsection{Ablauf}
+\fxerror{Needs english title}
+Before we started with the actual study, we did a small-scale pilot study with two participants, one of them being this thesis's first reviewer Prof.\ Dr.\ Rainer Koschke.
+Through their valuable feedback, I was able to see some issues I had not noticed myself before starting the study, such as a few bugs in \SEE{}, confusion regarding the term \gls{base}, and errors unpacking the prepared compressed builds of \SEE{} and \gls{vscode}\footnote{
+	As a sidenote, using prepared builds also prevents any potential problems.
+	For example, some plugins of \gls{vscode} might otherwise interfere with our study.
+} when using Windows.
+I fixed the bugs in \SEE{}, added a tutorial for the \glspl{base} (along with a comprehension question), and added detailed instructions on how to correctly unpack the builds.
+% TODO: Spelling of ironed correct?
+There luckily were no other major issues in the actual study after these problems noticed in the pilot study have been ironed out.
+
+There have been \participants participants in total, though we had to exclude one participant from most analyses because he indicated he had no knowledge of Java.
+Participants were gained via convenience sampling, that is, I asked fellow students, colleague developers from Axivion, and other acquaintances who had software engineering experience to participate.
 
 % FIXME: Before you do anything: Chance of alpha error >50% after 14 checks, so fix this first!
 
-% TODO: Prepared builds of SEE and VSCode
-
-% TODO: Mention three participating groups (students, SEE developers, Axivion).
-
-% TODO: Pilot study, participants I got from where
-%
 % TODO: In Appendix, give answer key.
 
+\fxfatal{}
+
 \subsection{Demographics}
+
+First, we want to take a quick look at the demographics of our study.
+We also take this opportunity to find any significant differences between the two groups $\alpha$ and $\beta$, to make sure any results in the dependent variables later on are not just due to such differences.
+For this purpose, we define null hypotheses of the form \enquote{Variable $X$ is not different between groups $\alpha$ and $\beta$}, which we check with a two-sided \gls{mwu}, as we cannot assume normal distributions.
+This also allows us to compare merely ordinal data.
+
+All answers\footnote{
+	The question "Do you know SpotBugs?" has also been excluded from the bar charts, as only one participant answered "I've heard of it", with all others answering "no".
+} to the demographic questions can be viewed as bar charts in \cref{fig:demobars}.
+Two exceptions are the non-categorical variables, namely age and the total time it took participants to finish the study, which we are going to go over first.
+% TODO: Mention spotbugs excluded from bars
+
+
+\begin{figure}
+	\begin{center}
+		\violinab{age}{Age}{15}{45}{3.1029}{1}
+	\end{center}
+	\caption{Distribution of age between the two groups.}\label{fig:dat_age}
+\end{figure}
+
+\paragraph{Age}
+We have a median age of $\widetilde{A} = 29$ and an average age of $\overline{A} = 28.55$ in our sample, suggesting few outliers, which can be confirmed by looking at the violin plots in \cref{fig:dat_age}.
+
+\paragraph{Total Time}
+
+\begin{figure}
+	\begin{center}
+		\violinab{total-time}{Time (in hours)}{0}{5}{0.1171}{0.106}
+	\end{center}
+	\caption{Total duration of time in which each participant finished the study.\\
+		May include time in which participants took breaks.}\label{fig:dat_totaltime}
+\end{figure}
+
+\begin{figure}
+	\tikzexternaldisable
+	\begin{subfigure}[T]{0.55\textwidth}
+		\caption{"What is your highest school or university degree?"\label{fig:degreebar}}
+		\barplot{alphabeta-degree}{Fachabitur,Abitur,Bachelor's degree,Master's degree,Doctoral degree}{width=\textwidth, enlarge x limits={0.4}}
+	\end{subfigure}\hfill
+	\begin{subfigure}[T]{0.45\textwidth}
+		\caption{"How long have you been programming?"\label{fig:programmingbar}}
+		\barplot{alphabeta-programming}{Less than 3 years, 3–9 years, 10–19 years}{width=\textwidth, ylabel={},enlarge x limits={0.7}}
+	\end{subfigure}\\
+	\begin{subfigure}[T]{0.55\textwidth}
+		\caption{"Do you know \gls{see}?"\label{fig:knowseebar}}
+		\barplot{alphabeta-knowsee}{No, Heard of it, Used it before, Developed parts of it}{width=\textwidth, enlarge x limits={0.5}}
+	\end{subfigure}\hfill
+	\begin{subfigure}[T]{0.45\textwidth}
+		\caption{"Do you know \gls{vscode}?"\label{fig:knowvsbar}}
+		\barplot{alphabeta-knowvs}{No, Heard of it, Used it before, Is my main IDE}{width=\textwidth, ylabel={}, enlarge x limits={1}}
+	\end{subfigure}\\
+	\begin{subfigure}[T]{0.55\textwidth}
+		\caption{"Have you ever used the program JabRef?"\label{fig:knowjabrefbar}}
+		\barplot{alphabeta-knowjabref}{No, Heard of it, Used it before, Developed parts of it}{width=\textwidth, enlarge x limits={0.5}}
+	\end{subfigure}\hfill
+	\begin{subfigure}[T]{0.45\textwidth}
+		\caption{"Do you play 3D video games for desktops?"\label{fig:knowgamebar}}
+		\barplot{alphabeta-knowgame}{I never played, I barely play, I play a lot}{width=\textwidth, ylabel={}, enlarge x limits={0.7}}
+	\end{subfigure}
+	\tikzexternalenable
+	\caption{Number of respective answers to various demographic questions.}\label{fig:demobars}
+\end{figure}
+
 \fxfatal{}
 
 %

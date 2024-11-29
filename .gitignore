@@ -304,6 +304,9 @@ TSWLatexianTemp*
 *.ist
 *.fln
 *.glg-abr
+thesis-figure*
+thesis.figlist
+thesis.makefile
 
 # Not included for privacy reasons.
 analysis/SEE-VSCode.csv

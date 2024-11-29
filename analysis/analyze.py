@@ -12,6 +12,7 @@ from scipy.stats import fisher_exact, mannwhitneyu
 
 from src.cleanup import clean_data, set_correctness, sus_total
 from src.demographics import check_demographics, check_effects
+from src.dtypes import name_mappings
 from src.util import print_comments, print_statistic, write_dat
 
 
@@ -151,25 +152,39 @@ def write_data(sv, vs, both):
         "knowjava",
     ]
     write_dat(
-        "alphabeta",
-        pl.concat(
-            [
-                df.select(
-                    [
-                        pl.col(key).to_physical().alias(f"{key}{i+1}")
-                        for key in demo_keys
-                    ]
-                    + [
-                        (pl.col("total_time").dt.total_minutes() / 60).alias(
-                            f"total_time{i+1}"
-                        )
-                    ]
-                )
-                for i, df in enumerate([sv, vs])
-            ],
-            how="horizontal",
+        "alphabeta1",
+        sv.select(
+            [pl.col(key).to_physical() for key in demo_keys]
+            + [(pl.col("total_time").dt.total_minutes() / 60)]
         ),
     )
+    write_dat(
+        "alphabeta2",
+        vs.select(
+            [pl.col(key).to_physical() for key in demo_keys]
+            + [(pl.col("total_time").dt.total_minutes() / 60)]
+        ),
+    )
+    # For bar charts:
+    for key in demo_keys[1:]:
+        write_dat(
+            f"alphabeta-{key}",
+            sv.group_by(key)
+            .agg(pl.len())
+            .join(vs.group_by(key).agg(pl.len()), on=key, how="full")
+            .fill_null(0)
+            .select(
+                pl.col(key)
+                .fill_null(pl.col(f"{key}_right"))
+                .cast(str)
+                .replace(name_mappings[key])
+                .alias("label"),
+                pl.col("len").alias("occ1"),
+                pl.col("len_right").alias("occ2"),
+            )
+            .sort(pl.col("occ1") + pl.col("occ2"), descending=True),
+            violin=False,
+        )
 
     comp_keys = [
         f"a{i}_{suffix}" for i in range(1, 7) for suffix in ["asq_easy", "asq_time"]

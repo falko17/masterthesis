@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 import polars as pl
 
 d_gender = pl.Enum(["Female", "Male", "Other", "Prefer not to say"])
@@ -40,4 +42,32 @@ d_dispersion = pl.Enum(
         "None: There are no unit tests.",
         "Other: Please specify manually.",
     ]
+)
+
+name_mappings = defaultdict(
+    dict,
+    {
+        "degree": {
+            "University of applied sciences entrance qualification (Fachabitur)": "Fachabitur",
+            "General higher education entrance qualification (Abitur) [Also choose this if you have completed school but are not sure what to pick]": "Abitur",
+        },
+        "knowsee": {
+            "Yes, I’ve used it": "Used it before",
+            "Yes, I’ve developed (parts of) it": "Developed parts of it",
+        },
+        "knowvs": {
+            "Yes, I’ve used it": "Used it before",
+            "Yes, it’s my main IDE": "Is my main IDE",
+        },
+        "knowgame": {
+            "Yes, have played a lot": "I play a lot",
+            "Yes, have played a little": "I play a little",
+            "Yes, but barely played": "I barely play",
+            "No, never": "I never played",
+        },
+        "knowjabref": {
+            "Yes, I’ve used it": "Used it before",
+            "Yes, I’ve developed (parts of) it": "Developed parts of it",
+        },
+    },
 )

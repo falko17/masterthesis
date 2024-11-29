@@ -29,18 +29,18 @@
 }
 
 \makeatletter
+\newcommand*{\@starsymfn}[1]{%
+	$\ifcase#1 \or*\or**\or\dagger\or\ddagger\or\mathsection\or\mathparagraph\or\|%
+		\else\roman{footnoteG}\fi$%
+}
 \newcommand*{\starsymfn}[1]{%
 	\expandafter\@starsymfn\csname c@#1\endcsname%
 }
-
-\newcommand*{\@starsymfn}[1]{%
-	$\ifcase#1 \or*\or**\or\dagger\or\ddagger\or\mathsection\or\mathparagraph\or\|%
-		\else\@ctrerr\fi$%
-}
 \makeatother
 
+
 \DeclareNewFootnote{G}
-\renewcommand*{\thefootnoteG}{\firstuseformat{\starsymfn{footnoteG}}}
+\renewcommand*{\thefootnoteG}{\protect\firstuseformat{\protect\starsymfn{footnoteG}}}
 
 % No links for description
 \let\oldglsdesc\glsdesc
@@ -214,6 +214,9 @@ description={\fc{A} source code viewer in \SEE{} which supports very basic \gls{
 
 \newglossaryentry{smell}{name=\fc{c}ode \fc{s}mell,
 	description={\fc{c}ertain structures in source code that suggest that a refactoring is in order, such as duplicated code, or a very long method~\cite[85-87]{fowler2019}.}}
+
+\newglossaryentry{mwu}{name={Mann-Whitney $U$ test},
+	description={\TODO{}~\cite{mann1947}}}
 
 \newglossaryentry{range}{name=Source Range, text=range,
 	description={\fc{t}he contiguous portion within a source code file that a certain element occupies. In this thesis, we will express it as an ordered pair of a start and end position $(s, e)$, or, alternatively, as a 4-tuple $(s_l, s_c, e_l, e_c)$.

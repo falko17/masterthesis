@@ -86,7 +86,7 @@
 \usepackage{bm}
 \usepackage{pifont}
 
-% FIXME: Using my fork here until the PR regarding jitter is merged.
+% FIXME: Using my fork here until the PR regarding jitter is merged and released.
 \usepackage{stringstrings}
 \usepackage{../tikzviolinplots/tikzviolinplots}
 
@@ -148,21 +148,65 @@
 			tick label style={font=\footnotesize,text=gray!50!black},
 		}}
 
+\newcommand{\plotornaments}[1]{
+  \node[shift={(0.44,-0.47)}](CNW) at (#1.north west) {\pgfornament[color=Gray,width=1cm]{41}};
+  \node[shift={(-0.44,-0.47)}](CNE) at (#1.north east) {\pgfornament[color=Gray,width=1cm,symmetry=v]{41}};
+  \node[shift={(0.44,0.47)}](CSW) at (#1.south west) {\pgfornament[color=Gray,width=1cm,symmetry=h]{41}};
+  \node[shift={(-0.44,0.47)}](CSE) at (#1.south east) {\pgfornament[color=Gray,width=1cm,symmetry=c]{41}};
+
+
+  \draw[transform canvas={yshift=-1.8mm},line width=1pt,color=Gray] ([xshift=-1.5mm]CNW.north east) -- ([xshift=1.5mm]CNE.north west);
+  \draw[transform canvas={yshift=1.8mm},line width=1pt,color=Gray] ([xshift=-1.5mm]CSW.south east) -- ([xshift=1.5mm]CSE.south west);
+  \draw[transform canvas={xshift=2.05mm},line width=1pt,color=Gray] ([yshift=1.6mm]CNW.south west) -- ([yshift=-1.6mm]CSW.north west);
+  \draw[transform canvas={xshift=-2.05mm},line width=1pt,color=Gray] ([yshift=1.6mm]CNE.south east) -- ([yshift=-1.6mm]CSE.north east);
+}
+
+\newcommand{\barplot}[3]{
+\begin{tikzpicture}
+  \begin{axis}[
+      ylabel={Number of participants},
+      height=6cm,
+      ybar stacked,
+      ytick distance=2,
+      name=bars,
+      ymin=0, ymax=16,
+      axis x line*=bottom,
+      axis y line*=left,
+      ymajorgrids,
+      bar width=0.6cm,
+      symbolic x coords={#2},
+      x tick label style={rotate=45, anchor=east, align=left, font=\scriptsize, yshift=-2},
+      xtick=data,
+      nodes near coords={\pgfmathprintnumber[precision=1]{\pgfplotspointmeta}},
+      nodes near coords style={
+          font=\scriptsize,
+        },
+      cycle list={
+          {fill=Maroon!30,draw=Maroon!50!black,nodes near coords style={Maroon}},
+          {fill=Gray,draw=black!70,nodes near coords style={white!50}},
+        },
+      #3
+    ]
+
+    \addplot+[fill] table [x=label,y=occ1,col sep=tab] {analysis/dat/#1.dat};
+    \addplot+[fill] table [x=label,y=occ2,col sep=tab] {analysis/dat/#1.dat};
+  \end{axis}
+  \plotornaments{bars}
+\end{tikzpicture}
+}
+
 \newcommand{\violin}[9]{
   \begin{tikzpicture}
     \violinsetoptions[data points,scaled,averages]{
       xmin=0,xmax=3,
       ymin=#6,ymax=#7,
-      % xlabel={#5},
-      % xlabel style={
-      %   yshift={-0.5cm},
-      % },
       ylabel={#5},
-      ymajorgrids=true
+      ymajorgrids=true,
+      name=violin
     }
 
     \violinplot[%
-      index=\expandafter#4\expandafter1,%
+      index=#4,%
       col sep=tab,%
       color=Maroon,%
       dataset size=3pt,%
@@ -180,9 +224,10 @@
       dataset fill=black,%
       dataset fill opacity=0.5,%
       label={#2}
-    ]{analysis/dat/#1.dat}
+    ]{analysis/dat/\expandafter#1\expandafter1.dat};
+
     \violinplot[%
-      index=\expandafter#4\expandafter2,%
+      index=#4,%
       col sep=tab,%
       color=black,%
       dataset size=3pt,%
@@ -199,11 +244,13 @@
       dataset fill=white,%
       dataset fill opacity=0.5,%
       label={#3}
-    ]{analysis/dat/#1.dat}
+    ]{analysis/dat/\expandafter#1\expandafter2.dat};
+
+		\plotornaments{violin}
   \end{tikzpicture}
 }
 
-% key, ylabel, ymin, ymax, bw1, bw2
+% 4key, ylabel, ymin, ymax, bw1, bw2
 \newcommand{\violinab}[6]{\violin{alphabeta}{$\alpha$}{$\beta$}{#1}{#2}{#3}{#4}{#5}{#6}}
 \newcommand{\violinsv}[6]{\violin{seevs}{SEE}{VSCode}{#1}{#2}{#3}{#4}{#5}{#6}}
 \newcommand{\violinsus}{\violin{seevs-sus}{SEE}{VSCode}{sus}{SUS}{40}{100}{7.4}{7.2153}}
@@ -240,7 +287,14 @@
 
 %%% OPTIONS %%%
 
+\subcaptionsetup{position=top, skip=1pt}
+
 \tcbset{shield externalize}  % Required for externalization to work.
+
+\makeatletter
+% Set htbp as default.
+\renewcommand*{\fps@figure}{htbp}
+\makeatother
 
 \let\oldmarginpar\marginpar
 \renewcommand{\marginpar}[2][]{%
