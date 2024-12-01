@@ -8,6 +8,7 @@ import polars as pl
 from polars import DataFrame, Datetime, Expr, String
 
 from src.dtypes import (
+    d_datetime,
     d_degree,
     d_dispersion,
     d_gender,
@@ -128,7 +129,9 @@ def task_time(task_num: int) -> tuple[str, str, str]:
 
 
 def handle_times(start: str, end: str) -> Expr:
-    return pl.max_horizontal(end) - pl.col(start)
+    return pl.max_horizontal(
+        pl.col(end).cast(d_datetime, strict=False).fill_null(strategy="zero")
+    ) - pl.col(start).cast(d_datetime)
 
 
 def sus_columns(app: str) -> list[Expr]:

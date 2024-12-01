@@ -12,7 +12,7 @@ from scipy.stats import fisher_exact, mannwhitneyu
 
 from src.cleanup import clean_data, set_correctness, sus_total
 from src.demographics import check_demographics, check_effects
-from src.dtypes import name_mappings
+from src.dtypes import d_datetime, name_mappings
 from src.util import print_comments, print_statistic, write_dat
 
 
@@ -23,7 +23,7 @@ def main():
         "SEE-VSCode.csv",
         separator=";",
         try_parse_dates=True,
-        schema_overrides={"s1a2_acent_update": Datetime(time_zone="UTC")},
+        schema_overrides={"s1a2_acent_update": d_datetime},
     )
     vs = pl.read_csv(
         "VSCode-SEE.csv",
@@ -31,12 +31,12 @@ def main():
         try_parse_dates=True,
         schema_overrides={
             # Some of these are completely empty, but we need polars to know they are datetimes.
-            "v1a2_acent_update": Datetime(time_zone="UTC"),
-            "v1a2_adisp_update": Datetime(time_zone="UTC"),
-            "v1a2_amisc_update": Datetime(time_zone="UTC"),
-            "s2a2_acent_update": Datetime(time_zone="UTC"),
-            "s2a2_adisp_update": Datetime(time_zone="UTC"),
-            "s2a2_amisc_update": Datetime(time_zone="UTC"),
+            "v1a2_acent_update": d_datetime,
+            "v1a2_adisp_update": d_datetime,
+            "v1a2_amisc_update": d_datetime,
+            "s2a2_acent_update": d_datetime,
+            "s2a2_adisp_update": d_datetime,
+            "s2a2_amisc_update": d_datetime,
         },
     )
     # Unfortunately, I made a bad naming choice when constructing the VSCode/SEE order form.

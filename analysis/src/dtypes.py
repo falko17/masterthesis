@@ -1,7 +1,9 @@
 from collections import defaultdict
 
 import polars as pl
+from polars import Datetime
 
+d_datetime = Datetime(time_zone="UTC")
 d_gender = pl.Enum(["Female", "Male", "Other", "Prefer not to say"])
 d_degree = pl.Enum(
     [
