@@ -205,6 +205,8 @@
       name=violin
     }
 
+    % TODO: Remove top and bottom line if there is one, else it intereferes with the corner ornaments.
+
     \violinplot[%
       index=#4,%
       col sep=tab,%
@@ -389,7 +391,7 @@
 \renewcommand{\thesischapterfont}{\color{ctcolorblack}\nobreak\normalfont\Huge \cabin\selectfont}
 \renewcommand{\thesissectionfont}{\color{ctcolorsection}\nobreak\normalfont\LARGE \cabin}
 \renewcommand{\thesissubsectionfont}{\color{ctcolorsubsection}\nobreak\normalfont\Large \cabin}
-\renewcommand{\thesisparagraphfont}{\color{ctcolorparagraph}\nobreak\scshape}
+\renewcommand{\thesisparagraphfont}{\color{ctcolorparagraph}\nobreak\large\scshape}
 %\renewcommand{\thesisparagraphfont}{\color{ctcolorparagraph}\nobreak\cabin\small\bfseries}
 
 \renewcommand{\ctfontfootertext}{%
