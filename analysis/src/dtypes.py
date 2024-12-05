@@ -25,7 +25,7 @@ d_time_alt = pl.Enum(
     ["Not yet", "Less than 3 years", "3–9 years", "10–19 years", "20 years or more"]
 )
 d_know = pl.Enum(
-    ["Heard of it", "Yes, I’ve used it", "Yes, I’ve developed (parts of) it", "No"]
+    ["No", "Heard of it", "Yes, I’ve used it", "Yes, I’ve developed (parts of) it"]
 )
 d_knowide = pl.Enum(["Heard of it", "Yes, I’ve used it", "Yes, it’s my main IDE", "No"])
 d_playgames = pl.Enum(

@@ -151,20 +151,14 @@ def write_data(sv, vs, both):
         "knowjabref",
         "knowjava",
     ]
-    write_dat(
-        "alphabeta1",
-        sv.select(
-            [pl.col(key).to_physical() for key in demo_keys]
-            + [(pl.col("total_time").dt.total_minutes() / 60)]
-        ),
-    )
-    write_dat(
-        "alphabeta2",
-        vs.select(
-            [pl.col(key).to_physical() for key in demo_keys]
-            + [(pl.col("total_time").dt.total_minutes() / 60)]
-        ),
-    )
+    for i, df in enumerate([sv, vs]):
+        write_dat(
+            f"alphabeta{i+1}",
+            df.select(
+                [pl.col(key).to_physical() for key in demo_keys]
+                + [(pl.col("total_time").dt.total_minutes() / 60)]
+            ),
+        )
     # For bar charts:
     for key in demo_keys[1:]:
         write_dat(
@@ -191,29 +185,15 @@ def write_data(sv, vs, both):
     ]
     comp_keys_bool = [f"a{i}_c" for i in range(1, 7)]
     comp_keys_time = [f"a{i}_time" for i in range(1, 7)]
-    write_dat(
-        "seevs",
-        pl.concat(
-            [
-                df.select(
-                    [
-                        pl.col(key).to_physical().alias(f"{key}{i+1}")
-                        for key in comp_keys
-                    ]
-                    + [
-                        pl.col(key).cast(dtype=int).alias(f"{key}{i+1}")
-                        for key in comp_keys_bool
-                    ]
-                    + [
-                        (pl.col(key).dt.total_seconds() / 60).alias(f"{key}{i+1}")
-                        for key in comp_keys_time
-                    ]
-                )
-                for i, df in enumerate([sv, vs])
-            ],
-            how="horizontal",
-        ),
-    )
+    for i, df in enumerate([sv, vs]):
+        write_dat(
+            f"seevs{i+1}",
+            df.select(
+                [pl.col(key).to_physical() for key in comp_keys]
+                + [pl.col(key).cast(dtype=int) for key in comp_keys_bool]
+                + [pl.col(key).dt.total_seconds() / 60 for key in comp_keys_time]
+            ),
+        )
 
     # SUS needs to be separate due to different number of rows.
     write_dat(

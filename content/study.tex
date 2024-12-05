@@ -76,6 +76,7 @@ I have collected the existing scores of those studies in a \gls{violin} in \cref
 				ymin=55,ymax=95,
 				xticklabel style={yshift={-2cm}},
 				ylabel={SUS},
+				set layers,
 				ymajorgrids=true,
 				name=violin
 			}
@@ -257,13 +258,13 @@ For the \textbf{usability}, we need to differentiate between the \gls{poststudy}
 	      \end{enumerate}
 \end{enumerate}
 
-We will use a significance level of $\alpha = 0.05$ for \fxwarning*{Except maybe effects!}{all} of our tests, though this will get halved to $0.025$ since we are using two-sided tests.
+We will use a significance level of $\alpha = 0.05$ for all of our tests, though this will get halved to $0.025$ since we are using two-sided tests.
 
 \section{Design}\label{sec:design}
 Since all the hypotheses we just listed compare \SEE{} to \gls{vscode}, the general form of our study should be to have participants solve representative software engineering related tasks, with one group solving tasks in \SEE{} and the other using \gls{vscode}.
 There are going to be six tasks, each taking no longer than ten minutes, which we will go over in \cref{subsec:tasks}.
 To maximize the number of collected datapoints, we will have each group use both tools.
-Specifically, group $\alpha$ will use \SEE{} for the first three tasks and \gls{vscode} for the last three tasks, while this will be switched around for group $\beta$.
+Specifically, group $\Psi$ will use \SEE{} for the first three tasks and \gls{vscode} for the last three tasks, while this will be switched around for group $\Omega$.
 We will then have $\frac{n}{2}$ datapoints per tool for each task, which we can then compare against each other to test for significant differences.
 This flow is illustrated in \cref{fig:taskflow}.
 
@@ -320,7 +321,7 @@ For a comprehensive overview and evaluation of other \gls{poststudy} and \gls{po
 
 \paragraph{Demographics}
 We ask each participant various demographic questions to (among other reasons) address the threat to validity of selection bias:
-While participants are randomly assigned into groups $\alpha$ and $\beta$, it is of course possible due to our moderate sample size of $n = \participants$ that there is a significant difference in any independent variable.
+While participants are randomly assigned into groups $\Psi$ and $\Omega$, it is of course possible due to our moderate sample size of $n = \participants$ that there is a significant difference in any independent variable.
 A difference like this would then matter if it acts as a confounder for one of the dependent variables---for example, age or experience can have a sizable impact on \gls{sus} scores~\cites[585]{bangor2008}{mclellan2012}.
 
 To catch this, we ask for some properties that could be relevant, namely
@@ -385,8 +386,8 @@ The survey in \gls{xlsform} is linked in \fxwarning*{Link to questionnaire in ap
 \end{figure}
 
 
-To equally partition participants into two groups, we create two versions of the survey, one for group $\alpha$ and one for group $\beta$.
-We then access KoboToolbox's REST API to redirect the participants to version $\alpha$ or $\beta$---the algorithm we are using is given in \cref{alg:redirect}, or can alternatively be seen in \fxwarning*{Link to script in appendix}{TODO}.
+To equally partition participants into two groups, we create two versions of the survey, one for group $\Psi$ and one for group $\Omega$.
+We then access KoboToolbox's REST API to redirect the participants to version $\Psi$ or $\Omega$---the algorithm we are using is given in \cref{alg:redirect}, or can alternatively be seen in \fxwarning*{Link to script in appendix}{TODO}.
 Inviting others to participate then becomes as simple as passing the link to the redirection script around\footnote{
 	\url{https://falko.de/master-evaluation}, but this link may not stay up forever.
 }.
@@ -403,19 +404,19 @@ Inviting others to participate then becomes as simple as passing the link to the
 		\If{$p = \varnothing$}
 		\State $p = \Call{NewRandomID}{\null}$
 		\EndIf
-		\State $n_{\alpha}, n_{\beta} \gets \Call{GetKoboParticipations}{\null}$
-		\If{$n_{\alpha} = \varnothing \lor n_{\beta} = \varnothing$}
+		\State $n_{\Psi}, n_{\Omega} \gets \Call{GetKoboParticipations}{\null}$
+		\If{$n_{\Psi} = \varnothing \lor n_{\Omega} = \varnothing$}
 		\Comment{API request failed, so just alternate using index $i$.}
 		\If{$i = 0$}
-		\State $P(p) \gets \alpha$
+		\State $P(p) \gets \Psi$
 		\Else
-		\State $P(p) \gets \beta$
+		\State $P(p) \gets \Omega$
 		\EndIf
 		\State $i \gets (i + 1) \bmod 2$
-		\ElsIf{$n_{\alpha} \leq n_{\beta}$}
-		\State $P(p) \gets \alpha$
+		\ElsIf{$n_{\Psi} \leq n_{\Omega}$}
+		\State $P(p) \gets \Psi$
 		\Else
-		\State $P(p) \gets \beta$
+		\State $P(p) \gets \Omega$
 		\EndIf
 		\EndIf
 		\State \Return $(p, P(p))$
@@ -457,12 +458,12 @@ Thus, we will focus on tasks from the first group:
 \end{enumerate}
 
 Note, however, that none of the tasks we selected above test any edge-related behavior, so we will add one task of our own.
-This task will be \enquote{Find the \gls{base} for class $C$ in the system.}
+This \textbf{task $\bm{C}$} will be to \enquote{find the \gls{base} for class $c$ in the system.}
 Its drawback is that it requires a short explanation of \glspl{base} before the task, but its upsides are that it is both a realistic task and additionally forces participants to have more than a cursory interaction with the edges (specifically, the \tt{Extend} edges\footnote{
 	We should also note that the \glspl{city} for this study \emph{only} contain \tt{Extend} edges---otherwise, there are too many edges for \SEE{} to handle in a performant manner.
 }) without having any unfair disadvantage in \gls{vscode}, where participants can navigate up the inheritance tree by repeatedly \keystroke{Ctrl}-clicking on the superclass.
 
-Now we only need to choose a fitting $C$ for both JabRef and SpotBugs, our two object systems.
+Now we only need to choose a fitting $c$ for both JabRef and SpotBugs, our two object systems.
 To make sure the task is not too easy, we choose the class which is deepest in the inheritance tree for both system.
 For JabRef, this is \tt{GenderEditorViewModel} (five levels deep), while for SpotBugs, this is \tt{OptionalReturnNull} (seven levels deep).
 This way, we can also evaluate the transitive edge animations we added in \fxwarning*{Where?}{some section}.
@@ -484,7 +485,7 @@ A full visual overview of our study along with its tasks is given in \cref{fig:t
 
 			% Left title box.
 			\node[draw, thick, minimum width=7cm, minimum height=14.5cm] (left) at (0,0) {};
-			\node[heading,align=center] at (0,6.4) {Group $\alpha$: SEE\\Group $\beta$: Dashboard};
+			\node[heading,align=center] at (0,6.4) {Group $\Psi$: SEE\\Group $\Omega$: VSCode};
 
 			% Boxes for tasks to the left.
 			\node[scalebox] (D) at (0, 4.4) {\itshape\color{Gray!50!Black}Demographics};
@@ -495,7 +496,7 @@ A full visual overview of our study along with its tasks is given in \cref{fig:t
 
 			% Right title box.
 			\node[draw, thick, minimum width=7cm, minimum height=14.5cm] (right) at (8,0) {};
-			\node[heading,align=center] at (8,6.4) {Group $\alpha$: Dashboard\\Group $\beta$: SEE};
+			\node[heading,align=center] at (8,6.4) {Group $\Psi$: VSCode\\Group $\Omega$: SEE};
 
 			% Boxes for tasks to the right.
 			\taskbox[anchor=north]{A2}{8, |- D.north}{Task $A_2$}{Find the three classes with the highest number of methods in JabRef.};
@@ -528,72 +529,76 @@ A full visual overview of our study along with its tasks is given in \cref{fig:t
 
 \section{Results}\label{sec:results}
 In this section, we can finally report on the results of the study.
-We will first go over the Ablauf %FIXME
-before taking a look at the results themselves.
+We will first go over the course of how the study was conducted before taking a look at the results themselves.
 For the latter, we start by analyzing the answers to the demographics questionnaire, and then go on to interpret the dependent variables relevant to our hypotheses, namely, correctness, time, and usability, in that order.
 We will then also investigate the role of experience (and some other independent variables) and the influence it had on how tasks were handled.
 Finally, we handle the various comments that were left during the study.
+
+As mentioned before, we use a significance level of $\alpha = 0.05$.
+We can neither assume normal distributions for our data, nor is it always interval-scaled, so we choose the \gls{mwu} to determine statistically significant differences between either our two groups $\Psi$ and $\Omega$ or between the two tools \SEE{} and \gls{vscode}.
+To help the reader quickly identify important results, we put a star ($\bigstar$) in the heading of a paragraph to indicate that it lead to the rejection of a null hypothesis.
+
+% \Psi and \varomega
 
 % TODO: Maybe mention alpha error stuff here already if relevant?
 %       As well as alpha=0.05. Don't call it alpha due to confusion with alphabeta. 
 %       And some stats stuff here maybe, such as why MWU.
 
-\subsection{Ablauf}
-\fxerror{Needs english title}
+\subsection{Study Procedure}
 Before we started with the actual study, we did a small-scale pilot study with two participants, one of them being this thesis's first reviewer Prof.\ Dr.\ Rainer Koschke.
 Through their valuable feedback, I was able to see some issues I had not noticed myself before starting the study, such as a few bugs in \SEE{}, confusion regarding the term \gls{base}, and errors unpacking the prepared compressed builds of \SEE{} and \gls{vscode}\footnote{
 	As a sidenote, using prepared builds also prevents any potential problems.
-	For example, some plugins of \gls{vscode} might otherwise interfere with our study.
+	For example, some pre-installed plugins of \gls{vscode} might otherwise interfere with our study.
 } when using Windows.
 I fixed the bugs in \SEE{}, added a tutorial for the \glspl{base} (along with a comprehension question), and added detailed instructions on how to correctly unpack the builds.
-% TODO: Spelling of ironed correct?
 There luckily were no other major issues in the actual study after these problems noticed in the pilot study have been ironed out.
 
 There have been \participants participants in total, though we had to exclude one participant from most analyses because he indicated he had no knowledge of Java.
 Participants were gained via convenience sampling, that is, I asked fellow students, colleague developers from Axivion, and other acquaintances who had software engineering experience to participate.
 
-% FIXME: Before you do anything: Chance of alpha error >50% after 14 checks, so fix this first!
-
-% TODO: In Appendix, give answer key.
-
-\fxfatal{}
+\fxnote{In Appendix, give answer key.}
 
 \subsection{Demographics}
 
 First, we want to take a quick look at the demographics of our study.
-We also take this opportunity to find any significant differences between the two groups $\alpha$ and $\beta$, to make sure any results in the dependent variables later on are not just due to such differences.
-For this purpose, we define null hypotheses of the form \enquote{Variable $X$ is not different between groups $\alpha$ and $\beta$}, which we check with a two-sided \gls{mwu}, as we cannot assume normal distributions.
+We also take this opportunity to find any significant differences between the two groups $\Psi$ and $\Omega$, to make sure any results in the dependent variables later on are not just due to such differences.
+For this purpose, we define null hypotheses of the form \enquote{Variable $X$ is not different between groups $\Psi$ and $\Omega$}, which we check with a two-sided \gls{mwu}, as we cannot assume normal distributions.
 This also allows us to compare merely ordinal data.
 
 All answers\footnote{
 	The question "Do you know SpotBugs?" has also been excluded from the bar charts, as only one participant answered "I've heard of it", with all others answering "no".
 } to the demographic questions can be viewed as bar charts in \cref{fig:demobars}.
 Two exceptions are the non-categorical variables, namely age and the total time it took participants to finish the study, which we are going to go over first.
-% TODO: Mention spotbugs excluded from bars
+We have also excluded the question "Have you ever used the program SpotBugs?", as there was only one participant answering "Heard of it", with all others answering "No."
 
+
+\paragraph{Age}
+We have a median age of $\widetilde{A} = 29$ and an average age of $\overline{A} = 28.55$ in our sample, suggesting few outliers, which can be confirmed by looking at the violin plots in \cref{fig:dat_age}.
+The \gls{mwu} also confirms no differences between the groups ($U = 40.5, p \approx 0.4947$).
 
 \begin{figure}
 	\begin{center}
-		\violinab{age}{Age}{15}{45}{3.1029}{1}
+		\violinab{age}{ylabel=Age}{15}{45}{3.1029}{1}
 	\end{center}
 	\caption{Distribution of age between the two groups.}\label{fig:dat_age}
 \end{figure}
 
-\paragraph{Age}
-We have a median age of $\widetilde{A} = 29$ and an average age of $\overline{A} = 28.55$ in our sample, suggesting few outliers, which can be confirmed by looking at the violin plots in \cref{fig:dat_age}.
-
 \paragraph{Total Time}
+The median time it took to complete the whole study was an hour and six minutes, which means we slightly overshot our initial aim of an hour to complete the study.
+In addition, the average being at roughly one and a half hours points to there being some significant outliers:
+In fact, some participations were longer than 2 hours, with one participant in the $\Omega$ group even taking almost five hours---however, as no participation took longer than twenty minutes (see \cref{subsec:time}), we can conclude that this must be due to breaks in between tasks rather than the participation being actually that long.
+The same likely applies to the other participations around the three hour range.
+The various times are visualized in \cref{fig:dat_totaltime}, where it also becomes apparent that the two groups had similar total times, which a \gls{mwu} confirms for us ($U = 63, p \approx 0.34470$).
 
 \begin{figure}
 	\begin{center}
-		\violinab{total-time}{Time (in hours)}{0}{5}{0.1171}{0.106}
+		\violinab{total-time}{ylabel={Time (in hours)}}{0}{5}{0.1171}{0.106}
 	\end{center}
 	\caption{Total duration of time in which each participant finished the study.\\
 		May include time in which participants took breaks.}\label{fig:dat_totaltime}
 \end{figure}
 
 \begin{figure}
-	\tikzexternaldisable
 	\begin{subfigure}[T]{0.55\textwidth}
 		\caption{"What is your highest school or university degree?"\label{fig:degreebar}}
 		\barplot{alphabeta-degree}{Fachabitur,Abitur,Bachelor's degree,Master's degree,Doctoral degree}{width=\textwidth, enlarge x limits={0.4}}
@@ -618,17 +623,54 @@ We have a median age of $\widetilde{A} = 29$ and an average age of $\overline{A}
 		\caption{"Do you play 3D video games for desktops?"\label{fig:knowgamebar}}
 		\barplot{alphabeta-knowgame}{I never played, I barely play, I play a lot}{width=\textwidth, ylabel={}, enlarge x limits={0.7}}
 	\end{subfigure}
-	\tikzexternalenable
-	\caption{Number of respective answers to various demographic questions.}\label{fig:demobars}
+	\caption{Number of respective answers to various demographic questions.\\
+		Group \textcolor{Maroon}{$\Psi$ is in red}, and group \textcolor{Gray!50!black}{$\Omega$ is in gray}.}\label{fig:demobars}
 \end{figure}
 
-\fxfatal{}
+\paragraph{Degree}
+Most participants had a Bachelor's degree (this is also the median), with some Abitur degrees, Master's degrees, and one person with a doctoral degree (see \cref{fig:degreebar}).
+The \gls{mwu} reveals no significant differences between $\Psi$ and $\Omega$ ($U = 57.5, p \approx 0.5693$).
 
-%
-% \violinab{age}{Age}{20}{40}
-%
-% \violinab{total-time}{Total Participation Time (hours)}{0}{5}
-%
+\paragraph{$\bigstar$ Programming Experience}
+Both the median and modal programming experience is 3--9 years.
+However, we can see that the only people with 10--19 years of experience are in group $\Psi$, and the \gls{mwu} indeed confirms a significant difference here ($U = 77, p \approx 0.0214$).
+It is unclear how this could have happened except coincidentally, as participants were always alternatingly assigned to either group $\Psi$ and $\Omega$.
+Nonetheless, we need to keep this difference in mind when moving on to the analysis of dependent variables.
+
+\paragraph{$\bigstar$ Experience on Bigger Software Projects}
+
+\begin{wrapfigure}{L}{0.5\textwidth}
+	\centering
+	\barplot{alphabeta-opensource}{Not yet, Less than 3 years, 3–9 years}{width=0.5\textwidth,ymax=10,height=5.2cm,enlarge x limits={0.6}}
+	\caption{"How long have you been programming on bigger software projects (\eg, within a company, or open-source projects)?"}\label{fig:opensourcebar}
+\end{wrapfigure}
+
+We also asked participants for experience with larger software projects, such as within companies or on open-source projects.
+Here, all but one participant have been working on bigger software projects, but the split between the "Less than 3 years" and "3--9 years" categories are inverted between groups $\Psi$ and $\Omega$, which can also be seen in \cref{fig:opensourcebar}.
+The \gls{mwu} again confirms a significant difference ($U = 80.5, p \approx 0.0105$).
+
+\paragraph{Experience with \SEE{}}
+The clear majority of participants (eleven people) have developed on \SEE{} before, as can be seen in \cref{fig:knowseebar}, which can be attributed to the fact that one major group of people I asked to participate are the students who are working on \SEE{} in a professional or academic capacity.
+We can also see a qualitative difference between the two groups:
+Group $\Omega$ contains the only people who have answered "No", while group $\Psi$ contains the only people who have answered "I heard of it" and "I used it before".
+However, this difference is not significant ($U = 42.5, p \approx 0.5598$).
+
+\paragraph{Experience with \gls{vscode}}
+Every single participant has used \gls{vscode} before, with six people even using it as their main \gls{ide}.
+We can assume that most participants thus have more experience with \gls{vscode} than \SEE{}, which may bias our results somewhat---we try to investigate this further in \cref{subsec:experience,sec:threats}.
+\Cref{fig:knowvsbar} shows the groups to be quite similar, and indeed, there is no significant difference here ($U = 55, p \approx 0.6809$).
+
+\paragraph{Experience with JabRef}
+Most participants in either group have not heard of JabRef before, but in contrast to SpotBugs, some have actually used the bibliography manager before, with one participant in group $\Psi$ even having developed parts of it (see \cref{fig:knowjabrefbar}).
+Again, there is no significant difference between the two groups ($U = 58, p \approx 0.5041$).
+
+\paragraph{Experience with Video Games}
+A clear majority of sixteen participants reported that they play a lot of video games (as can be seen in \cref{fig:knowgamebar}), with only two responding that they barely play and one stating that they never played video games before.
+Here as well there is no significant difference we need to be aware of ($U = 46, p \approx 0.6701$).
+
+In summary, the only significant differences between the two groups that could cause problems in our analysis are the programming experience in general and the programming experience for bigger projects, both of which indicate significant differences insofar that group $\Psi$ apparently contains more experienced programmers.
+We will investigate the effects of this in more detail in \cref{subsec:experience}.
+
 % % TODO: ordinal data
 %
 % \violinsv{a1-time}{Time (Minutes)}{0}{20}
@@ -649,7 +691,8 @@ We have a median age of $\widetilde{A} = 29$ and an average age of $\overline{A}
 % 				yshift={-0.5cm},
 % 			},
 % 		ylabel={SUS},
-% 		ymajorgrids=true
+% 		ymajorgrids=true,
+% 		set layers
 % 	}
 %
 % 	\violinplot[%
@@ -674,9 +717,18 @@ We have a median age of $\widetilde{A} = 29$ and an average age of $\overline{A}
 % \end{tikzpicture}
 
 \subsection{Correctness}\label{subsec:correct}
+It does not make much sense to use \glspl{violin} here, as there are in most cases only two possible values here:
+The participants were either correct or incorrect in their answer to the task.
+Even for task $A$
 \fxfatal{}
 
-\subsection{Time}
+\tikzexternaldisable
+\violinsv{a1-c}{ylabel={Correctness}}{-1}{4}{0.26143}{1}
+
+\violinsv{a2-c}{ylabel={Correctness},ytick={0,1},yticklabels={Wrong, Correct}}{-1}{2}{0.35224}{1}
+\tikzexternalenable
+
+\subsection{Time}\label{subsec:time}
 \fxfatal{}
 
 \subsection{Usability}
@@ -690,7 +742,7 @@ We have a median age of $\widetilde{A} = 29$ and an average age of $\overline{A}
 \subsection{Comments}
 \fxfatal{}
 
-\section{Threats to Validity}
+\section{Threats to Validity}\label{sec:threats}
 \fxfatal{}
 
 \section{Interim Conclusion}  % Or maybe just recap?

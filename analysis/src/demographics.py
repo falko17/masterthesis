@@ -1,8 +1,10 @@
+import code
 from itertools import product
 
 import polars as pl
 from colorama import Back, Fore, Style
 from scipy.stats import (
+    combine_pvalues,
     false_discovery_control,
     fisher_exact,
     kendalltau,
@@ -90,18 +92,48 @@ def check_demographics(sv, vs):
 def check_effects(sv, vs):
     # Check for effects of some IVs (experience, age, etc) on DVs.
     # MUST CHECK: programming, opensource, knowsee [sign. diff] and knowide, knowjava [important]
+    iv_interval = ["age", "total_time"]
+    iv_ordinal = ["degree", "programming", "opensource", "knowsee"]
     print("\n=== EFFECTS ===")
 
-    # TODO: Aggregate along SEE/VS
-    dv_categorical = [f"a{i}_c" for i in (2, 3, 5, 6)]
-    dv_interval = (
-        ["a1_c", "a4_c"]
-        + [f"a{i}_time" for i in range(1, 7)]
-        + [f"a{i}_asq_{kind}" for i in range(1, 7) for kind in ("time", "easy")]
-    )
+    def prepare_df(df):
+        return df.with_columns(pl.col(pl.Duration).dt.total_seconds() / 60).select(
+            pl.col(iv_interval + iv_ordinal),
+            # Aggregate along SEE/VS, else we have too many hypotheses to test.
+            # This also makes analysis a bit easier, as we only have interval-scaled dependent variables.
+            (
+                pl.col("a1_c") / 3 + pl.col("a2_c").cast(int) + pl.col("a3_c").cast(int)
+            ).alias("p1_correctness"),
+            (
+                pl.col("a4_c") / 3 + pl.col("a5_c").cast(int) + pl.col("a6_c").cast(int)
+            ).alias("p2_correctness"),
+            (pl.col("a1_time") + pl.col("a2_time") + pl.col("a3_time")).alias(
+                "p1_time"
+            ),
+            (pl.col("a4_time") + pl.col("a5_time") + pl.col("a6_time")).alias(
+                "p2_time"
+            ),
+            (
+                pl.col("a1_asq_time") + pl.col("a2_asq_time") + pl.col("a3_asq_time")
+            ).alias("p1_asq_time"),
+            (
+                pl.col("a4_asq_time") + pl.col("a5_asq_time") + pl.col("a6_asq_time")
+            ).alias("p2_asq_time"),
+            (
+                pl.col("a1_asq_easy") + pl.col("a2_asq_easy") + pl.col("a3_asq_easy")
+            ).alias("p1_asq_easy"),
+            (
+                pl.col("a4_asq_easy") + pl.col("a5_asq_easy") + pl.col("a6_asq_easy")
+            ).alias("p2_asq_easy"),
+        )
 
-    sv = sv.with_columns(pl.col(pl.Duration).dt.total_seconds() / 60)
-    vs = vs.with_columns(pl.col(pl.Duration).dt.total_seconds() / 60)
+    sv = prepare_df(sv)
+    vs = prepare_df(vs)
+    dv = [
+        f"p{i}_{t}"
+        for i in (1, 2)
+        for t in ("correctness", "time", "asq_time", "asq_easy")
+    ]
 
     # We would also like to output a correlation matrix for a heatmap visualization.
     # We will create a matrix per kind of correlation measure.
@@ -122,12 +154,11 @@ def check_effects(sv, vs):
     # We have interval and ordinal variables, separated in the two arrays.
     # We also have the categorical gender, but as there is only one non-male, we won't investigate this further.
     # DVs:
-    # Time, Usability, and a1_c and a3_c are continuous variables (interval-scaled).
-    # Other correctness values are categorical (with 2 categories).
+    # Time, Usability, and Correctness are continuous variables (interval-scaled).
     # According to (Khamis, 2008), we will use...
     # - Either Pearson or Spearman (if outliers) for Interval-Interval
-    for key1, key2 in product(iv_interval, dv_interval):
-        # TODO: Choose one or both
+    for key1, key2 in product(iv_interval, dv):
+        # We choose Spearman here, as there are indeed some outliers.
         corr_sv = spearmanr(sv[key1], sv[key2])
         corr_vs = spearmanr(vs[key1], vs[key2])
         mat = pl.concat(
@@ -154,7 +185,7 @@ def check_effects(sv, vs):
     # - Kendall's tau_b for Ordinal-Interval
     mat_total = pl.concat([mat_total, mat])
     mat = mat.clear()
-    for key1, key2 in product(iv_ordinal, dv_interval):
+    for key1, key2 in product(iv_ordinal, dv):
         corr_sv = kendalltau(sv[key1], sv[key2])
         corr_vs = kendalltau(vs[key1], vs[key2])
         mat = pl.concat(
@@ -188,3 +219,4 @@ def check_effects(sv, vs):
     mat_total = mat_total.with_columns(
         p_adjusted=pl.Series(false_discovery_control(mat_total["p"], method="bh"))
     )
+    # code.interact(local=dict(globals(), **locals()))
