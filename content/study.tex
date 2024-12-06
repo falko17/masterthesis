@@ -69,44 +69,8 @@ I have collected the existing scores of those studies in a \gls{violin} in \cref
 \pgfplotsset{axis line style={draw=none}}
 
 \begin{figure}
-	\begin{center}
-		\begin{tikzpicture}
-			\violinsetoptions[data points,scaled,averages]{
-				xmin=0,xmax=2,
-				ymin=55,ymax=95,
-				xticklabel style={yshift={-2cm}},
-				ylabel={SUS},
-				set layers,
-				ymajorgrids=true,
-				name=violin
-			}
-
-			\violinplot[%
-				index=sus,%
-				col sep=tab,%
-				color=Maroon,%
-				dataset size=3pt,%
-				average size=5pt,%
-				average opacity=0.8,%
-				average color=black,%
-				dataset opacity=0.8,%
-				dataset jitter=0.1,%
-				relative position=1,%
-				bandwidth=2.1269,%
-				average fill opacity=0.5,%
-				average fill=ForestGreen,%
-				average mark=otimes*,%
-				dataset color=black,%
-				dataset fill=black,%
-				dataset fill opacity=0.5,%
-				label={}
-			]{analysis/dat/sus.dat}
-
-			\node(xlabel) at ($(violin.south) + (0,-0.5)$) {\small \textcolor{Gray!50!Black}{SEE}};
-
-			\plotornaments{violin}
-		\end{tikzpicture}
-	\end{center}
+	\centering
+	\includegraphics{tikz/seesus.tikz}
 	\caption{\Gls{sus} results for \SEE{} across sixteen studies~\cite{davidwagner2020, felixgaebler2021, galperin2021, hannesmasuch2020, kevindoehl2020, lennartkipka2020, maximilianwick2022, michelkrause2024, moritz, nicoweiser2021, robertbohnsack2020, rohlfing2024, rubensmidt2021, schramm2022, sulanabubakarov2021, yannisrohloff2021}.}\label{fig:seesus}
 \end{figure}
 
@@ -473,54 +437,8 @@ If one of the options is then chosen (\eg, \enquote{Centralized}), users have to
 A full visual overview of our study along with its tasks is given in \cref{fig:taskflow}.
 
 \begin{figure}
-	\begin{center}
-		\begin{tikzpicture}[
-			box/.style={draw, rounded corners, text width=6cm, align=center, minimum height=2cm},
-			scalebox/.style={draw, rounded corners, text width=4.5cm, align=center, minimum height=1cm},
-			heading/.style={font=\Large\bfseries\boldmath},
-			nextarrow/.style={draw=Maroon, line width=0.5mm,-{Latex[length=3mm]}}
-			]
-
-			\newcommand{\taskbox}[5][]{\node[box,#1] (#2) at (#3) {{\large\bfseries\boldmath \underline{#4}}\\\vspace{1.5mm}\small#5}}
-
-			% Left title box.
-			\node[draw, thick, minimum width=7cm, minimum height=14.5cm] (left) at (0,0) {};
-			\node[heading,align=center] at (0,6.4) {Group $\Psi$: SEE\\Group $\Omega$: VSCode};
-
-			% Boxes for tasks to the left.
-			\node[scalebox] (D) at (0, 4.4) {\itshape\color{Gray!50!Black}Demographics};
-			\taskbox{A1}{$(D) + (0, -2.3)$}{Task $A_1$}{Find the three classes with the highest number of methods in SpotBugs.};
-			\taskbox{B1}{$(A1) + (0, -3)$}{Task $B_1$}{Identify the convention used by the developers to organize the unit tests in SpotBugs.};
-			\taskbox{C1}{$(B1) + (0, -3)$}{Task $C_1$}{Find the base type for class \texttt{OptionalReturnNull} in SpotBugs.};
-			\node[scalebox] (S1) at ($(C1) + (0,-2.3)$) {\itshape\large\glsentrylong{sus}};
-
-			% Right title box.
-			\node[draw, thick, minimum width=7cm, minimum height=14.5cm] (right) at (8,0) {};
-			\node[heading,align=center] at (8,6.4) {Group $\Psi$: VSCode\\Group $\Omega$: SEE};
-
-			% Boxes for tasks to the right.
-			\taskbox[anchor=north]{A2}{8, |- D.north}{Task $A_2$}{Find the three classes with the highest number of methods in JabRef.};
-			\taskbox{B2}{$(A2) + (0, -3)$}{Task $B_2$}{Identify the convention used by the developers to organize the unit tests in JabRef.};
-			\taskbox{C2}{$(B2) + (0, -3)$}{Task $C_2$}{Find the base type for class \texttt{GenderEditorViewModel} in JabRef.};
-			\node[scalebox] (S2) at ($(C2) + (0, -2.3)$) {\itshape\large\glsentrylong{sus}};
-			\node[scalebox] (C) at (S2 |-, |- S1) {\itshape\color{Gray!50!Black}Final comments};
-
-			% Lines below heading at top
-			\node[inner sep=0pt] at ($(left.north east)!.5!(left.north west) + (0,-1.8)$) {\pgfornament[width=7cm]{88}} ;
-			\node[inner sep=0pt] at ($(right.north east)!.5!(right.north west) + (0,-1.8)$) {\pgfornament[width=7cm]{88}} ;
-
-			% And the arrows.
-			\draw[nextarrow] (D) -- (A1);
-			\draw[nextarrow] (A1) -- (B1);
-			\draw[nextarrow] (B1) -- (C1);
-			\draw[nextarrow] (C1) -- (S1);
-			\draw[nextarrow] (A2) -- (B2);
-			\draw[nextarrow] (B2) -- (C2);
-			\draw[nextarrow] (C2) -- (S2);
-			\draw[nextarrow] (S2) -- (C);
-			\draw[nextarrow] (S1.east) to[out=0,in=180] (A2.west);
-		\end{tikzpicture}
-	\end{center}
+	\centering
+	\includegraphics{tikz/taskflow.tikz}
 	\caption{Flow of the tasks the participants worked on.
 		$A^c$ and $A^e$ were gathered after each task.
 	}\label{fig:taskflow}
@@ -578,7 +496,7 @@ The \gls{mwu} also confirms no differences between the groups ($U = 40.5, p \app
 
 \begin{figure}
 	\begin{center}
-		\violinab{age}{ylabel=Age}{15}{45}{3.1029}{1}
+		\violinab{age}{ylabel=Age}{15}{45}{3.1029}{1}{1}
 	\end{center}
 	\caption{Distribution of age between the two groups.}\label{fig:dat_age}
 \end{figure}
@@ -592,7 +510,7 @@ The various times are visualized in \cref{fig:dat_totaltime}, where it also beco
 
 \begin{figure}
 	\begin{center}
-		\violinab{total-time}{ylabel={Time (in hours)}}{0}{5}{0.1171}{0.106}
+		\violinab{total-time}{ylabel={Time (in hours)}}{0}{5}{0.1171}{0.106}{1}
 	\end{center}
 	\caption{Total duration of time in which each participant finished the study.\\
 		May include time in which participants took breaks.}\label{fig:dat_totaltime}
@@ -671,6 +589,132 @@ Here as well there is no significant difference we need to be aware of ($U = 46,
 In summary, the only significant differences between the two groups that could cause problems in our analysis are the programming experience in general and the programming experience for bigger projects, both of which indicate significant differences insofar that group $\Psi$ apparently contains more experienced programmers.
 We will investigate the effects of this in more detail in \cref{subsec:experience}.
 
+\subsection{Correctness}\label{subsec:correct}
+To evaluate the correctness of the various answers, I wrote a script which showed me each answer and prompted me to say whether this answer was correct or incorrect, while I used the previously created answer key (see {TODO}) as a base.
+This allowed me to catch misspellings or unusual formats\footnote{For example, some participants also entered the \gls{nom} along with the class name for task $A$.} and still mark the answers as correct.
+The results of which answers I marked as correct are attached as {TODO}, while the script used to do so is part of the general analysis script in {TODO}.
+\fxwarning{Attach and link answer key, correctness answers, script in appendix}
+
+It does not make much sense to use \glspl{violin} here, as there are in most cases only two possible values here:
+The participants were either correct or incorrect in their answer to the task.
+Even for task $A$, where three answers had to be given, we only have at most three possible values in practice.
+For this reason, we are using bar graphs again, which are collected in \cref{fig:correctness} along with the respective results of the \gls{mwu}.
+
+\begin{figure}
+	\begin{subfigure}[T]{0.5\textwidth}
+		\caption{Achieved correctness for task $A_1$.\\
+			($U = 46, p \approx 0.939$)
+			\label{fig:a1c}}
+		\barcplot{seevs-a1-c}{width=\textwidth,ylabel={Number of participants},xticklabels={None correct, One correct, All correct},xtick={0,1,3}}{1}
+	\end{subfigure}\hfill
+	\begin{subfigure}[T]{0.5\textwidth}
+		\caption{Achieved correctness for task $A_2$.\\
+			($U = 50, p \approx 0.3428$)\label{fig:a2c}}
+		\barcplot{seevs-a4-c}{width=\textwidth,ylabel={},xticklabels={None correct, All correct},xtick={0,3}}{2}
+	\end{subfigure}\\
+	\begin{subfigure}[T]{0.5\textwidth}
+		\caption{Achieved correctness for task $B_1$.\\
+			($U = 0.5, p \approx 0.65$)\label{fig:b1c}}
+		\barcplot{seevs-a2-c}{width=\textwidth,ylabel={Number of participants},xticklabels={Wrong, Correct},xtick={0,1}}{1}
+	\end{subfigure}\hfill
+	\begin{subfigure}[T]{0.5\textwidth}
+		\caption{Achieved correctness for task $B_2$.\\
+			($U = 0.3, p \approx 0.3698$)\label{fig:b2c}}
+		\barcplot{seevs-a5-c}{width=\textwidth,ylabel={},xticklabels={Wrong, Correct},xtick={0,1}}{2}
+	\end{subfigure}\\
+	\begin{subfigure}[T]{0.5\textwidth}
+		\caption{Achieved correctness for task $C_1$.\\
+			($U = 0, p = 1$)\label{fig:c1c}}
+		\barcplot{seevs-a3-c}{width=\textwidth,ylabel={Number of participants},xticklabels={Wrong, Correct},xtick={0,1}}{1}
+	\end{subfigure}\hfill
+	\begin{subfigure}[T]{0.5\textwidth}
+		\caption{Achieved correctness for task $C_2$.\\
+			($\text{no differences, } U \text{ undefined }; p = 1$)\label{fig:c2c}}
+		\barcplot{seevs-a6-c}{width=\textwidth,ylabel={},xticklabels={Wrong, Correct},xtick={0,1}}{2}
+	\end{subfigure}
+	\caption{Correctness achieved in the various tasks, compared across the two systems.\\
+		Correctness when \textcolor{Maroon}{using SEE is in red}, and when \textcolor{Gray!50!black}{using VSCode is in gray}.}\label{fig:correctness}
+\end{figure}
+
+We can make several observations here:
+First, performance compared across the two object systems JabRef and SpotBugs is remarkably similar within tasks, which tells us that neither of the two systems was harder to analyze than the other under our tasks.
+We can also see a slight difference across subject systems in task $B$, where participants gave slightly more correct answers when using \gls{vscode} for $B_1$ and when using \SEE{} for $B_2$, but none of the $p$ values come close to our significance level, meaning that the choice of subject system did not affect the correctness for these tasks.
+Finally, we can tell that tasks $A$ and $C$ were easy (with only one or two participants making mistakes), while task $B$ was seemingly hard (with the wrong/correct divide being closer to 50\%).
+
+As a reminder, task $B$ was about determining how unit tests were organized in the system.
+For SpotBugs, there actually were no unit tests under the root package we included---there were some files with \tt{Test} in their name, but as SpotBugs is a static analysis tool, these were actually about detecting and handling tests for the projects that SpotBugs analyzes.
+The only class that could be reasonably construed as a test was \proptt{TestDataflowAnalysis}, so we allowed both answers "none" and "dispersed", though the latter only if \proptt{TestDataflowAnalysis} was given as an example.
+The most common error here was participants mistaking the aforementioned test detectors by SpotBugs as unit test classes \emph{for} SpotBugs (either giving them as a "centralized" or "dispersed" example), while the second-most common type of wrong answer were "other" answers which consisted of confused explanations of the system in the free text field.
+
+For JabRef, unit tests were all centralized under the \tt{src.test} package, so I had expected there to be less issues here for task $B$ than with SpotBugs.
+Looking at \cref{fig:b1c,fig:b2c} proves this assumption wrong.
+The most common (and actually only) type of error was to answer "dispersed" and then give one or more test classes under the centralized test package hierarchy as examples.
+I am not sure what went wrong here.
+While I have provided explanations of the "dispersed" and "centralized" conventions, perhaps this was still misunderstood by participants (\eg, maybe because the test package hierarchy mirrors the main package hierarchy, participants thought that the "dispersed" term applies here).
+Another possible explanation is that participants simply missed the fact that the test file they were looking at (which they likely arrived at by searching for the term "Test") was actually in the \tt{src.test} package instead of \tt{src.main}.
+Still, it is interesting that this happened with both \gls{vscode} and \SEE{}.
+
+\subsection{Time $\bigstar$}\label{subsec:time}
+As mentioned before, we calculated the time it took to complete a task using the set of timestamps $T$ and the starting timestamp $t_0$ as $\hat{t} = \max T - t_0$.
+While the \glspl{violin} in \cref{fig:time} include all datapoints, for the \glspl{mwu} we exclude datapoints belonging to incorrect answers for the respective tasks (as we do not want to count quick but wrong solutions).
+This ensures that the actual time is no higher than $\hat{t}$, but it does not catch the opposite:
+It is possible that participants were, for example, distracted and had to stop solving the task to attend some other matter, which could explain outliers like the twenty minute participation time for one participant in task $A_1$ (see \cref{fig:a1t}).
+Still, while there are some such outliers, the measured times were relatively consistent, so this method should have been accurate enough for our purposes.
+
+\begin{figure}
+	\begin{subfigure}[T]{0.5\textwidth}
+		\caption{Time taken for task $A_1$. Excluded a \SEE{} outlier that took 20 minutes.
+			($U = 47, p \approx 0.3213$)
+			\label{fig:a1t}}
+		\includegraphics[width=\textwidth,height=6cm]{tikz/a1t.tikz}
+	\end{subfigure}\hfill
+	\begin{subfigure}[T]{0.5\textwidth}
+		\caption{Time taken for task $A_2$.\\
+			($U = 19, p \approx 0.0676$)\label{fig:a2t}}
+		\includegraphics[width=\textwidth,height=6cm]{tikz/a4t.tikz}
+	\end{subfigure}\\
+	\begin{subfigure}[T]{0.5\textwidth}
+		\caption{Time taken for task $B_1$.\\
+			($U = 5, p \approx 0.08225$)\label{fig:b1t}}
+		\includegraphics[width=\textwidth,height=6cm]{tikz/a2t.tikz}
+	\end{subfigure}\hfill
+	\begin{subfigure}[T]{0.5\textwidth}
+		\caption{Time taken for task $B_2$. Excluded a \gls{vscode} outlier that took 16 minutes.
+			($U = 15, p \approx 0.6095$)\label{fig:b2t}}
+		\includegraphics[width=\textwidth,height=6cm]{tikz/a5t.tikz}
+	\end{subfigure}\\
+	\begin{subfigure}[T]{0.5\textwidth}
+		\caption{Time taken for task $C_1$.\\
+			($\bigstar\ U = 77, p = 0.0015$)\label{fig:c1t}}
+		\includegraphics[width=\textwidth,height=6cm]{tikz/a3t.tikz}
+	\end{subfigure}\hfill
+	\begin{subfigure}[T]{0.5\textwidth}
+		\caption{Time taken for task $C_2$. Excluded a \SEE{} outlier that took 8 minutes.
+			($\bigstar\ U = 17, p = 0.0247$)\label{fig:c2t}}
+		\includegraphics[width=\textwidth,height=6cm]{tikz/a6t.tikz}
+	\end{subfigure}
+	\caption{Time that it took participants to solve the tasks, compared across the two systems.}\label{fig:time}
+\end{figure}
+
+We can see a slight, but non-significant advantage for \gls{vscode} for task $A$ (\cref{fig:a1t,fig:a2t}), where the classes with the highest \gls{nom} had to be identified.
+\gls{vscode} users were allowed to use a table that could be sorted by exactly this metric, while \SEE{} users had to glean this information by inspecting the size or color of the buildings in the \gls{city}.
+The former made this task very simple and quick to solve, probably even moreso than the visual method provided by \SEE{}.
+In task $B$, by contrast, we see (\cref{fig:b1t,fig:b2t}) a slight and again non-significant advantage for \SEE{}.
+This was the task about identifying the way that unit tests were organized.
+Perhaps \SEE{} made the structure of the package hierarchy more immediately visible, which would have especially helped in task $B_2$ (where we do see a bigger margin) where all tests were in a separate hierarchy---in \gls{vscode}, this would have just been a path at the top of the \gls{ide} indicating where the file belongs, while for \SEE{} it would be immediately apparent due to the node's location that the class belongs to a certain package.
+
+The only actual significant difference lies in task $C$ (\cref{fig:c1t,fig:c2t}) for both object systems.
+Here, participants using \gls{vscode} outperformed those using \SEE{}, with an especially clear difference for task $C_1$, where we have a $p$-value of ca.\ $0.1\%$.
+This was the task about finding a \gls{base} for a given class.
+In \gls{vscode}, this was very simple:
+All participants needed to do was to keep \keystroke{Ctrl}-clicking on the superclass until they eventually reach a class without any parent.
+In \SEE{}, this was similarly simple, but required more interaction with the 3D city.
+The transitive edge animation does pretty quickly point to the \gls{base} of the hovered node, but especially for SpotBugs (see \cref{fig:c1t} for the more pronounced difference) the final edge pointed to a relatively dense and small cluster of nodes, so users would have to zoom in and move the city around further before being able to clearly tell which node the edge targets.
+This forced participants to become more familiar with \SEE{}'s controls compared to \gls{vscode}'s very simple repeated clicking, so this is my primary guess as to where the time difference comes from.
+
+\subsection{Usability}
+\fxfatal{}
+
 % % TODO: ordinal data
 %
 % \violinsv{a1-time}{Time (Minutes)}{0}{20}
@@ -715,77 +759,6 @@ We will investigate the effects of this in more detail in \cref{subsec:experienc
 % 		label={SEE}
 % 	]{analysis/dat/sus.dat}
 % \end{tikzpicture}
-
-\subsection{Correctness}\label{subsec:correct}
-To evaluate the correctness of the various answers, I wrote a script which showed me each answer and prompted me to say whether this answer was correct or incorrect, while I used the previously created answer key (see {TODO}) as a base.
-This allowed me to catch misspellings or unusual formats\footnote{For example, some participants also entered the \gls{nom} along with the class name for task $A$.} and still mark the answers as correct.
-The results of which answers I marked as correct are attached as {TODO}, while the script used to do so is part of the general analysis script in {TODO}.
-\fxwarning{Attach and link answer key, correctness answers, script in appendix}
-
-It does not make much sense to use \glspl{violin} here, as there are in most cases only two possible values here:
-The participants were either correct or incorrect in their answer to the task.
-Even for task $A$, where three answers had to be given, we only have at most three possible values in practice.
-For this reason, we are using bar graphs again, which are collected in \cref{fig:correctness} along with the respective results of the \gls{mwu}.
-
-\begin{figure}
-	\begin{subfigure}[T]{0.5\textwidth}
-		\caption{Achieved correctness for task $A_1$.\\
-			($U = 46, p \approx 0.939$)
-			\label{fig:a1c}}
-		\barcplot{seevs-a1-c}{width=\textwidth,ylabel={Number of participants},xticklabels={None correct, One correct, All correct},xtick={0,1,3}}
-	\end{subfigure}\hfill
-	\begin{subfigure}[T]{0.5\textwidth}
-		\caption{Achieved correctness for task $A_2$.\\
-			($U = 50, p \approx 0.3428$)\label{fig:a2c}}
-		\barcplot{seevs-a4-c}{width=\textwidth,ylabel={},xticklabels={None correct, All correct},xtick={0,3}}
-	\end{subfigure}\\
-	\begin{subfigure}[T]{0.5\textwidth}
-		\caption{Achieved correctness for task $B_1$.\\
-			($U = 0.5, p \approx 0.65$)\label{fig:b1c}}
-		\barcplot{seevs-a2-c}{width=\textwidth,ylabel={Number of participants},xticklabels={Wrong, Correct},xtick={0,1}}
-	\end{subfigure}\hfill
-	\begin{subfigure}[T]{0.5\textwidth}
-		\caption{Achieved correctness for task $B_2$.\\
-			($U = 0.3, p \approx 0.3698$)\label{fig:b2c}}
-		\barcplot{seevs-a5-c}{width=\textwidth,ylabel={},xticklabels={Wrong, Correct},xtick={0,1}}
-	\end{subfigure}\\
-	\begin{subfigure}[T]{0.5\textwidth}
-		\caption{Achieved correctness for task $C_1$.\\
-			($U = 0, p = 1$)\label{fig:c1c}}
-		\barcplot{seevs-a3-c}{width=\textwidth,ylabel={Number of participants},xticklabels={Wrong, Correct},xtick={0,1}}
-	\end{subfigure}\hfill
-	\begin{subfigure}[T]{0.5\textwidth}
-		\caption{Achieved correctness for task $C_2$.\\
-			($\text{no differences, } U \text{ undefined }; p = 1$)\label{fig:c2c}}
-		\barcplot{seevs-a6-c}{width=\textwidth,ylabel={},xticklabels={Wrong, Correct},xtick={0,1}}
-	\end{subfigure}
-	\caption{Correctness achieved in the various tasks, compared across the two systems.\\
-		Correctness when \textcolor{Maroon}{using SEE is in red}, and when \textcolor{Gray!50!black}{using VSCode is in gray}.}\label{fig:correctness}
-\end{figure}
-
-We can make several observations here:
-First, performance compared across the two object systems JabRef and SpotBugs is remarkably similar within tasks, which tells us that neither of the two systems was harder to analyze than the other under our tasks.
-We can also see a slight difference across subject systems in task $B$, where participants gave slightly more correct answers when using \gls{vscode}, but none of the $p$ values come close to our significance level, meaning that the choice of subject system did not affect the correctness for these tasks.
-Finally, we can tell that tasks $A$ and $C$ were easy (with only one or two participants making mistakes), while task $B$ was seemingly hard (with the wrong/correct divide being closer to 50\%).
-
-As a reminder, task $B$ was about determining how unit tests were organized in the system.
-For SpotBugs, there actually were no unit tests under the root package we included---there were some files with \tt{Test} in their name, but as SpotBugs is a static analysis tool, these were actually about detecting and handling tests for the projects that SpotBugs analyzes.
-The only class that could be reasonably construed as a test was \proptt{TestDataflowAnalysis}, so we allowed both answers "none" and "dispersed", though the latter only if \proptt{TestDataflowAnalysis} was given as an example.
-The most common error here was participants mistaking the aforementioned test detectors by SpotBugs as unit test classes \emph{for} SpotBugs (either giving them as a "centralized" or "dispersed" example), while the second-most common type of wrong answer were "other" answers which consisted of confused explanations of the system in the free text field.
-
-For JabRef, unit tests were all centralized under the \tt{src.test} package, so I had expected there to be less issues here for task $B$.
-Looking at \cref{fig:b2c,fig:b1c} proves this assumption wrong.
-The most common (and actually only) type of error was to answer "dispersed" and then give one or more test classes under the centralized test package hierarchy as examples.
-I am not sure what went wrong here.
-While I have provided explanations of the "dispersed" and "centralized" conventions, perhaps this was still misunderstood by participants (\eg, maybe because the test package hierarchy mirrors the main package hierarchy, participants thought that the "dispersed" term applies here).
-Another possible explanation is that participants simply missed the fact that the test file they were looking at (which they likely arrived at by searching for the term "Test") was actually in the \tt{src.test} package instead of \tt{src.main}.
-Still, it is interesting that this happened with both \gls{vscode} and \SEE{}.
-
-\subsection{Time}\label{subsec:time}
-\fxfatal{}
-
-\subsection{Usability}
-\fxfatal{}
 
 % TODO: SUS: Measure learnability and usability (see galperin2021)
 

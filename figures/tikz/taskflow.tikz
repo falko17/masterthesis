@@ -1,0 +1,46 @@
+\begin{tikzpicture}[
+	box/.style={draw, rounded corners, text width=6cm, align=center, minimum height=2cm},
+	scalebox/.style={draw, rounded corners, text width=4.5cm, align=center, minimum height=1cm},
+	heading/.style={font=\Large\bfseries\boldmath},
+	nextarrow/.style={draw=Maroon, line width=0.5mm,-{Latex[length=3mm]}}
+	]
+
+	\newcommand{\taskbox}[5][]{\node[box,#1] (#2) at (#3) {{\large\bfseries\boldmath \underline{#4}}\\\vspace{1.5mm}\small#5}}
+
+	% Left title box.
+	\node[draw, thick, minimum width=7cm, minimum height=14.5cm] (left) at (0,0) {};
+	\node[heading,align=center] at (0,6.4) {Group $\Psi$: SEE\\Group $\Omega$: VSCode};
+
+	% Boxes for tasks to the left.
+	\node[scalebox] (D) at (0, 4.4) {\itshape\color{Gray!50!Black}Demographics};
+	\taskbox{A1}{$(D) + (0, -2.3)$}{Task $A_1$}{Find the three classes with the highest number of methods in SpotBugs.};
+	\taskbox{B1}{$(A1) + (0, -3)$}{Task $B_1$}{Identify the convention used by the developers to organize the unit tests in SpotBugs.};
+	\taskbox{C1}{$(B1) + (0, -3)$}{Task $C_1$}{Find the base type for class \texttt{OptionalReturnNull} in SpotBugs.};
+	\node[scalebox] (S1) at ($(C1) + (0,-2.3)$) {\itshape\large\glsentrylong{sus}};
+
+	% Right title box.
+	\node[draw, thick, minimum width=7cm, minimum height=14.5cm] (right) at (8,0) {};
+	\node[heading,align=center] at (8,6.4) {Group $\Psi$: VSCode\\Group $\Omega$: SEE};
+
+	% Boxes for tasks to the right.
+	\taskbox[anchor=north]{A2}{8, |- D.north}{Task $A_2$}{Find the three classes with the highest number of methods in JabRef.};
+	\taskbox{B2}{$(A2) + (0, -3)$}{Task $B_2$}{Identify the convention used by the developers to organize the unit tests in JabRef.};
+	\taskbox{C2}{$(B2) + (0, -3)$}{Task $C_2$}{Find the base type for class \texttt{GenderEditorViewModel} in JabRef.};
+	\node[scalebox] (S2) at ($(C2) + (0, -2.3)$) {\itshape\large\glsentrylong{sus}};
+	\node[scalebox] (C) at (S2 |-, |- S1) {\itshape\color{Gray!50!Black}Final comments};
+
+	% Lines below heading at top
+	\node[inner sep=0pt] at ($(left.north east)!.5!(left.north west) + (0,-1.8)$) {\pgfornament[width=7cm]{88}} ;
+	\node[inner sep=0pt] at ($(right.north east)!.5!(right.north west) + (0,-1.8)$) {\pgfornament[width=7cm]{88}} ;
+
+	% And the arrows.
+	\draw[nextarrow] (D) -- (A1);
+	\draw[nextarrow] (A1) -- (B1);
+	\draw[nextarrow] (B1) -- (C1);
+	\draw[nextarrow] (C1) -- (S1);
+	\draw[nextarrow] (A2) -- (B2);
+	\draw[nextarrow] (B2) -- (C2);
+	\draw[nextarrow] (C2) -- (S2);
+	\draw[nextarrow] (S2) -- (C);
+	\draw[nextarrow] (S1.east) to[out=0,in=180] (A2.west);
+\end{tikzpicture}

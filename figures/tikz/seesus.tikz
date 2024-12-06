@@ -1,0 +1,36 @@
+\begin{tikzpicture}
+	\violinsetoptions[data points,scaled,averages]{
+		xmin=0,xmax=2,
+		ymin=55,ymax=95,
+		xticklabel style={yshift={-2cm}},
+		ylabel={SUS},
+		set layers,
+		ymajorgrids=true,
+		name=violin
+	}
+
+	\violinplot[%
+		index=sus,%
+		col sep=tab,%
+		color=Maroon,%
+		dataset size=3pt,%
+		average size=5pt,%
+		average opacity=0.8,%
+		average color=black,%
+		dataset opacity=0.8,%
+		dataset jitter=0.1,%
+		relative position=1,%
+		bandwidth=2.1269,%
+		average fill opacity=0.5,%
+		average fill=ForestGreen,%
+		average mark=otimes*,%
+		dataset color=black,%
+		dataset fill=black,%
+		dataset fill opacity=0.5,%
+		label={}
+	]{analysis/dat/sus.dat}
+
+	\node(xlabel) at ($(violin.south) + (0,-0.5)$) {\small \textcolor{Gray!50!Black}{SEE}};
+
+	\plotornaments{violin}
+\end{tikzpicture}

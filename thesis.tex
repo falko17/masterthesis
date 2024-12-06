@@ -57,6 +57,7 @@
 \usepackage{pgfplots}
 \usepackage{pgfornament}
 \usepackage[perpage]{manyfoot}
+\usepackage{tikzscale}
 
 \tcbuselibrary{skins,minted,breakable}
 
@@ -201,7 +202,7 @@
   \plotornaments{bars}
 \end{tikzpicture}
 }
-\newcommand{\barcplot}[2]{
+\newcommand{\barcplot}[3]{
 \begin{tikzpicture}
   \begin{axis}[
       ylabel={Number of participants},
@@ -229,19 +230,18 @@
       #2
     ]
 
-    \addplot+[fill] table [x=correct,y=occ1,col sep=tab] {analysis/dat/#1.dat};
-    \addplot+[fill] table [x=correct,y=occ2,col sep=tab] {analysis/dat/#1.dat};
+    \addplot+[fill] table [x=correct,y=occ\expandafter#3,col sep=tab] {analysis/dat/#1.dat};
+    \addplot+[fill] table [x=correct,y=occ\the\numexpr3-#3\relax,col sep=tab] {analysis/dat/#1.dat};
   \end{axis}
   \plotornaments{bars}
 \end{tikzpicture}
 }
 %\newcommand{\barcplot}[3]{\barplot{#1}{#2}{width=\textwidth, #3}}
 
-\newcommand{\violin}[9]{
+\newcommand{\violin}[8]{
   \begin{tikzpicture}
     \violinsetoptions[data points,scaled,averages]{
       xmin=0,xmax=3,
-      ymin=#6,ymax=#7,
       ymajorgrids=true,
       axis on top=false,
       set layers,
@@ -265,12 +265,12 @@
       average fill opacity=0.5,%
       average fill=ForestGreen,%
       average mark=otimes*,%
-      bandwidth=#8,%
+      bandwidth=#6,%
       dataset color=black,%
       dataset fill=black,%
       dataset fill opacity=0.5,%
       label={#2}
-    ]{analysis/dat/\expandafter#1\expandafter1.dat};
+    ]{analysis/dat/\expandafter#1\expandafter#8.dat};
 
     \violinplot[%
       index=#4,%
@@ -283,23 +283,23 @@
       average fill opacity=0.5,%
       average fill=ForestGreen,%
       average mark=otimes*,%
-      bandwidth=#9,%
+      bandwidth=#7,%
       dataset opacity=0.5,%
       dataset jitter=0.1,%
       relative position=2,%
       dataset fill=white,%
       dataset fill opacity=0.5,%
       label={#3}
-    ]{analysis/dat/\expandafter#1\expandafter2.dat};
+    ]{analysis/dat/\expandafter#1\the\numexpr3-#8\relax.dat};
 
 		\plotornaments{violin}
   \end{tikzpicture}
 }
 
 % 4key, options, ymin, ymax, bw1, bw2
-\newcommand{\violinab}[6]{\violin{alphabeta}{$\Psi$}{$\Omega$}{#1}{#2}{#3}{#4}{#5}{#6}}
-\newcommand{\violinsv}[6]{\violin{seevs}{SEE}{VSCode}{#1}{#2}{#3}{#4}{#5}{#6}}
-\newcommand{\violinsus}{\violin{seevs-sus}{SEE}{VSCode}{sus}{ylabel=SUS}{40}{100}{7.4}{7.2153}}
+\newcommand{\violinab}[7]{\violin{alphabeta}{$\Psi$}{$\Omega$}{#1}{ymin=#3,ymax=#4,#2}{#5}{#6}{#7}}
+\newcommand{\violinsv}[7]{\violin{seevs}{SEE}{VSCode}{#1}{ymin=#3,ymax=#4,#2}{#5}{#6}{#7}}
+\newcommand{\violinsus}{\violin{seevs-sus}{SEE}{VSCode}{sus}{ymin=40,ymax=100,ylabel=SUS}{7.4}{7.2153}{1}}
 
 \newcommand{\legendsquare}[1]{\textcolor{#1}{\rule{1.1ex}{1.1ex}}}
 
