@@ -185,12 +185,33 @@ def write_data(sv, vs, both):
     ]
     comp_keys_bool = [f"a{i}_c" for i in range(1, 7)]
     comp_keys_time = [f"a{i}_time" for i in range(1, 7)]
+
+    # For bar charts again (correctness):
+    for key in comp_keys_bool:
+        write_dat(
+            f"seevs-{key.replace('_', '-')}",
+            sv.group_by(key)
+            .agg(pl.len())
+            .join(vs.group_by(key).agg(pl.len()), on=key, how="full")
+            .fill_null(0)
+            .select(
+                pl.col(key)
+                .fill_null(pl.col(f"{key}_right"))
+                .cast(int)
+                .alias("correct"),
+                pl.col("len").alias("occ1"),
+                pl.col("len_right").alias("occ2"),
+            )
+            .sort(pl.col("occ1") + pl.col("occ2"), descending=True),
+            violin=False,
+        )
+
     for i, df in enumerate([sv, vs]):
         write_dat(
             f"seevs{i+1}",
             df.select(
                 [pl.col(key).to_physical() for key in comp_keys]
-                + [pl.col(key).cast(dtype=int) for key in comp_keys_bool]
+                # + [pl.col(key).cast(dtype=int) for key in comp_keys_bool]
                 + [pl.col(key).dt.total_seconds() / 60 for key in comp_keys_time]
             ),
         )

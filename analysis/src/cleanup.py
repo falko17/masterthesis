@@ -233,7 +233,7 @@ def set_correctness(df, name):
                         )[i].glimpse()
                     )
                 print(f"{value} (#{i+1})")
-                correct = input("Is this correct? [Y/n/x]: ")
+                correct = input("Is this correct? [Y/n/x]: ").lower()
                 values[key].append("y" if correct == "" else correct)
 
         # === ANSWER KEY ===

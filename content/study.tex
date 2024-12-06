@@ -717,16 +717,69 @@ We will investigate the effects of this in more detail in \cref{subsec:experienc
 % \end{tikzpicture}
 
 \subsection{Correctness}\label{subsec:correct}
+To evaluate the correctness of the various answers, I wrote a script which showed me each answer and prompted me to say whether this answer was correct or incorrect, while I used the previously created answer key (see {TODO}) as a base.
+This allowed me to catch misspellings or unusual formats\footnote{For example, some participants also entered the \gls{nom} along with the class name for task $A$.} and still mark the answers as correct.
+The results of which answers I marked as correct are attached as {TODO}, while the script used to do so is part of the general analysis script in {TODO}.
+\fxwarning{Attach and link answer key, correctness answers, script in appendix}
+
 It does not make much sense to use \glspl{violin} here, as there are in most cases only two possible values here:
 The participants were either correct or incorrect in their answer to the task.
-Even for task $A$
-\fxfatal{}
+Even for task $A$, where three answers had to be given, we only have at most three possible values in practice.
+For this reason, we are using bar graphs again, which are collected in \cref{fig:correctness} along with the respective results of the \gls{mwu}.
 
-\tikzexternaldisable
-\violinsv{a1-c}{ylabel={Correctness}}{-1}{4}{0.26143}{1}
+\begin{figure}
+	\begin{subfigure}[T]{0.5\textwidth}
+		\caption{Achieved correctness for task $A_1$.\\
+			($U = 46, p \approx 0.939$)
+			\label{fig:a1c}}
+		\barcplot{seevs-a1-c}{width=\textwidth,ylabel={Number of participants},xticklabels={None correct, One correct, All correct},xtick={0,1,3}}
+	\end{subfigure}\hfill
+	\begin{subfigure}[T]{0.5\textwidth}
+		\caption{Achieved correctness for task $A_2$.\\
+			($U = 50, p \approx 0.3428$)\label{fig:a2c}}
+		\barcplot{seevs-a4-c}{width=\textwidth,ylabel={},xticklabels={None correct, All correct},xtick={0,3}}
+	\end{subfigure}\\
+	\begin{subfigure}[T]{0.5\textwidth}
+		\caption{Achieved correctness for task $B_1$.\\
+			($U = 0.5, p \approx 0.65$)\label{fig:b1c}}
+		\barcplot{seevs-a2-c}{width=\textwidth,ylabel={Number of participants},xticklabels={Wrong, Correct},xtick={0,1}}
+	\end{subfigure}\hfill
+	\begin{subfigure}[T]{0.5\textwidth}
+		\caption{Achieved correctness for task $B_2$.\\
+			($U = 0.3, p \approx 0.3698$)\label{fig:b2c}}
+		\barcplot{seevs-a5-c}{width=\textwidth,ylabel={},xticklabels={Wrong, Correct},xtick={0,1}}
+	\end{subfigure}\\
+	\begin{subfigure}[T]{0.5\textwidth}
+		\caption{Achieved correctness for task $C_1$.\\
+			($U = 0, p = 1$)\label{fig:c1c}}
+		\barcplot{seevs-a3-c}{width=\textwidth,ylabel={Number of participants},xticklabels={Wrong, Correct},xtick={0,1}}
+	\end{subfigure}\hfill
+	\begin{subfigure}[T]{0.5\textwidth}
+		\caption{Achieved correctness for task $C_2$.\\
+			($\text{no differences, } U \text{ undefined }; p = 1$)\label{fig:c2c}}
+		\barcplot{seevs-a6-c}{width=\textwidth,ylabel={},xticklabels={Wrong, Correct},xtick={0,1}}
+	\end{subfigure}
+	\caption{Correctness achieved in the various tasks, compared across the two systems.\\
+		Correctness when \textcolor{Maroon}{using SEE is in red}, and when \textcolor{Gray!50!black}{using VSCode is in gray}.}\label{fig:correctness}
+\end{figure}
 
-\violinsv{a2-c}{ylabel={Correctness},ytick={0,1},yticklabels={Wrong, Correct}}{-1}{2}{0.35224}{1}
-\tikzexternalenable
+We can make several observations here:
+First, performance compared across the two object systems JabRef and SpotBugs is remarkably similar within tasks, which tells us that neither of the two systems was harder to analyze than the other under our tasks.
+We can also see a slight difference across subject systems in task $B$, where participants gave slightly more correct answers when using \gls{vscode}, but none of the $p$ values come close to our significance level, meaning that the choice of subject system did not affect the correctness for these tasks.
+Finally, we can tell that tasks $A$ and $C$ were easy (with only one or two participants making mistakes), while task $B$ was seemingly hard (with the wrong/correct divide being closer to 50\%).
+
+As a reminder, task $B$ was about determining how unit tests were organized in the system.
+For SpotBugs, there actually were no unit tests under the root package we included---there were some files with \tt{Test} in their name, but as SpotBugs is a static analysis tool, these were actually about detecting and handling tests for the projects that SpotBugs analyzes.
+The only class that could be reasonably construed as a test was \proptt{TestDataflowAnalysis}, so we allowed both answers "none" and "dispersed", though the latter only if \proptt{TestDataflowAnalysis} was given as an example.
+The most common error here was participants mistaking the aforementioned test detectors by SpotBugs as unit test classes \emph{for} SpotBugs (either giving them as a "centralized" or "dispersed" example), while the second-most common type of wrong answer were "other" answers which consisted of confused explanations of the system in the free text field.
+
+For JabRef, unit tests were all centralized under the \tt{src.test} package, so I had expected there to be less issues here for task $B$.
+Looking at \cref{fig:b2c,fig:b1c} proves this assumption wrong.
+The most common (and actually only) type of error was to answer "dispersed" and then give one or more test classes under the centralized test package hierarchy as examples.
+I am not sure what went wrong here.
+While I have provided explanations of the "dispersed" and "centralized" conventions, perhaps this was still misunderstood by participants (\eg, maybe because the test package hierarchy mirrors the main package hierarchy, participants thought that the "dispersed" term applies here).
+Another possible explanation is that participants simply missed the fact that the test file they were looking at (which they likely arrived at by searching for the term "Test") was actually in the \tt{src.test} package instead of \tt{src.main}.
+Still, it is interesting that this happened with both \gls{vscode} and \SEE{}.
 
 \subsection{Time}\label{subsec:time}
 \fxfatal{}

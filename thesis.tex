@@ -166,6 +166,7 @@
       \end{pgfonlayer}
 }
 
+% file, x coords, options
 \newcommand{\barplot}[3]{
 \begin{tikzpicture}
   \begin{axis}[
@@ -200,6 +201,41 @@
   \plotornaments{bars}
 \end{tikzpicture}
 }
+\newcommand{\barcplot}[2]{
+\begin{tikzpicture}
+  \begin{axis}[
+      ylabel={Number of participants},
+      height=6cm,
+      ybar stacked,
+      ytick distance=4,
+      name=bars,
+      set layers,
+      ymin=0, ymax=20,
+      axis x line*=bottom,
+      axis y line*=left,
+      enlarge x limits={1},
+      ymajorgrids,
+      bar width=0.6cm,
+      x tick label style={rotate=45, anchor=east, align=left, font=\scriptsize, yshift=-2},
+      xtick=data,
+      nodes near coords={\pgfmathprintnumber[precision=1]{\pgfplotspointmeta}},
+      nodes near coords style={
+          font=\scriptsize,
+        },
+      cycle list={
+          {fill=Maroon!30,draw=Maroon!50!black,nodes near coords style={Maroon}},
+          {fill=Gray,draw=black!70,nodes near coords style={white!50}},
+        },
+      #2
+    ]
+
+    \addplot+[fill] table [x=correct,y=occ1,col sep=tab] {analysis/dat/#1.dat};
+    \addplot+[fill] table [x=correct,y=occ2,col sep=tab] {analysis/dat/#1.dat};
+  \end{axis}
+  \plotornaments{bars}
+\end{tikzpicture}
+}
+%\newcommand{\barcplot}[3]{\barplot{#1}{#2}{width=\textwidth, #3}}
 
 \newcommand{\violin}[9]{
   \begin{tikzpicture}
