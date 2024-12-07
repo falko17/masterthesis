@@ -217,12 +217,8 @@ def write_data(sv, vs, both):
         )
 
     # SUS needs to be separate due to different number of rows.
-    write_dat(
-        "seevs-sus",
-        both.select(
-            [pl.col("sus_see").alias("sus1"), pl.col("sus_vscode").alias("sus2")]
-        ),
-    )
+    write_dat("seevs-sus1", both.select(pl.col("sus_see").alias("sus")))
+    write_dat("seevs-sus2", both.select(pl.col("sus_vscode").alias("sus")))
 
 
 if __name__ == "__main__":

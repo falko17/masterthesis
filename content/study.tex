@@ -456,12 +456,6 @@ As mentioned before, we use a significance level of $\alpha = 0.05$.
 We can neither assume normal distributions for our data, nor is it always interval-scaled, so we choose the \gls{mwu} to determine statistically significant differences between either our two groups $\Psi$ and $\Omega$ or between the two tools \SEE{} and \gls{vscode}.
 To help the reader quickly identify important results, we put a star ($\bigstar$) in the heading of a paragraph to indicate that it lead to the rejection of a null hypothesis.
 
-% \Psi and \varomega
-
-% TODO: Maybe mention alpha error stuff here already if relevant?
-%       As well as alpha=0.05. Don't call it alpha due to confusion with alphabeta. 
-%       And some stats stuff here maybe, such as why MWU.
-
 \subsection{Study Procedure}
 Before we started with the actual study, we did a small-scale pilot study with two participants, one of them being this thesis's first reviewer Prof.\ Dr.\ Rainer Koschke.
 Through their valuable feedback, I was able to see some issues I had not noticed myself before starting the study, such as a few bugs in \SEE{}, confusion regarding the term \gls{base}, and errors unpacking the prepared compressed builds of \SEE{} and \gls{vscode}\footnote{
@@ -584,7 +578,7 @@ Again, there is no significant difference between the two groups ($U = 58, p \ap
 
 \paragraph{Experience with Video Games}
 A clear majority of sixteen participants reported that they play a lot of video games (as can be seen in \cref{fig:knowgamebar}), with only two responding that they barely play and one stating that they never played video games before.
-Here as well there is no significant difference we need to be aware of ($U = 46, p \approx 0.6701$).
+There is no significant difference we need to be aware of ($U = 46, p \approx 0.6701$) here, either.
 
 In summary, the only significant differences between the two groups that could cause problems in our analysis are the programming experience in general and the programming experience for bigger projects, both of which indicate significant differences insofar that group $\Psi$ apparently contains more experienced programmers.
 We will investigate the effects of this in more detail in \cref{subsec:experience}.
@@ -654,7 +648,7 @@ While I have provided explanations of the "dispersed" and "centralized" conventi
 Another possible explanation is that participants simply missed the fact that the test file they were looking at (which they likely arrived at by searching for the term "Test") was actually in the \tt{src.test} package instead of \tt{src.main}.
 Still, it is interesting that this happened with both \gls{vscode} and \SEE{}.
 
-\subsection{Time $\bigstar$}\label{subsec:time}
+\subsection{$\bigstar$ Time}\label{subsec:time}
 As mentioned before, we calculated the time it took to complete a task using the set of timestamps $T$ and the starting timestamp $t_0$ as $\hat{t} = \max T - t_0$.
 While the \glspl{violin} in \cref{fig:time} include all datapoints, for the \glspl{mwu} we exclude datapoints belonging to incorrect answers for the respective tasks (as we do not want to count quick but wrong solutions).
 This ensures that the actual time is no higher than $\hat{t}$, but it does not catch the opposite:
@@ -693,7 +687,8 @@ Still, while there are some such outliers, the measured times were relatively co
 			($\bigstar\ U = 17, p = 0.0247$)\label{fig:c2t}}
 		\includegraphics[width=\textwidth,height=6cm]{tikz/a6t.tikz}
 	\end{subfigure}
-	\caption{Time that it took participants to solve the tasks, compared across the two systems.}\label{fig:time}
+	\caption{Time that it took participants to solve the tasks, compared across the two systems.
+		Outsiders are excluded by cutting off the Y-axis---they are still included in the average.}\label{fig:time}
 \end{figure}
 
 We can see a slight, but non-significant advantage for \gls{vscode} for task $A$ (\cref{fig:a1t,fig:a2t}), where the classes with the highest \gls{nom} had to be identified.
@@ -712,60 +707,131 @@ In \SEE{}, this was similarly simple, but required more interaction with the 3D 
 The transitive edge animation does pretty quickly point to the \gls{base} of the hovered node, but especially for SpotBugs (see \cref{fig:c1t} for the more pronounced difference) the final edge pointed to a relatively dense and small cluster of nodes, so users would have to zoom in and move the city around further before being able to clearly tell which node the edge targets.
 This forced participants to become more familiar with \SEE{}'s controls compared to \gls{vscode}'s very simple repeated clicking, so this is my primary guess as to where the time difference comes from.
 
-\subsection{Usability}
-\fxfatal{}
+\subsection{$\bigstar$ Usability}
+We have measured the usability in two ways:
+With the \gls{asq} after each task (six times total), which we will examine first, and with the \gls{sus} after each system (twice total), which we will examine afterwards.
 
-% % TODO: ordinal data
-%
-% \violinsv{a1-time}{Time (Minutes)}{0}{20}
-% \violinsv{a2-time}{Time (Minutes)}{0}{20}
-% \violinsv{a3-time}{Time (Minutes)}{0}{10}
-% \violinsv{a4-time}{Time (Minutes)}{0}{10}
-% \violinsv{a5-time}{Time (Minutes)}{0}{20}
-% \violinsv{a6-time}{Time (Minutes)}{0}{10}
-%
-% \violinsus{}
+% FIXME: Use variables and null hypotheses above (or latter only in conclusion)
 
-% \begin{tikzpicture}
-% 	\violinsetoptions[data points,scaled,averages]{
-% 		xmin=0,xmax=3,
-% 		ymin=50,ymax=100,
-% 		xlabel={Sys},
-% 		xlabel style={
-% 				yshift={-0.5cm},
-% 			},
-% 		ylabel={SUS},
-% 		ymajorgrids=true,
-% 		set layers
-% 	}
-%
-% 	\violinplot[%
-% 		index=sus,%
-% 		col sep=tab,%
-% 		color=Maroon,%
-% 		dataset size=3pt,%
-% 		average size=4pt,%
-% 		average opacity=0.8,%
-% 		average color=black,%
-% 		dataset opacity=0.8,%
-% 		dataset jitter=0.1,%
-% 		relative position=1,%
-% 		average fill opacity=0.5,%
-% 		average fill=ForestGreen,%
-% 		average mark=otimes*,%
-% 		dataset color=black,%
-% 		dataset fill=black,%
-% 		dataset fill opacity=0.5,%
-% 		label={SEE}
-% 	]{analysis/dat/sus.dat}
-% \end{tikzpicture}
+\paragraph{\gls{asq}: Complexity}
+The \gls{asq} consists of two questions, the first of which is about the "cognitive" complexity or difficulty of solving the task---this is the factor we will examine here.
+Comparisons of this factor between the two systems are visualized in \cref{fig:asqc}..
+Note that the values are \gls{likert} responses to the question given in \cref{subsec:question}, meaning that \emph{lower} scores corresponds to \emph{higher} complexity.
 
-% TODO: SUS: Measure learnability and usability (see galperin2021)
+\begin{figure}
+	\begin{subfigure}[T]{0.5\textwidth}
+		\caption{Perceived complexity for task $A_1$.\\
+			($U = 42, p \approx 0.82496$)
+			\label{fig:a1ac}}
+		\includegraphics[width=\textwidth,height=6cm]{tikz/a1ac.tikz}
+	\end{subfigure}\hfill
+	\begin{subfigure}[T]{0.5\textwidth}
+		\caption{Perceived complexity for task $A_2$.\\
+			($U = 66, p \approx 0.08332$)\label{fig:a2ac}}
+		\includegraphics[width=\textwidth,height=6cm]{tikz/a4ac.tikz}
+	\end{subfigure}\\
+	\begin{subfigure}[T]{0.5\textwidth}
+		\caption{Perceived complexity for task $B_1$.\\
+			($U = 58.5, p \approx 0.27923$)\label{fig:b1ac}}
+		\includegraphics[width=\textwidth,height=6cm]{tikz/a2ac.tikz}
+	\end{subfigure}\hfill
+	\begin{subfigure}[T]{0.5\textwidth}
+		\caption{Perceived complexity for task $B_2$.\\
+			($U = 42.5, p \approx 0.86514$)\label{fig:b2ac}}
+		\includegraphics[width=\textwidth,height=6cm]{tikz/a5ac.tikz}
+	\end{subfigure}\\
+	\begin{subfigure}[T]{0.5\textwidth}
+		\caption{Perceived complexity for task $C_1$.\\
+			($U = 21.5, p \approx 0.05357$)\label{fig:c1ac}}
+		\includegraphics[width=\textwidth,height=6cm]{tikz/a3ac.tikz}
+	\end{subfigure}\hfill
+	\begin{subfigure}[T]{0.5\textwidth}
+		\caption{Perceived complexity for task $C_2$.\\
+			($U = 59.5, p \approx 0.2005$)\label{fig:c2ac}}
+		\includegraphics[width=\textwidth,height=6cm]{tikz/a6ac.tikz}
+	\end{subfigure}
+	\caption{Perceived complexity for each system as measured by the \gls{asq} for each task.\\
+		\textbf{A higher number means an easier perception of the task, \ie, \emph{lower} complexity.}}\label{fig:asqc}
+\end{figure}
+
+\Cref{fig:a1ac,fig:b1ac,fig:b2ac,fig:c2ac} for tasks $A_1$, $B_1$, $B_2$, and $C_2$, respectively, show only negligible or even close to no differences between the two systems.
+The only differences that come at least within an order of magnitude of our significance level of $\frac{\alpha}{2} = 0.025$ are the results for tasks $A_2$ and $C_1$, but even those are due to one or two outliers with very high complexity on the side of \SEE{} without which their $p$-value comes closer to those of the other tasks.
+
+Thus, from both a qualitative view (\ie, by looking at the \glspl{violin}) and a quantitative view (\ie, through the \glspl{mwu}) we cannot draw any significant conclusions on the difference in perceived complexity here and keep the null hypothesis. % TODO: Which?
+
+\paragraph{$\bigstar$ \gls{asq}: Effort}
+The second factor measured by the \gls{asq} is the "temporal" effort, that is, whether participants were happy with the amount of time it took them to solve a given task.
+As with the previous section, the comparisons shown in \cref{fig:asqt} are of a form where, the \emph{higher} the score is, the \emph{lower} the perceived effort is.
+
+\begin{figure}
+	\begin{subfigure}[T]{0.5\textwidth}
+		\caption{Perceived effort for task $A_1$.\\
+			($U = 42, p \approx 0.82956$)
+			\label{fig:a1at}}
+		\includegraphics[width=\textwidth,height=6cm]{tikz/a1at.tikz}
+	\end{subfigure}\hfill
+	\begin{subfigure}[T]{0.5\textwidth}
+		\caption{Perceived effort for task $A_2$.\\
+			($\bigstar\ U = 78.5, p \approx 0.00531$)\label{fig:a2at}}
+		\includegraphics[width=\textwidth,height=6cm]{tikz/a4at.tikz}
+	\end{subfigure}\\
+	\begin{subfigure}[T]{0.5\textwidth}
+		\caption{Perceived effort for task $B_1$.\\
+			($U = 45.5, p = 1$)\label{fig:b1at}}
+		\includegraphics[width=\textwidth,height=6cm]{tikz/a2at.tikz}
+	\end{subfigure}\hfill
+	\begin{subfigure}[T]{0.5\textwidth}
+		\caption{Perceived effort for task $B_2$.\\
+			($U = 33, p \approx 0.33402$)\label{fig:b2at}}
+		\includegraphics[width=\textwidth,height=6cm]{tikz/a5at.tikz}
+	\end{subfigure}\\
+	\begin{subfigure}[T]{0.5\textwidth}
+		\caption{Perceived effort for task $C_1$.\\
+			($\bigstar\ U = 15, p \approx 0.0142$)\label{fig:c1at}}
+		\includegraphics[width=\textwidth,height=6cm]{tikz/a3at.tikz}
+	\end{subfigure}\hfill
+	\begin{subfigure}[T]{0.5\textwidth}
+		\caption{Perceived effort for task $C_2$.\\
+			($U = 52, p \approx 0.55359$)\label{fig:c2at}}
+		\includegraphics[width=\textwidth,height=6cm]{tikz/a6at.tikz}
+	\end{subfigure}
+	\caption{Perceived effort for each system as measured by the \gls{asq} for each task.\\
+		\textbf{A higher number means an easier perception of the task, \ie, \emph{lower} effort.}}\label{fig:asqt}
+\end{figure}
+
+Interestingly, the tasks with the smallest difference in answers to this questions are once again tasks $A_1$, $B_1$, $B_2$, and $C_2$ in \cref{fig:a1at,fig:b1at,fig:b2at,fig:c2at}.
+The remaining two \cref{fig:a2at,fig:c1at} belonging to tasks $A_2$ and $C_1$, however, actually produce a statistically significant result here, both times in favor of \gls{vscode}, where participants felt they could solve the task faster than those using \SEE{}.
+A quick comparison against \cref{fig:time} in \cref{subsec:time} reveals that they are right:
+In task $C_1$, participants were significantly faster when using \gls{vscode}, and while there was no significant difference for task $A_2$, participants were still faster on average with \gls{vscode}.
+
+It is slightly puzzling, though, that no such difference in the perceived effort exists for task $C_2$, where \cref{fig:c2t} \emph{does} show a significant difference.
+Looking again at the result of the significance test, the $p$-value of $0.0247$ is extremely close to our significance level, so perhaps the difference is not as pronounced, although in that case I would have expected the \gls{asq} effort for task $A_2$ to also have a noticeable difference.
+Maybe there is a difference between perceived versus actual time taken for the $A$ task, in that it feels more strenuous or at least slower than the $C$ task (\eg, maybe it is more interesting to follow the transitive hops of the edge around the city than to look for big buildings and enter them into a table).
+
+\paragraph{$\bigstar$ \gls{sus}}
+Finally, the \glsentrylong{sus} measures the usability of a system as a whole with ten questions.
+To map a set of answers onto a score from 0--100, we apply the formula by \textcite{brooke1996}, that is, $2.5 \cdot (20 + \sum\limits_{i = 1}^{10} (-1)^{i+1} \cdot s_i)$, where $s_i$ is the answer to the $i$-th \gls{sus} question on a \gls{likert} from 0--4.
+The alternation introduced by the factor $(-1)^{i+1}$ exists due to the fact that even-numbered questions are inverted phrasings of the odd-numbered questions.
+\Cref{fig:sus} showcases the difference in measured \gls{sus} scores between \SEE{} and \gls{vscode}.
+We have 38 datapoints here because participants were asked to rate both systems.
+
+\begin{figure}
+	\center
+	\violinsus
+	\caption{Comparisons between measured \gls{sus} scores for \SEE{} and \gls{vscode}.}\label{fig:sus}
+\end{figure}
+
+As the attentive reader may have guessed from the star in the heading, the difference here is significant when we apply the \gls{mwu}, specifically in favor of \gls{vscode} ($U = 114.5, p \approx 0.02116$).
+The average \gls{sus} score for \SEE{} is $69.5$, with a median of $68.75$, while the \gls{sus} score for \gls{vscode} was on average $80.5$, with a median of $80.5$.
+Our measured score for \SEE{} falls in line with the average for \SEE{} established from other experiments (see \cref{fig:seesus}), and its difference to a traditional tool also replicates the results of the study for my bachelor's thesis~\cite{galperin2022}.
+There are multiple possible reasons why \SEE{} does worse than \gls{vscode} here:
+As a research project, it is less polished than the professionally developed \gls{vscode}, it uses paradigms and controls that users may be less familiar with than those in a traditional \gls{ide}, or there may be specific grievances users had with \SEE{}.
+We can at least cast light on the last of these explanations by examining the feedback participants have left about \SEE{}, which we will do in the very next \cref{subsec:comments}.
 
 \subsection{The Effects of Experience}\label{subsec:experience}
 \fxfatal{}
 
-\subsection{Comments}
+\subsection{Comments}\label{subsec:comments}
 \fxfatal{}
 
 \section{Threats to Validity}\label{sec:threats}
