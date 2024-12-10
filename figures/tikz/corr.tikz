@@ -1,0 +1,41 @@
+\begin{tikzpicture}
+	\begin{axis}[
+			axis equal image, % We want a square grid, not a rectangular one
+			scatter, % This activates the color mapping
+			scatter/use mapped color,
+			colormap/RdBu, % Choose the colormap
+			colorbar, % Add a legend
+			point meta min=-1,
+			point meta max=1,
+			grid=minor, % Grid lines between the intervals
+			minor tick num=1, % One minor tick per interval
+			tickwidth=0pt, % Don't draw the major tick marks
+			y dir=reverse, % Y increases downward
+			axis line style={draw=Gray!50!black},
+			x tick label style={rotate=45, anchor=east, align=left, font=\scriptsize, yshift=-2},
+			enlargelimits={abs=0.5}, % Add half a unit on all sides
+			yticklabels={Age, Highest degree, Programming experience, Bigger project experience, SEE experience, VSCode experience, Video game experience, SpotBugs experience, JabRef experience},
+			xticklabels={\textcolor{Maroon}{Correctness}, \textcolor{Gray!50!black}{Correctness}, \textcolor{Maroon}{Time}, \textcolor{Gray!50!black}{Time}, \textcolor{Maroon}{ASQ effort}, \textcolor{Gray!50!black}{ASQ effort}, \textcolor{Maroon}{ASQ complexity}, \textcolor{Gray!50!black}{ASQ complexity}, \textcolor{Maroon}{SUS}, \textcolor{Gray!50!black}{SUS}},
+			ytick=data,
+			xtick=data,
+			scatter/@pre marker code/.append code={% A bit of magic for scaling the circles in axis units
+					\pgfplotstransformcoordinatex{sqrt(abs(\pgfplotspointmeta))}% Area scales with the square of the radius
+					\scope[mark size=\pgfplotsunitxlength*\pgfmathresult/2, fill=mapped color]
+				},
+			scatter/@post marker code/.append code={%
+					\endscope%
+				}
+		]
+		\addplot +[
+		point meta=explicit, % We'll provide values for the color and size
+		only marks, % No lines between the points
+		] table [
+				x expr={int(mod(\coordindex+0.01,10))}, % The position depends on the coordinate index, not the X or Y values
+				y expr={int((\coordindex+0.01)/10))},
+				col sep=tab,
+				x=IV,
+				y=DV,
+				meta=correlation
+			] {analysis/dat/corr.dat};
+	\end{axis}
+\end{tikzpicture}

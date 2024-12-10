@@ -89,52 +89,67 @@ def check_demographics(sv, vs):
         )
 
 
-def check_effects(sv, vs):
+def check_effects(sv, vs, both):
     # Check for effects of some IVs (experience, age, etc) on DVs.
-    # MUST CHECK: programming, opensource, knowsee [sign. diff] and knowide, knowjava [important]
-    iv_interval = ["age", "total_time"]
-    iv_ordinal = ["degree", "programming", "opensource", "knowsee"]
+    # MUST CHECK: programming, opensource, knowsee [sign. diff]
+    iv_interval = ["age"]
+    iv_ordinal = [
+        "degree",
+        "programming",
+        "opensource",
+        "knowsee",
+        "knowvs",
+        "knowgame",
+        "knowspotbugs",
+        "knowjabref",
+    ]
     print("\n=== EFFECTS ===")
 
-    def prepare_df(df):
+    def prepare_df(df, see_first):
+        systems = ["vscode", "see"]
+        if see_first:
+            systems.reverse()
         return df.with_columns(pl.col(pl.Duration).dt.total_seconds() / 60).select(
-            pl.col(iv_interval + iv_ordinal),
+            pl.col(iv_interval + iv_ordinal + ["id"]),
             # Aggregate along SEE/VS, else we have too many hypotheses to test.
             # This also makes analysis a bit easier, as we only have interval-scaled dependent variables.
             (
                 pl.col("a1_c") / 3 + pl.col("a2_c").cast(int) + pl.col("a3_c").cast(int)
-            ).alias("p1_correctness"),
+            ).alias(f"{systems[0]}_correctness"),
             (
                 pl.col("a4_c") / 3 + pl.col("a5_c").cast(int) + pl.col("a6_c").cast(int)
-            ).alias("p2_correctness"),
+            ).alias(f"{systems[1]}_correctness"),
             (pl.col("a1_time") + pl.col("a2_time") + pl.col("a3_time")).alias(
-                "p1_time"
+                f"{systems[0]}_time"
             ),
             (pl.col("a4_time") + pl.col("a5_time") + pl.col("a6_time")).alias(
-                "p2_time"
+                f"{systems[1]}_time"
             ),
             (
                 pl.col("a1_asq_time") + pl.col("a2_asq_time") + pl.col("a3_asq_time")
-            ).alias("p1_asq_time"),
+            ).alias(f"{systems[0]}_asq_time"),
             (
                 pl.col("a4_asq_time") + pl.col("a5_asq_time") + pl.col("a6_asq_time")
-            ).alias("p2_asq_time"),
+            ).alias(f"{systems[1]}_asq_time"),
             (
                 pl.col("a1_asq_easy") + pl.col("a2_asq_easy") + pl.col("a3_asq_easy")
-            ).alias("p1_asq_easy"),
+            ).alias(f"{systems[0]}_asq_easy"),
             (
                 pl.col("a4_asq_easy") + pl.col("a5_asq_easy") + pl.col("a6_asq_easy")
-            ).alias("p2_asq_easy"),
+            ).alias(f"{systems[1]}_asq_easy"),
         )
 
-    sv = prepare_df(sv)
-    vs = prepare_df(vs)
-    dv = [
-        f"p{i}_{t}"
-        for i in (1, 2)
-        for t in ("correctness", "time", "asq_time", "asq_easy")
-    ]
-
+    dvs = ("correctness", "time", "asq_time", "asq_easy", "sus")
+    df = pl.concat([prepare_df(sv, True), prepare_df(vs, False)], how="diagonal")
+    # Add SUS scores.
+    df = df.join(
+        both.select(
+            pl.col("sus_see").alias("see_sus"),
+            pl.col("sus_vscode").alias("vscode_sus"),
+            pl.col("id"),
+        ),
+        on="id",
+    )
     # We would also like to output a correlation matrix for a heatmap visualization.
     # We will create a matrix per kind of correlation measure.
     # The columns will be the IV, then the DV, then the correlation measure.
@@ -142,13 +157,11 @@ def check_effects(sv, vs):
         schema={
             "IV": pl.String,
             "DV": pl.String,
-            "Correlation": pl.Float64,
+            "correlation": pl.Float64,
             "p": pl.Float64,
         }
     )
     mat_total = mat.clone()
-
-    # TODO: SUS
 
     # IVs:
     # We have interval and ordinal variables, separated in the two arrays.
@@ -157,27 +170,27 @@ def check_effects(sv, vs):
     # Time, Usability, and Correctness are continuous variables (interval-scaled).
     # According to (Khamis, 2008), we will use...
     # - Either Pearson or Spearman (if outliers) for Interval-Interval
-    for key1, key2 in product(iv_interval, dv):
+    for key1, key2 in product(iv_interval, dvs):
         # We choose Spearman here, as there are indeed some outliers.
-        corr_sv = spearmanr(sv[key1], sv[key2])
-        corr_vs = spearmanr(vs[key1], vs[key2])
+        corr_see = spearmanr(df[key1], df[f"see_{key2}"])
+        corr_vscode = spearmanr(df[key1], df[f"vscode_{key2}"])
         mat = pl.concat(
             [
                 mat,
                 pl.DataFrame(
                     {
                         "IV": key1,
-                        "DV": key2 + "_sv",
-                        "Correlation": corr_sv.statistic,
-                        "p": corr_sv.pvalue,
+                        "DV": key2 + "_see",
+                        "correlation": corr_see.statistic,
+                        "p": corr_see.pvalue,
                     },
                 ),
                 pl.DataFrame(
                     {
                         "IV": key1,
-                        "DV": key2 + "_vs",
-                        "Correlation": corr_vs.statistic,
-                        "p": corr_vs.pvalue,
+                        "DV": key2 + "_vscode",
+                        "correlation": corr_vscode.statistic,
+                        "p": corr_vscode.pvalue,
                     },
                 ),
             ]
@@ -185,38 +198,37 @@ def check_effects(sv, vs):
     # - Kendall's tau_b for Ordinal-Interval
     mat_total = pl.concat([mat_total, mat])
     mat = mat.clear()
-    for key1, key2 in product(iv_ordinal, dv):
-        corr_sv = kendalltau(sv[key1], sv[key2])
-        corr_vs = kendalltau(vs[key1], vs[key2])
+    for key1, key2 in product(iv_ordinal, dvs):
+        corr_see = kendalltau(df[key1], df[f"see_{key2}"])
+        corr_vscode = kendalltau(df[key1], df[f"vscode_{key2}"])
         mat = pl.concat(
             [
                 mat,
                 pl.DataFrame(
                     {
                         "IV": key1,
-                        "DV": key2 + "_sv",
-                        "Correlation": corr_sv.statistic,
-                        "p": corr_sv.pvalue,
+                        "DV": key2 + "_see",
+                        "correlation": corr_see.statistic,
+                        "p": corr_see.pvalue,
                     },
                 ),
                 pl.DataFrame(
                     {
                         "IV": key1,
-                        "DV": key2 + "_vs",
-                        "Correlation": corr_vs.statistic,
-                        "p": corr_vs.pvalue,
+                        "DV": key2 + "_vscode",
+                        "correlation": corr_vscode.statistic,
+                        "p": corr_vscode.pvalue,
                     },
                 ),
             ]
         )
-    # write_dat("corr-ktau", mat)
     mat_total = pl.concat([mat_total, mat])
     mat = mat.clear()
 
-    mat_total = pl.concat([mat_total, mat])
-
     mat_total = mat_total.filter(pl.col("p").is_not_nan())
     mat_total = mat_total.with_columns(
-        p_adjusted=pl.Series(false_discovery_control(mat_total["p"], method="bh"))
-    )
-    # code.interact(local=dict(globals(), **locals()))
+        p_adjusted=pl.Series(false_discovery_control(mat_total["p"], method="by"))
+    ).with_columns(pl.col(pl.String).str.replace_all("_", "-"))
+
+    code.interact(local=dict(globals(), **locals()))
+    write_dat("corr", mat_total, violin=False)

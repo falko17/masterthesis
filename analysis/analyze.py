@@ -18,6 +18,7 @@ from src.util import print_comments, print_statistic, write_dat
 
 def main():
     colorama_init()
+    pl.Config().set_tbl_rows(1000)
     print("Analyzing evaluation results...\n")
     sv = pl.read_csv(
         "SEE-VSCode.csv",
@@ -65,12 +66,10 @@ def main():
         pl.col("knowjava") != "No, not really", pl.col("knowide") != "No, not really"
     )
 
-    code.interact(local=dict(globals(), **locals()))
-
     check_correctness(sv, vs)
     check_time(sv, vs)
     check_usability(sv, vs, both)
-    check_effects(sv, vs)
+    check_effects(sv, vs, both)
 
     write_data(sv, vs, both)
 

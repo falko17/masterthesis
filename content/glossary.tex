@@ -120,6 +120,12 @@
 
 \newacronym[description={A syntax in which context-free grammars can be formally expressed.}]{ebnf}{EBNF}{Extended Backus–Naur Form}
 
+\newacronym[description={The expected proportion of false positives within all positives.~\cite{benjamini1995}}]{fdr}{FDR}{False Discovery Rate}
+
+\newacronym[description={The area of the world that can be seen by a camera or eye.}]{fov}{FOV}{Field of view}
+
+\newacronym[description={The probability of getting at least one false positive in a family of statistical tests.~\cite{tukey1953}}]{fwer}{FWER}{Family-Wise Error Rate}
+
 \newacronym[description={\fc{A} file format for graphs, used in \gls{see} for representing dependency and hierarchy graphs of software projects.}]{gxl}{GXL}{Graph eXchange Language}
 
 \newacronym[description={\fc{E}ditor for source code with features that are useful for development (\eg, highlighting errors). Examples are \emph{Eclipse} or \emph{\textsc{JetBrains} IntelliJ}}.]{ide}{IDE}{Integrated Development Environment}
@@ -180,6 +186,9 @@ description={\fc{A} development tool, such as an \gls{ide}, that supports \gls{l
 \newglossaryentry{window}{name=\fc{c}ode {w}indow, text=code window,
 description={\fc{A} source code viewer in \SEE{} which supports very basic \gls{ide}-like functionality.}}
 
+\newglossaryentry{fisherexact}{name={F}isher's exact test,
+	description={\fc{A} test for statistical significance for contingency tables, intended as an alternative to the $\chi^2$ test to be accurate even with smaller sample sizes.~\cite{fisher1922}}}
+
 \newglossaryentry{likert}{name={L}ikert scale,
 	description={\fc{A} psychometric scale in which users indicate their agreement on a linear scale from "strongly agree" to "strongly disagree"~\cite{likert1932}.}}
 
@@ -188,6 +197,9 @@ description={\fc{A} source code viewer in \SEE{} which supports very basic \gls{
 
 \newglossaryentry{intervaltree}{name=interval tree,
 	description={\fc{A} data structure meant to store intervals/ranges in such a way that overlapping or contained intervals can be found efficiently.}}
+
+\newglossaryentry{multiplecomp}{name=multiple comparisons problem,
+	description={\fc{A} problem in statistics that happens when the same dataset is tested for significant results multiple times, thereby increasing the chance of a false positive beyond what is acceptable.~\cite{tukey1953}}}
 
 \newglossaryentry{reflexion}{name=\fc{r}eflexion \fc{a}nalysis,
 	description={\fc{T}he process of comparing the architecture and implementation of a software project and finding incongruencies between the two.}}

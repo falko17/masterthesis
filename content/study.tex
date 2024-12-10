@@ -263,7 +263,7 @@ Additionally, we would like to follow the "wish list" compiled by \textcite[122-
 	\item \textbf{\enquote{Provide the same data to all participants.}}
 	      The tasks for both participants (and accompanying data) are identical, and \gls{vscode} participants get access to a table of metrics so that the same data is present. \cyes
 	\item \textbf{\enquote{Limit the amount of time allowed for solving each task.}}
-	      Integrating a limit like this into the tool we used for the questionnaire would have proved difficult, but the tasks were comparatively simple and participants were aware that their completion time was measured, so we should hopefully have avoided the effects Wettel references here. \chmm
+	      Integrating a limit like this into the tool we used for the questionnaire would have been difficult, but the tasks were comparatively simple and participants were aware that their completion time was measured, so we should hopefully have avoided the effects Wettel references here. \chmm
 	\item \textbf{\enquote{Provide all the details needed to make the experiment replicable.}}
 	      I have included (pseudonymized) participation data, the full definition of the questionnaire, and the analysis script which performed data cleanup and statistical tests. \cyes
 	      \fxwarning{Link to appendix here.}
@@ -470,7 +470,7 @@ Participants were gained via convenience sampling, that is, I asked fellow stude
 
 \fxnote{In Appendix, give answer key.}
 
-\subsection{Demographics}
+\subsection{Demographics}\label{subsec:demographics}
 
 First, we want to take a quick look at the demographics of our study.
 We also take this opportunity to find any significant differences between the two groups $\Psi$ and $\Omega$, to make sure any results in the dependent variables later on are not just due to such differences.
@@ -592,7 +592,9 @@ The results of which answers I marked as correct are attached as {TODO}, while t
 It does not make much sense to use \glspl{violin} here, as there are in most cases only two possible values here:
 The participants were either correct or incorrect in their answer to the task.
 Even for task $A$, where three answers had to be given, we only have at most three possible values in practice.
-For this reason, we are using bar graphs again, which are collected in \cref{fig:correctness} along with the respective results of the \gls{mwu}.
+For this reason, we are using bar graphs again, which are collected in \cref{fig:correctness} along with the respective results of the statistical tests.
+I also need to note that, while task $A$ can be analyzed with the \gls{mwu}, tasks $B$ and $C$ with their binary results are much better suited for \gls{fisherexact}, which takes a $2 \times 2$ contingency table as input.
+We chose this test instead of the more frequently used $\chi^2$ test~\cite{pearson1900} because it is (as its name implies) more exact, and thus works better with smaller sample sizes~\cite{fisher1922}, whereas its downside is a more involved computation, which we do not need to worry about here.
 
 \begin{figure}
 	\begin{subfigure}[T]{0.5\textwidth}
@@ -829,13 +831,162 @@ As a research project, it is less polished than the professionally developed \gl
 We can at least cast light on the last of these explanations by examining the feedback participants have left about \SEE{}, which we will do in the very next \cref{subsec:comments}.
 
 \subsection{The Effects of Experience}\label{subsec:experience}
-\fxfatal{}
+As noted before, we now want to see if there is a correlation between any independent variables (especially ones related to experience) and any dependent variables (such as correctness).
+One of the reasons we do this is simple scientific interest, but another is to check whether any significant differences between groups $\Psi$ and $\Omega$ that we uncovered in \cref{subsec:demographics} actually have a non-negligible bearing on the results of the study.
+
+There is one problem we need to handle first.
+Assuming that we create a null hypothesis of the form "independent variable $X$ is not correlated to dependent variable $Y$ for task $Z_i$," for each possible $X$, $Y$, $Z$, and $i$, we would create $9 \cdot (4 \cdot 3 \cdot 2 + 2) = 234$ (the $+2$ is due to the \gls{sus}, which is asked twice) null hypotheses and perform a corresponding number of statistical tests.
+At a significance level of $\alpha = 0.05$, we have a $5\%$ chance of a false positive.
+Hence, for this many tests, we are virtually certain to hit at least one---in fact, we should expect around $12$ (\ie, $234 \cdot 0.05$) of them.
+This is know as the \gls{multiplecomp}.
+Since we do not really care that much about the correlation for each individual task, we can at least reduce this problem somewhat by aggregating along the two subject systems, that is, by averaging results for the first three tasks and then for the last three tasks, to get a single dependent variable per system instead of three.
+Still, this leaves us with $90$ tests, where we can expect roughly 5 false positives.
+
+There are a few ways to solve this, one of the most famous being the Bonferroni correction, which simply divides the significance level by the number of hypotheses~\cite[66 \psq]{miller1981}.
+However, this method of controlling the \gls{fwer} is known to be very conservative---with our moderate sample size of $n=\participants$ we would prefer a method less likely to result in false negatives.
+Luckily, such a tool exists in the procedure by \textcite{benjamini1995} to control the \gls{fdr}.
+Since our tested hypotheses might not be fully independent, we choose the variation by \textcite{benjamini2001} and fix the \gls{fdr} at our usual $\alpha$ of $0.05$.
+We designate the $p$-value before fixing the \gls{multiplecomp} as $\xcancel{p}$.
+
+For the correlations themselves, we follow the recommendations by \textcite[157,159]{khamis2008} and use Kendall's coefficient of rank correlation $\tau_b$ for comparisons with ordinal independent variables~\cite{kendall1938, kendall1945}, and Spearman's rank correlation coefficient $r$\footnote{
+	We could have also used Pearson's correlation coefficient $r$~\cite{bravais1844, pearson1895}, but Spearman's $r$ seems more fitting due to our dataset including some outliers.
+} for comparisons with continuous independent variables~\cite{spearman1904} (since all our dependent variables, at least in aggregated form, are continuous).
+
+\begin{figure}
+	\centering
+	\includegraphics{tikz/corr.tikz}
+	\caption{Correlations between independent and dependent variables.\\
+		Dependent variables for \SEE{} are marked in \textcolor{Maroon}{red} and those for \gls{vscode} in \textcolor{Gray!50!black}{gray}.}\label{fig:corr}
+\end{figure}
+
+A matrix of correlations between the independent and dependent variables is given in \cref{fig:corr}.
+The size of the circles corresponds to the strength of the correlation, while the color indicates its direction in addition to strength.
+We can see that no particularly dark colors, and thus no particularly strong correlations are present.
+Indeed, the only correlations that would even be normally classified as "moderate"~\cite{akoglu2018} (these also turn out to be the only statistically significant results \emph{before} applying the \gls{fdr} correction) are the following two negative correlations:
+\begin{itemize}
+	\item \textbf{Experience with bigger software projects} and the \textbf{\gls{sus} for \gls{vscode}} correlate negatively with $\tau_b \approx -0.4225$ ($\xcancel{p} \approx 0.0313, p \approx 1$).
+	      \begin{itemize}
+		      \item This is a very surprising result to me.
+		            I would have expected more experience on software project to have led to more familiarity with tools like \gls{vscode} and hence to higher usability ratings.
+		            If we want to speculate, maybe very experienced developers have more specific "tastes", such as a heavily customized editor, leading to less enjoyment when they have to use the normal \gls{vscode}, but this does not really ring true, personally.
+	      \end{itemize}
+	\item \textbf{Experience with \gls{vscode}} and the \textbf{\gls{sus} for \SEE{}} correlate negatively with $\tau_b \approx -0.4523$ ($\xcancel{p} \approx 0.0247, p \approx 1$).
+	      \begin{itemize}
+		      \item This result at least seems to make intuitive sense---developers used to \gls{vscode} may feel less productive when switching to a very new environment like \SEE{}.
+	      \end{itemize}
+\end{itemize}
+
+However, we cannot put too much stock in the speculation given above, since neither of the two \gls{fdr}-adjusted $p$-values are anywhere near below our significance level.
+Thus, in total, we cannot make out any significant correlation between independent and dependent variables here, which has the upside that we need not worry as much about any of the differences in independent variables from \cref{subsec:experience} biasing our results.
 
 \subsection{Comments}\label{subsec:comments}
-\fxfatal{}
+
+\newcommand{\answer}[1]{\begin{description}\item[\follows{}]{#1}\end{description}}
+\newcommand*{\agree}{%
+	\scalebox{-1}[1]{%
+		\begingroup
+		\sbox0{Ag}%
+		\raisebox{-\dp0}{%
+			\includegraphics[{%
+						height=\dimexpr\dp0+\ht0\relax,%
+					}]{Symbol_thumbs_up-crop.pdf}%
+		}%
+		\endgroup
+	}%
+}
+
+Here, we shall go over the comments that participants have left in the free text fields.
+There has been one such field for feedback about \SEE{}, one for feedback about \gls{vscode}, and one for general comments.
+I will group the comments together and rephrase them in a more general and direct way to eliminate duplicates, make this easier to read, and to preserve the anonymity of the participants.
+The number of times a type of comment has been left is indicated by a number in brackets after the description, if this number is greater than one.
+My responses to comments are indicated by the "\follows{}" symbol, while simple agreement without any further elaboration is indicated by the "\agree" symbol\footnote{
+	A missing "\agree" symbol does not necessarily indicate disagreement on my part, some comments (\eg, "\gls{vscode} was great to use") are just of a form where agreement does not make much sense as a response.
+}.
+\fxnote{Should I move this into an appendix instead of listing the comments here?}
+
+\paragraph{\SEE{}}
+Since this is where most of the comments were left, I will group these comments into three categories.
+
+\begin{itemize}
+	\item \textbf{Feature/change requests}:
+	      \begin{itemize}
+		      \item A copy-paste feature for text in \SEE{} (including in \glspl{window}) would have been useful. $\bm{[3\times]}$ \agree
+		      \item It should be possible to sort all classes in the tree view independent of the tree structure. $\bm{[2\times]}$
+		            \answer{This use-case is already planned as issue \href{https://github.com/uni-bremen-agst/SEE/issues/680}{\proptt{\#680}}.}
+		      \item The \gls{fov} should be increased.
+		            \answer{This is easy to implement, and should probably even be adjustable in-game instead of being a fixed value.}
+		      \item After zooming in and zooming out again, it is hard to move the \gls{city} back to its original spot.
+		            The \gls{city} should ideally be fixed in place when zooming. \agree{}
+		      \item There should be a more obvious function to highlight the superclass instead of just the edges.
+		            \answer{This function already exists via the context menu, but was not included in the explanatory video.}
+		      \item It would be useful to have the feature to directly navigate to the \gls{base} instead of having to go from one parent to the next.
+		            \answer{I agree when talking about \SEE{} as it is normally used, but for this study, the intent was also to have a non-trivial task that required moderate interaction with the \gls{city} environment.}
+		      \item File paths should have been shown more prominently.
+		            \answer{There should at least be an option to include this information in the hover popup.
+			            Showing paths for every node in the city would overcrowd it a bit.}
+		      \item The "show in city" effect should stop more quickly. \agree
+		      \item A key combination to trigger edges for a given node would be useful to quickly navigate using edges.
+		            \answer{As I write this, we are working on a new keyboard shortcut system that would accomodate this.}
+		      \item A gradient may have been better on the nodes.
+		            The single color makes it harder to distinguish nodes whose \gls{nom} is similar. \agree \fxnote{Do we already support using a gradient? I can't remember.}
+		      \item A less three-dimensional view may have been useful to navigate this city more easily.
+		            \answer{This may be true here, since we have not used all three dimensions for metrics, but at its core, \SEE{} is a 3D \gls{city} visualization.}
+	      \end{itemize}
+	\item \textbf{Bug reports}:
+	      \begin{itemize}
+		      \item There were some smaller bugs that only became apparent after longer usage.
+		      \item The \gls{window} could not be opened for one of the files in task $C$.
+		      \item Using "show code" made \SEE{} freeze.
+		            \answer{The above two problems are likely related, and this happened to me once too, but it also seems to occur non-deterministically, making it hard to debug.}
+		      \item \SEE{} had to be restarted at one point because a node went missing.
+		            \answer{The most likely explanation here is that the node was accidentally moved.
+			            A "reset" button to completely undo any changes to a city's layout might be a good idea.}
+		      \item Under Linux, the search menu is flickering, making it much harder to use.
+		            \answer{I cannot replicate this, even though I am a Linux user---perhaps there are more specific sets of circumstances under which this bug occurs.}
+		      \item Clicks in the tree view are sometimes transferred to the \gls{city} behind it.
+		            \answer{We are aware of this problem and tracking it in issue \href{https://github.com/uni-bremen-agst/SEE/issues/702}{\proptt{\#702}}.}
+	      \end{itemize}
+	\item \textbf{Miscellaneous comments and criticism}:
+	      \begin{itemize}
+		      \item Edges drawn between clusters of nodes that are close to one another are hard to visually distinguish. $\bm{[2\times]}$
+		            \answer{This is indeed a problem for denser clusters of nodes, but it is not immediately clear how to reliably solve this.}
+		      \item A first-person camera combined with mouse controls is a very unfamiliar combination.
+		      \item Quickly estimating which node has the highest \gls{nom} works well, but it is harder to gain confidence over numeric exactness.
+		      \item It is cumbersome to check the \gls{nom} using the properties window.
+		      \item \SEE{} is getting very visually appealing, and the transitive edge animation reminds me of a stone skipping across water, which is very cool.
+	      \end{itemize}
+\end{itemize}
+
+\paragraph{\gls{vscode}}
+\begin{itemize}
+	\item It was great to use. $\bm{[2\times]}$
+	\item An extension in \gls{vscode} with which metrics can be viewed directly in the \gls{ide} would have been helpful. $\bm{[2\times]}$
+	      \answer{A related work is the bachelor's thesis by \textcite{herrmann2024}, which explores how visualizations of such metrics can be integrated into \gls{vscode} via an extension.}
+	\item The featureset is huge.
+	\item I was unsure if we were allowed to use the table for task $A$, which is why I slightly hesitated at first.
+	\item The task seemed to only be solveable using the provided table.
+	      \answer{This was intentional---the table was added to make the comparison to \SEE{} fair.}
+	\item I would have rather used the command-line on Linux to solve tasks more quickly.
+	      \answer{I agree that this would have been faster for an experienced developer, but the aim of the study was to compare \emph{\glspl{ide}} with \glspl{city}.}
+	\item The symbols in \gls{vscode} were too small to reliably hit with the mouse.
+	\item I prefer Emacs and Vim over \gls{vscode}. \agree
+\end{itemize}
+
+\paragraph{General Comments}
+\begin{itemize}
+	\item I found the question about the structure of the unit tests misleading.
+	      \answer{Unfortunately, there were no further details in this comment, so I am not sure which part was misleading.
+		      I have tried to give a detailed description of each type of unit test organization, but perhaps I should have added another tutorial question like I did for the \glspl{base}.}
+	\item Telemetry functions in \gls{vscode} were active---this should never be the case in a study.
+	      \answer{I fully agree and apologize for this oversight.}
+	\item Without the table, solving the tasks would have been very difficult in \gls{vscode}.
+	\item The study was well done.
+\end{itemize}
 
 \section{Threats to Validity}\label{sec:threats}
 \fxfatal{}
 
-\section{Interim Conclusion}  % Or maybe just recap?
+\section{Interim Conclusion}
 \fxfatal{}
+
+% Table with all results
