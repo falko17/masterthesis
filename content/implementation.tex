@@ -10,6 +10,9 @@ We will start by briefly going over some preliminary changes to both \SEE{} and 
 Then, we will spend the majority of this chapter specifying and explaining the algorithm which "converts" \gls{lsp} information into \glspl{city}, before looking into how additional \glspl{capability} can be integrated into \SEE{}'s \glspl{city} and \glspl{window} specifically.
 Finally, we will conduct a brief technical evaluation, with a more thorough user study following in the next chapter.
 
+Before continuing with this chapter, I also highly recommend the reader to watch the six-minute showcase video at \url{https://www.youtube.com/watch?v=yAzyv2_q2ng}.
+It goes over all important user-facing features and does a better job of presenting these than can be done in text alone.
+
 \section{Preliminary Changes}
 As promised in the preceding paragraph, we will first quickly list some preparations.
 
@@ -132,16 +135,16 @@ Hence, a few simplifications\footnote{
 } were made to not make this section even more technical and longer than it already is.
 Some noteworthy omissions are:
 \begin{itemize}
-	\item Details on adding nodes, such as the definition of the \textsc{NewNode} function, or the unique IDs assigned to each node.
-	\item The configuration of the algorithm. We present it as only having two input parameters, but in reality, there are many additional explicit and implicit parameters (\eg, importing only certain types of nodes).
+	\item \textbf{Details on adding nodes,} such as the definition of the \textsc{NewNode} function, or the unique IDs assigned to each node.
+	\item \textbf{The configuration of the algorithm.} We present it as only having two input parameters, but in reality, there are many additional explicit and implicit parameters (\eg, importing only certain types of nodes).
 	      We will take a look at some of these configuration parameters that are relevant for the user in \cref{subsec:alg_editor}.
 	      \begin{itemize}
 		      \item Actually, even the two input parameters that we did include are simplifications.
 		            In truth, the user selects a directory (instead of a set of documents), with the option to exclude some subdirectories, and we then automatically include every file with an extension that is relevant to the selected \gls{ls}.
 	      \end{itemize}
-	\item Progress reporting.
+	\item \textbf{Progress reporting.}
 	      A progress bar noting the approximate progress (in percent) appears in both the \gls{editor}'s \gls{ui} as well as in-game while the \gls{city} is constructed, so the user has an idea of how long the conversion is going to take.
-	\item Asynchronicity.
+	\item \textbf{Asynchronicity.}
 	      Specifically, this refers to the way the algorithm is executed in Unity.
 	      If we were to implement it as a normal synchronous function, the \gls{ui} would become irresponsive to input and freeze until the whole algorithm is done.
 	      Instead, we make use of C\#'s task-based \texttt{async} capabilities~\cite{wagner2023} in combination with the \texttt{UniTask}\footnote{
@@ -311,7 +314,9 @@ Still, this case is almost impossible in real-world generated graphs.
 In actuality, a given range is only going to be contained by very few elements compared to the number of total elements within a given document tree.
 Taking into account that in almost all situations, $k \ll |V|$, and especially $k < \log |V|$, our average-case runtime reduces to an upper bound of $\mathcal{O}(\log |V|)$.
 Hence, while the theoretical worst-case runtime complexity stays the same, the average-case runtime of \cref{alg:generate} reduces from $\Theta(|V| + n_d \cdot |V| + |E| \cdot |V|)$ to $\mathcal{O}(|V| + n_d \cdot \log |V| + |E| \cdot \log |V|)$.
-Since it is easy to make mistakes here due to the inherent complexity of this part, unit tests have also been implemented to make sure both normal and edge cases are handled correctly.
+Since it is easy to make mistakes in the implementation due to the inherent complexity of this part, unit tests have also been implemented to make sure both normal and edge cases\footnote{
+	No pun intended.
+} are handled correctly.
 
 \subsection{Usage in Practice}\label{subsec:alg_editor}
 Now, we will have a quick look at how to actually use the algorithm in \SEE{}.
@@ -373,19 +378,83 @@ For example, a quirk of many \glspl{ls} is that a returned location may begin at
 
 Finally, there is an option to enable the \gls{lsp} functions for \glspl{window} that are detailed in \cref{sec:intowindow}, a setting to generate log files for the transferred \gls{jrpc} messages, and a slider to adjust the maximum time we should wait for a \gls{ls}'s response to a request.
 With all of these options configured, the graph can be loaded and drawn (and optionally exported to a \gls{gxl} file), where a bar displays the approximate progress of the process.
-At this point, we will once again refer back to the explanatory video \fxnote*{Link to video again here}{TODO}, which goes over the implemented functionality in a bit more detail and may be easier to follow along than this textual description.
+At this point, we will once again refer back to the explanatory video\footnote{\url{https://www.youtube.com/watch?v=yAzyv2_q2ng}},
+which goes over the implemented functionality in a bit more detail and may be easier to follow along than this textual description.
 
 \section{Integrating LSP Functionality into Code Cities}\label{sec:intocity}
-\fxfatal{}
+After having examined how \glspl{city} are generated through the use of \gls{lsp}, we are now going to take a quick look at how some \gls{lsp} \glspl{capability} are integrated into \SEE{}.
+For this section, we are going to purely focus on the interaction with the city itself, saving \glspl{window} for the following \cref{sec:intowindow}.
 
-% TODO: Also mention tree view here.
-%
-% TODO: UML?
+\subsection{Hover information}
+The first thing I implemented was the functionality that, when hovering above nodes, the \gls{lsp} hover information should be displayed.
+We already had an implementation for a tooltip that shows arbitrary text when hovering above nodes in \SEE{}, but I had to change it in two ways to work for this implementation:
+\begin{enumerate}
+	\item It is now a \gls{singleton} (since there will only be at most one tooltip per screen), making it easier to use as a caller.
+	\item The tooltip now disappears when the user moves their mouse, and re-appears when the mouse is kept in place for a certain amount of time.
+\end{enumerate}
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[width=0.95\textwidth]{HoverInfo}
+	\end{center}
+	\caption{A hover info tooltip with Markdown text converted to TextMeshPro rich text tags.}\label{fig:hoverinfo}
+\end{figure}
+
+
+Displaying the hover info is then relatively straightforward, as \cref{alg:generate} already saved it in the nodes of the city, so we need not even make any actual \gls{lsp} requests.
+However, there is one more feature here that would be nice to support:
+Some \glspl{ls} return the hover info as Markdown-formatted text instead of just plain text.
+While Markdown by itself is still readable, we can leverage the XML-like rich text tags in Unity's TextMeshPro package\footnote{
+	\web{http://digitalnativestudios.com/textmeshpro/docs/rich-text/}{2024-12-15}
+} to display the Markdown text (partially, at least) in its proper formatting.
+For this, I used the Markdig\footnote{\web{https://github.com/xoofx/markdig}{2024-15-12}} parser and implemented a custom renderer to output the corresponding TextMeshPro tags.
+An example for a "rich" hover info tooltip like this can be seen in \cref{fig:hoverinfo}.
+
+\subsection{Context Menu Navigation}
+While the various connections between nodes (\ie{}, references, definitions, etc.) can already visually be represented as edges in the scene, this is not always the most accessible option.
+% TODO: Link to benchmark here about edge vs node count count
+For example, in very large projects, the huge number of edges would make it very hard to discern individual connections, so edges are often excluded from the rendering.
+Another problem with edges is that, as the evaluation will show (see \cref{subsec:comments}), it is sometimes hard to discern which node a certain edge points to.
+
+\begin{minipage}[t]{.75\textwidth}
+	\centering
+	\includegraphics[width=0.97\textwidth]{TreeWindow}
+	\captionof{figure}{The tree view for a \gls{city} in \SEE{}.}\label{fig:treeview}
+\end{minipage}%
+\begin{minipage}[t]{.25\textwidth}
+	\centering
+	\includegraphics[width=0.9\textwidth]{CityContextMenu}
+	\captionof{figure}{Context menu options for a node in an \gls{lsp}-enabled \gls{city}.}\label{fig:contextcity}
+\end{minipage}
+
+For cases like that, users could open the tree view for the city, which is a hierarchical 2D representation of the project graph, which also shows the outgoing and incoming edges for each node (see \cref{fig:treeview}).
+However, although it is useful, it is still cumbersome to look around in the city and to then have to open this tree view and navigate around in it to find out what a certain node is connected to.
+The context menu seems like a fitting place to remedy this:
+Right-clicking a node opens a menu that is shown in \cref{fig:contextcity} with several actions, such as opening the tree view for this node or opening its \gls{window}.
+As part of the implementation here, the context menu will now also display \gls{lsp} navigation entries such as "Show outgoing calls," given that corresponding edges exists.
+Clicking on this entry leads to one of two things happening:
+\begin{itemize}
+	\item If there is only one target, it will be immediately highlighted with a spear and glow to make it easily identifiable in the scene.\footnote{
+		      Once again, I recommend watching \href{https://www.youtube.com/watch?v=yAzyv2_q2ng}{the showcase video} to see this effect in action.
+	      }
+	\item If there is more than one target, a modified tree view will open, containing only the targets of the edge.
+	      The user can click on one of the results here to trigger the highlighting described above.
+\end{itemize}
+
+\subsection{Diagnostics as Erosion Icons}
+Finally, we are displaying \gls{lsp}-sourced diagnostics as erosion icons above each node.
+As described in \cref{sec:generate} and specifically \cpageref{alg:generate:end3,alg:generate:funcend} of \cref{alg:generate}, we retrieve these diagnostics either by using the pull diagnostics \gls{capability} if it is available, or we collect pushed diagnostics during the import process.
+We then associate diagnostics to nodes using the \gls{intervaltree}-based function described in \cref{subsec:kd}.
+Finally, if the user enabled this in the configuration, we aggregate diagnostics upwards so that collected diagnostics can also be seen on the module they are in, for example.
+
+We are not going to go into the details of the rendering and display of the nodes, as this just re-uses the same mechanisms as the implementation from my bachelor's thesis~\cite[section~3.3]{galperin2021}.
+There were only minimal changes, like the integration of new icons for the different \gls{lsp} diagnostic types, and a change that allows leaf erosion icons to be displayed on non-leaf nodes, since the \gls{lsp} diagnostics are not always present at the lowest level in the hierarchy.
 
 \section{Integrating LSP Functionality into Code Windows}\label{sec:intowindow}
 \fxfatal{}
 
 \section{Technical Evaluation}\label{sec:techeval}
+
 \fxfatal{}
 
 % Sample projects:
