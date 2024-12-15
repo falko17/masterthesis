@@ -6,6 +6,7 @@
 		ylabel={SUS},
 		set layers,
 		ymajorgrids=true,
+		axis on top=false,
 		name=violin
 	}
 
