@@ -422,6 +422,7 @@ Another problem with edges is that, as the evaluation will show (see \cref{subse
 	\captionof{figure}{The tree view for a \gls{city} in \SEE{}.}\label{fig:treeview}
 \end{minipage}%
 \begin{minipage}[t]{.25\textwidth}
+	\captionsetup{format=plain}
 	\centering
 	\includegraphics[width=0.9\textwidth]{CityContextMenu}
 	\captionof{figure}{Context menu options for a node in an \gls{lsp}-enabled \gls{city}.}\label{fig:contextcity}
@@ -451,6 +452,16 @@ We are not going to go into the details of the rendering and display of the node
 There were only minimal changes, like the integration of new icons for the different \gls{lsp} diagnostic types, and a change that allows leaf erosion icons to be displayed on non-leaf nodes, since the \gls{lsp} diagnostics are not always present at the lowest level in the hierarchy.
 
 \section{Integrating LSP Functionality into Code Windows}\label{sec:intowindow}
+Now we will go over how the functionalities of \glspl{ls} have been integrated into \glspl{window} to make them more \gls{ide}-like.
+
+\subsection{Syntax Highlighting}
+
+% Semantic Tokens
+% Diagnostics
+% Hover
+% Navigation
+% Mention reported bug
+
 \fxfatal{}
 
 \section{Technical Evaluation}\label{sec:techeval}
