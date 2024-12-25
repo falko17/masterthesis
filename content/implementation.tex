@@ -512,7 +512,6 @@ This difference cannot be explained by the idea that edges may not play a big ro
 Hence, the difference there has to come from the different \glspl{ls}.
 
 \begin{figure}
-	\tikzexternaldisable
 	\begin{subfigure}[T]{0.5\textwidth}
 		\begin{center}
 			\begin{tikzpicture}
@@ -650,19 +649,95 @@ Hence, the difference there has to come from the different \glspl{ls}.
 	\caption{Generation time for each project, broken down by parts of the algorithm.
 		The suffix \emph{O} denotes the optimized (\gls{intervaltree}) version of the algorithm, while \emph{B} refers to the brute-force version.
 	}\label{fig:techeval}
+\end{figure}
+
+\begin{figure}
+	\tikzexternaldisable
+	\begin{center}
+		\begin{tikzpicture}
+			\begin{semilogxaxis}[
+					height=9cm,
+					name=line,
+					set layers,
+					ymin=0, ymax=1,
+					xmin=-5000, xmax=55000,
+					xtick distance=10^(0.5),
+					xtick distance=10^(0.5),
+					axis x line*=bottom,
+					axis y line*=left,
+					grid=major,
+					xlabel={Number of edges},
+					ylabel={Relative time improvement},
+					width=\textwidth,
+				]
+
+				\addplot+[draw=black,
+					mark=*,
+					mark options={fill=Maroon,draw=Maroon},
+					nodes near coords,
+					nodes near coords align={above left},
+					every node near coord/.append style={font=\footnotesize,Maroon},
+					point meta=explicit symbolic,
+					ultra thick,
+					error bars/.cd,
+					y dir=both,y explicit,
+				] table [meta=project,x=edges,y=adv_mean,y error minus=adv_min,y error plus=adv_max,col sep=tab] {benchmark/advantage.dat};
+			\end{semilogxaxis}
+			\plotornaments{line}
+		\end{tikzpicture}
+	\end{center}
+	\caption{The relative improvement of the optimized algorithm by number of edges (\ie, the percentage by which the time is reduced when using \cref{alg:interval} instead of the base \cref{alg:generate}).
+		Error bars are shown when their extent exceeds the diameter of the point.
+	}\label{fig:relimprov}
 	\tikzexternalenable
 \end{figure}
 
-\fxwarning{Bar plot corners overlap with ornaments}
+\begin{figure}
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{AaoCity}
+		\caption{\Gls{city} for the \proptt{aaoffline} project.}\label{fig:aaocity}
+	\end{subfigure}
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{BachelorCity}
+		\caption{\Gls{city} for my bachelor's thesis.}\label{fig:bachcity}
+	\end{subfigure}
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{DcafCity}
+		\caption{\Gls{city} for the \proptt{dcaf-rs} project.}\label{fig:dcafcity}
+	\end{subfigure}
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{MasterCity}
+		\caption{\Gls{city} for this master's thesis.}\label{fig:mastercity}
+	\end{subfigure}
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{JabCity}
+		\caption{\Gls{city} for the JabRef project.}\label{fig:jabcity}
+	\end{subfigure}
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{SpotCity}
+		\caption{\Gls{city} for the SpotBugs project.}\label{fig:spotcity}
+	\end{subfigure}
+	\caption{Sample \glspl{city} generated using the \gls{lsp} algorithm introduced in this chapter.}\label{fig:gencities}
+\end{figure}
+
+% TODO: Note no edges in figures.
+
+\fxwarning{Fix label in edge vs adv plot that overlaps with edge}
+\fxwarning{Bar plot corners overlap with ornaments (probably due to axis x line*)}
+
 
 % Visualizations / Analyses:
 % - Taking a look at the city itself, making sure it looks right.
 % - What I want to show:
-%   - Normal running time vs optimized running time.
-%   - Running time of various parts of the algorithm (in percent?)
-%   - Advantage of optimized over brute force compared to num edges!
-% - Plot [] VS [Nodes/Edges]
-% - Maybe Scatter Plot for time and edges?
+%   ✓ Normal running time vs optimized running time.
+%   ✓ Running time of various parts of the algorithm (in percent?)
+%   ✓ Advantage of optimized over brute force compared to num edges!
 % - Maybe Stacked Bar Chart for time components per system?
 
 \fxfatal{}
