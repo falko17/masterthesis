@@ -230,5 +230,5 @@ def check_effects(sv, vs, both):
         p_adjusted=pl.Series(false_discovery_control(mat_total["p"], method="by"))
     ).with_columns(pl.col(pl.String).str.replace_all("_", "-"))
 
-    code.interact(local=dict(globals(), **locals()))
+    # code.interact(local=dict(globals(), **locals()))
     write_dat("corr", mat_total, violin=False)

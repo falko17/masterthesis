@@ -159,7 +159,7 @@ Some noteworthy omissions are:
 
 The full C\# implementation in \SEE{} is available at \web{https://github.com/uni-bremen-agst/SEE/blob/c4e3de908a022d65723bf82d3b350dade8b5f01a/Assets/SEE/DataModel/DG/IO/LSPImporter.cs}{2024-10-25}.
 
-\paragraph{Performance Considerations}
+\paragraph{Performance Considerations}\label{subsec:performance}
 When we analyze this algorithm in terms of complexity, we can quickly see that the most relevant portions are in matching locations to nodes, that is, \textsc{FindNodesByLocation}\footnote{
 	At least, this is the case when we assume the runtime complexity of externally supplied \textsc{Lsp} functions is constant.
 	This is an oversimplification, but the claim that this function is the most expensive part of the algorithm holds up to analyses of real-world test runs of the C\# algorithm.
@@ -456,6 +456,8 @@ Now we will go over how the functionalities of \glspl{ls} have been integrated i
 
 \subsection{Syntax Highlighting}
 
+% Reference table: This is where most LOCs came from.
+
 % Semantic Tokens
 % Diagnostics
 % Hover
@@ -465,17 +467,210 @@ Now we will go over how the functionalities of \glspl{ls} have been integrated i
 \fxfatal{}
 
 \section{Technical Evaluation}\label{sec:techeval}
+Before ending this chapter, we want to briefly evaluate the implementation on a technical level.
+While there are some unit tests for parts of the algorithm, taking real-world projects and trying to generate \glspl{city} out of them using our implementation is important to verify that it is working correctly too.
+Apart from a quick qualitative glance at each generated city, we are also interested in an analysis of performance here---we made quite a few theoretical statements and analyses in \cref{sec:generate}, so we can also use this section to make sure the \gls{intervaltree}-based \cref{alg:interval} actually does work more efficiently than the original "brute-force" approach of \cref{alg:generate}.
+
+We have run the city generation algorithm on the following projects:
+\begin{itemize}
+	\item \textbf{JabRef}: A bibliography manager written in Java.
+	\item \textbf{SpotBugs}: A bug-detector using static analysis for Java code.
+	\item \textbf{\proptt{dcaf-rs}}: A Rust project about authentication in the Internet of Things.
+	\item \textbf{\proptt{aaoffline}}: A Rust downloader for a certain kind of online-hosted mystery game.
+	\item \textbf{\LaTeX{} source of this master's thesis}\footnote{
+		      I could not use the whole content of the thesis---for example, it would have been difficult to include the results of the technical evaluation while I was still in the process of collecting them.
+	      }: Self-explanatory.
+	\item \textbf{\LaTeX{} source of my bachelor's thesis}: Self-explanatory.
+\end{itemize}
+
+The source code for these projects is linked in \fxnote*{Link to appendix}{TODO}.
+The algorithm was repeated three times for the first two projects and five times for the others\footnote{
+	The difference stems from the fact that the generation for JabRef and SpotBugs took much longer.
+}, to make sure that any single result was not an outlier.
+For the generation, we enabled every edge type, node type, and diagnostic, except for JabRef and SpotBugs, where we only enabled some node types (namely File, Module, Namespace, Package, Class, and Interface) and only one edge type (Extend for JabRef and Reference for SpotBugs), otherwise the generation would have taken much too long.
+\Cref{tab:benchmark} lists all projects along with their node count, edge count, \gls{loc}, and average generation time.
+
+\begin{table*}[htbp]
+	\caption{Relevant metadata for all evaluated projects, along with the average total generation time.}\label{tab:benchmark}
+	\begin{tabular}{@{}llccccc@{}}
+		\toprule
+		\multicolumn{1}{c}{\multirow{2}{*}{\textbf{Name}}} & \multicolumn{1}{c}{\multirow{2}{*}{\textbf{\Gls{ls}}}} & \multicolumn{1}{c}{\multirow{2}{*}{\textbf{k\gls{loc}}}} & \multicolumn{1}{c}{\multirow{2}{*}{\textbf{\# Nodes}}} & \multicolumn{1}{c}{\multirow{2}{*}{\textbf{\# Edges}}} & \multicolumn{2}{c}{\textbf{Average Time [h:m]}}                 \\
+		                                                   &                                                        &                                                          &                                                        &                                                        & {Optimized}                                     & {Brute-force} \\
+		\midrule
+		\textit{JabRef}                                    & Eclipse JDT                                            & $179$                                                    & $5575$                                                 & $919$                                                  & $4$:$17$                                        & $4$:$29$      \\
+		\textit{SpotBugs}                                  & Eclipse JDT                                            & $216$                                                    & $3813$                                                 & $16262$                                                & $9$:$22$                                        & $43$:$11$     \\
+		\textit{\proptt{dcaf-rs}}                          & Rust Analyzer                                          & $16.5$                                                   & $1192$                                                 & $9940$                                                 & $4$:$27$                                        & $5$:$59$      \\
+		\textit{\proptt{aaoffline}}                        & Rust Analyzer                                          & $3.3$                                                    & $515$                                                  & $1250$                                                 & $0$:$46$                                        & $0$:$56$      \\
+		\textit{Master's thesis}                           & \proptt{texlab}                                        & $2.5$                                                    & $301$                                                  & $24048$                                                & $0$:$10$                                        & $0$:$36$      \\
+		\textit{Bachelor's thesis}                         & \proptt{texlab}                                        & $2$                                                      & $376$                                                  & $46348$                                                & $0$:$13$                                        & $2$:$31$      \\ \bottomrule
+	\end{tabular}
+\end{table*}
+
+The first thing that is worth mentioning here is that generations by different \glspl{ls} are not really comparable to one another.
+For example, we can see that the generation run for this thesis took on average nine seconds---faster than any other project---even though there were more edges than in almost every other project.
+This difference cannot be explained by the idea that edges may not play a big role in generation time after all, since a closer look at the data for JabRef and SpotBugs reveals a much longer generation time for SpotBugs, even though SpotBugs has less nodes (but a lot more edges) than JabRef.
+Hence, the difference there has to come from the different \glspl{ls}.
+
+\begin{figure}
+	\tikzexternaldisable
+	\begin{subfigure}[T]{0.5\textwidth}
+		\begin{center}
+			\begin{tikzpicture}
+				\begin{axis}[
+						ylabel={Time in seconds},
+						height=10cm,
+						ybar stacked,
+						name=bars,
+						set layers,
+						ymin=0, ymax=370,
+						axis x line*=bottom,
+						axis y line*=left,
+						enlarge x limits={0.5},
+						ymajorgrids,
+						bar width=0.6cm,
+						x tick label style={rotate=45, anchor=east, align=left, font=\scriptsize, yshift=-2},
+						xtick=data,
+						width=\textwidth,
+						xticklabels={\proptt{aaoffline}-O, \proptt{aaoffline}-B, \proptt{dcaf-rs}-O, \proptt{dcaf-rs}-B},
+						xtick={0,1,3,4},
+					]
+
+					\addplot+[fill] table [x=index,y=LSP Nodes,col sep=tab] {benchmark/rust.dat};
+					\addplot+[fill] table [x=index,y=LSP Edges,col sep=tab] {benchmark/rust.dat};
+					\addplot+[fill] table [x=index,y=LSP Diagnostics,col sep=tab] {benchmark/rust.dat};
+					\addplot+[fill] table [x=index,y=LSP Aggregate,col sep=tab] {benchmark/rust.dat};
+					\addplot+[fill] table [x=index,y=LSP Tree,col sep=tab] {benchmark/rust.dat};
+					\addplot+[fill] table [x=index,y=LSP Miscellaneous,col sep=tab] {benchmark/rust.dat};
+				\end{axis}
+				\plotornaments{bars}
+			\end{tikzpicture}
+		\end{center}
+	\end{subfigure}
+	\begin{subfigure}[T]{0.5\textwidth}
+		\begin{center}
+			\begin{tikzpicture}
+				\begin{axis}[
+						height=10cm,
+						ybar stacked,
+						name=bars,
+						set layers,
+						ymin=0, ymax=155,
+						axis x line*=bottom,
+						axis y line*=left,
+						enlarge x limits={0.5},
+						ymajorgrids,
+						bar width=0.6cm,
+						x tick label style={rotate=45, anchor=east, align=left, font=\scriptsize, yshift=-2},
+						xtick=data,
+						width=\textwidth,
+						xticklabels={Bachelor-O, Bachelor-B, Master-O, Master-B},
+						xtick={0,1,3,4},
+						legend entries={Nodes, Edges, Diagnostics, Aggregation, Tree Creation, Miscellaneous},
+						legend style={nodes={scale=0.7, transform shape}, at={(0.95,0.9)}}
+					]
+
+					\addplot+[fill] table [x=index,y=LSP Nodes,col sep=tab] {benchmark/tex.dat};
+					\addplot+[fill] table [x=index,y=LSP Edges,col sep=tab] {benchmark/tex.dat};
+					\addplot+[fill] table [x=index,y=LSP Diagnostics,col sep=tab] {benchmark/tex.dat};
+					\addplot+[fill] table [x=index,y=LSP Aggregate,col sep=tab] {benchmark/tex.dat};
+					\addplot+[fill] table [x=index,y=LSP Tree,col sep=tab] {benchmark/tex.dat};
+					\addplot+[fill] table [x=index,y=LSP Miscellaneous,col sep=tab] {benchmark/tex.dat};
+				\end{axis}
+				\plotornaments{bars}
+			\end{tikzpicture}
+		\end{center}
+	\end{subfigure}\\
+	\begin{subfigure}[T]{0.5\textwidth}
+		\begin{center}
+			\begin{tikzpicture}
+				\begin{axis}[
+						ylabel={Time in seconds},
+						height=10cm,
+						ybar stacked,
+						name=bars,
+						set layers,
+						ymin=0, ymax=280,
+						xmin=0, xmax=1,
+						axis x line*=bottom,
+						axis y line*=left,
+						enlarge x limits={1},
+						ymajorgrids,
+						bar width=0.6cm,
+						x tick label style={rotate=45, anchor=east, align=left, font=\scriptsize, yshift=-2},
+						xtick=data,
+						width=\textwidth,
+						xticklabels={JabRef-O, JabRef-B},
+						xtick={0,1},
+					]
+
+					\addplot+[fill] table [x=index,y=LSP Nodes,col sep=tab] {benchmark/java.dat};
+					\addplot+[fill] table [x=index,y=LSP Edges,col sep=tab] {benchmark/java.dat};
+					\addplot+[fill] table [x=index,y=LSP Diagnostics,col sep=tab] {benchmark/java.dat};
+					\addplot+[fill] table [x=index,y=LSP Aggregate,col sep=tab] {benchmark/java.dat};
+					\addplot+[fill] table [x=index,y=LSP Tree,col sep=tab] {benchmark/java.dat};
+					\addplot+[fill] table [x=index,y=LSP Miscellaneous,col sep=tab] {benchmark/java.dat};
+				\end{axis}
+				\plotornaments{bars}
+			\end{tikzpicture}
+		\end{center}
+	\end{subfigure}
+	\begin{subfigure}[T]{0.5\textwidth}
+		\begin{center}
+			\begin{tikzpicture}
+				\begin{axis}[
+						height=10cm,
+						ybar stacked,
+						name=bars,
+						set layers,
+						ymin=0, ymax=2700,
+						axis x line*=bottom,
+						axis y line*=left,
+						xmin=3, xmax=4,
+						enlarge x limits={1},
+						ymajorgrids,
+						bar width=0.6cm,
+						x tick label style={rotate=45, anchor=east, align=left, font=\scriptsize, yshift=-2},
+						xtick=data,
+						width=\textwidth,
+						xticklabels={SpotBugs-O, SpotBugs-B},
+						xtick={3,4},
+					]
+
+					\addplot+[fill] table [x=index,y=LSP Nodes,col sep=tab] {benchmark/java.dat};
+					\addplot+[fill] table [x=index,y=LSP Edges,col sep=tab] {benchmark/java.dat};
+					\addplot+[fill] table [x=index,y=LSP Diagnostics,col sep=tab] {benchmark/java.dat};
+					\addplot+[fill] table [x=index,y=LSP Aggregate,col sep=tab] {benchmark/java.dat};
+					\addplot+[fill] table [x=index,y=LSP Tree,col sep=tab] {benchmark/java.dat};
+					\addplot+[fill] table [x=index,y=LSP Miscellaneous,col sep=tab] {benchmark/java.dat};
+				\end{axis}
+				\plotornaments{bars}
+			\end{tikzpicture}
+		\end{center}
+	\end{subfigure}
+	\caption{Generation time for each project, broken down by parts of the algorithm.
+		The suffix \emph{O} denotes the optimized (\gls{intervaltree}) version of the algorithm, while \emph{B} refers to the brute-force version.
+	}\label{fig:techeval}
+	\tikzexternalenable
+\end{figure}
+
+\fxwarning{Bar plot corners overlap with ornaments}
+
+% Visualizations / Analyses:
+% - Taking a look at the city itself, making sure it looks right.
+% - What I want to show:
+%   - Normal running time vs optimized running time.
+%   - Running time of various parts of the algorithm (in percent?)
+%   - Advantage of optimized over brute force compared to num edges!
+% - Plot [] VS [Nodes/Edges]
+% - Maybe Scatter Plot for time and edges?
+% - Maybe Stacked Bar Chart for time components per system?
 
 \fxfatal{}
-
-% Sample projects:
-% dcaf-rs
-% JabRef
-% SpotBugs
-% My master's thesis
 
 \section{Interim Conclusion}\label{sec:implconclusion}
 \fxfatal{}
+
+% TODO: Mention potential for improvement: JabRef/SpotBugs with all edge/node types would have been way too long, but SEE would be ideal for very large projects.
 
 % TODO: Mention PR for user study changes (maybe in city section actually?)
 
