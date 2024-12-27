@@ -68,6 +68,8 @@
 
 \PassOptionsToClass{listof=numbered}{scrreprt}
 
+\PassOptionsToPackage{datamodel=software}{biblatex}
+
 \PassOptionsToPackage{
     figuresep=colon,
     hangfigurecaption=false,
@@ -81,6 +83,8 @@
     bibstyle=alphabetic,
 }{cleanthesis}
 \usepackage{cleanthesis}
+
+\usepackage{software-biblatex}
 
 \usepackage[p,osf,scaled=1.05]{erewhon}
 \usepackage[scaled=1.05]{zlmtt}
@@ -663,6 +667,8 @@ All passages that have been quoted verbatim or paraphrased from published source
 \printglossary[type=\acronymtype]
 \printunsrtglossary[type=file,style={long-name-desc}]
 
+\subfile{content/data}
+
 \listoffigures
 
 \listoftables
@@ -670,6 +676,5 @@ All passages that have been quoted verbatim or paraphrased from published source
 \listoflistings
 
 \printbibliography[heading=bibnumbered]
-\fxerror{Bibliography doesn't work}
 
 \end{document}

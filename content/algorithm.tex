@@ -63,8 +63,8 @@
 		\label{alg:generate:end2}
 
 		\Statex
-		\State \Call{HandleDiagnostics}{$C$} \Comment{Handle diagnostics that were collected in the background.}
-		\State \Call{AggregateMetrics}{\{\tt{Metric.LOC}\}}
+		\State \Call{HandleDiagnostics}{$C$} \Comment{Handle diagnostics that were collected in the background.}\label{alg:generate:diag}
+		\State \Call{AggregateMetrics}{\{\tt{Metric.LOC}\}}\label{alg:generate:agg}
 		\State \Call{AggregateMetrics}{\{\tt{ErrorCount, WarningCount, InformationCount, HintCount}\}}
 		\State \Return $(V, E, a, s, t, \ell)$
 		\label{alg:generate:end3}
