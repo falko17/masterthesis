@@ -532,17 +532,19 @@ For the generation, we enabled every edge type, node type, and diagnostic, excep
 	\caption{Relevant metadata for all evaluated projects, along with the average total generation time.}\label{tab:benchmark}
 	\begin{tabular}{@{}llccccc@{}}
 		\toprule
-		\multicolumn{1}{c}{\multirow{2}{*}{\textbf{Name}}} & \multicolumn{1}{c}{\multirow{2}{*}{\textbf{\Gls{ls}}}} & \multicolumn{1}{c}{\multirow{2}{*}{\textbf{k\gls{loc}}}} & \multicolumn{1}{c}{\multirow{2}{*}{\textbf{\# Nodes}}} & \multicolumn{1}{c}{\multirow{2}{*}{\textbf{\# Edges}}} & \multicolumn{2}{c}{\textbf{Average Time [h:m]}}                 \\
-		                                                   &                                                        &                                                          &                                                        &                                                        & {Optimized}                                     & {Brute-force} \\
+		\multicolumn{1}{c}{\multirow{2}{*}{\textbf{Name}}} & \multicolumn{1}{c}{\multirow{2}{*}{\textbf{\Gls{ls}}}} & \multicolumn{1}{c}{\multirow{2}{*}{\textbf{k\gls{loc}}}} & \multicolumn{1}{c}{\multirow{2}{*}{\textbf{\# Nodes}}} & \multicolumn{1}{c}{\multirow{2}{*}{\textbf{\# Edges}}} & \multicolumn{2}{c}{\textbf{Average Time [h:m]}}                         \\
+		                                                   &                                                        &                                                          &                                                        &                                                        & {Optimized}                                     & {Brute-force}         \\
 		\midrule
-		\textit{JabRef}                                    & Eclipse JDT                                            & $179$                                                    & $5575$                                                 & $919$                                                  & $4$:$17$                                        & $4$:$29$      \\
-		\textit{SpotBugs}                                  & Eclipse JDT                                            & $216$                                                    & $3813$                                                 & $16262$                                                & $9$:$22$                                        & $43$:$11$     \\
-		\textit{\proptt{dcaf-rs}}                          & Rust Analyzer                                          & $16.5$                                                   & $1192$                                                 & $9940$                                                 & $4$:$27$                                        & $5$:$59$      \\
-		\textit{\proptt{aaoffline}}                        & Rust Analyzer                                          & $3.3$                                                    & $515$                                                  & $1250$                                                 & $0$:$46$                                        & $0$:$56$      \\
-		\textit{Master's thesis}                           & \proptt{texlab}                                        & $2.5$                                                    & $301$                                                  & $24048$                                                & $0$:$10$                                        & $0$:$36$      \\
-		\textit{Bachelor's thesis}                         & \proptt{texlab}                                        & $2$                                                      & $376$                                                  & $46348$                                                & $0$:$13$                                        & $2$:$31$      \\ \bottomrule
+		\textit{JabRef}                                    & Eclipse JDT                                            & $\num{179}$                                              & $\num{5575}$                                           & $\num{919}$                                            & $4$:$\num{17}$                                  & $4$:$\num{29}$        \\
+		\textit{SpotBugs}                                  & Eclipse JDT                                            & $\num{216}$                                              & $\num{3813}$                                           & $\num{16262}$                                          & $9$:$\num{22}$                                  & $\num{43}$:$\num{11}$ \\
+		\textit{\proptt{dcaf-rs}}                          & Rust Analyzer                                          & $\num{16}.5$                                             & $\num{1192}$                                           & $\num{9940}$                                           & $4$:$\num{27}$                                  & $5$:$\num{59}$        \\
+		\textit{\proptt{aaoffline}}                        & Rust Analyzer                                          & $3.3$                                                    & $\num{515}$                                            & $\num{1250}$                                           & $0$:$\num{46}$                                  & $0$:$\num{56}$        \\
+		\textit{Master's thesis}                           & \proptt{texlab}                                        & $2.5$                                                    & $\num{301}$                                            & $\num{24048}$                                          & $0$:$\num{10}$                                  & $0$:$\num{36}$        \\
+		\textit{Bachelor's thesis}                         & \proptt{texlab}                                        & $2$                                                      & $\num{376}$                                            & $\num{46348}$                                          & $0$:$\num{13}$                                  & $2$:$\num{31}$        \\ \bottomrule
 	\end{tabular}
 \end{table*}
+
+\fxwarning{Go through thesis and find units}
 
 The first thing that is worth mentioning here is that generations by different \glspl{ls} are not really comparable to one another.
 For example, we can see that the generation run for this thesis took on average nine seconds---faster than any other project---even though there were more edges than in almost every other project.
@@ -819,13 +821,26 @@ Still, this should not be a big problem, as the structure of the \gls{city} stil
 In this chapter, we covered how we implemented the various aspects of the \gls{lsp} integration, placing a special focus on the generation algorithm for \glspl{city}.
 We closed out the chapter by evaluating the implementation and benchmarking its performance.
 
-% TODO: Mention potential for improvement: JabRef/SpotBugs with all edge/node types would have been way too long, but SEE would be ideal for very large projects.
+The technical evaluation revealed that the implementation does work well for the tested projects and that the implemented optimizations make sense, but the total runtime still is not really at the level where this system can be used productively for larger projects.
+For example, generating a city for SpotBugs, a project with around \num{200000} \gls{loc}, took almost ten minutes---and this was with almost all node and edge types being disabled!
+Actually generating a \gls{city} for projects on the order of $\num{1000000}$ \gls{loc} from \gls{lsp} information with all available information being present (\ie, all nodes, all edges, all diagnostics) still seems intractable, but I am unsure whether this is due to additional inefficiencies in the algorithm or if the \glspl{ls} themselves are at fault.\footnote{
+	Of course, this is a slightly unfair assessment---\glspl{ls} were never developed with the intent to be used in high-throughput scenarios like this, only for moderate use in \glspl{ide}.
+}
 
-% TODO: Mention PR for user study changes (maybe in city section actually?)
-
-% TODO: Reference table
-
-\fxfatal{}
+\Cref{tab:code} contains a summary of all pull requests created for this thesis, along with the number of added and deleted lines.
+There is one more pull request here that I have not mentioned yet, since it only contains disparate fixes and small additions that were done for the user study that we will talk about in the next chapter.
+There are two relevant features here that we should quickly go over:
+\begin{itemize}
+	\item Edges of a certain type can be hidden, causing them to only be shown when hovering over nodes they are connected to.
+	      This mitigates the problem of too many edges obscuring and cluttering the \gls{city}.
+	\item Transitive edge animations:
+	      When an edge is revealed by hovering above it, the "next" connected edge is repeatedly revealed as well.
+	      For example, when this is enabled for "extend" edges, hovering over a class node will gradually reveal the path to the \gls{base}.
+	      I recommend watching the explanatory video for the user study to get an intuitive understanding about this\footnote{
+		      See \web{https://www.youtube.com/watch?v=WE21naXp\_YM}{2024-12-28}.
+	      }.
+\end{itemize}
+The fixes for this pull request were a mix of things I noticed myself while designing the user study and bugs noticed while conducting the pilot study (see \cref{subsec:procedure}).
 
 \begin{table*}[htbp]
 	\newcommand{\githubpr}[2]{\href{https://github.com/#1/pull/#2}{\proptt{#1\##2}}}
