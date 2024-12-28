@@ -385,7 +385,7 @@ which goes over the implemented functionality in a bit more detail and may be ea
 After having examined how \glspl{city} are generated through the use of \gls{lsp}, we are now going to take a quick look at how some \gls{lsp} \glspl{capability} are integrated into \SEE{}.
 For this section, we are going to purely focus on the interaction with the city itself, saving \glspl{window} for the following \cref{sec:intowindow}.
 
-\subsection{Hover information}
+\subsection{Hover information}\label{subsec:hover}
 The first thing I implemented was the functionality that, when hovering above nodes, the \gls{lsp} hover information should be displayed.
 We already had an implementation for a tooltip that shows arbitrary text when hovering above nodes in \SEE{}, but I had to change it in two ways to work for this implementation:
 \begin{enumerate}
@@ -410,7 +410,7 @@ While Markdown by itself is still readable, we can leverage the XML-like rich te
 For this, I used the Markdig\footnote{\web{https://github.com/xoofx/markdig}{2024-15-12}} parser and implemented a custom renderer to output the corresponding TextMeshPro tags.
 An example for a "rich" hover info tooltip like this can be seen in \cref{fig:hoverinfo}.
 
-\subsection{Context Menu Navigation}
+\subsection{Context Menu Navigation}\label{subsec:citycontext}
 While the various connections between nodes (\ie{}, references, definitions, etc.) can already visually be represented as edges in the scene, this is not always the most accessible option.
 % TODO: Link to benchmark here about edge vs node count count
 For example, in very large projects, the huge number of edges would make it very hard to discern individual connections, so edges are often excluded from the rendering.
@@ -453,18 +453,57 @@ There were only minimal changes, like the integration of new icons for the diffe
 
 \section{Integrating LSP Functionality into Code Windows}\label{sec:intowindow}
 Now we will go over how the functionalities of \glspl{ls} have been integrated into \glspl{window} to make them more \gls{ide}-like.
+Some of these functionalities will seem quite similar to the way the corresponding \gls{city} \gls{lsp} features were implemented in the previous section.
+However, a crucial difference here is that, for \glspl{city}, the pre-computed \gls{lsp} attributes from \cref{alg:generate} are used (\ie, no actual requests are made to the \gls{ls}, it does not even have to be running), while for \glspl{window}, all \gls{lsp} functionality does actually go through the \gls{ls} as a proper \gls{jrpc} request.
+\fxerror{Insert screenshot of code window here, showcasing all features (and reference from individual sections)}
 
 \subsection{Syntax Highlighting}
+\SEE{} already has support for syntax highlighting using Antlr-generated lexers, which works by converting the token stream returned by the lexer into a string of TextMeshPro rich text, as for the hover info in \cref{subsec:hover}.
+The rich text then contains color tags that render each element in the desired color.
+This implementation was very heavily coupled to Antlr and the token types it offers, so some larger refactoring was necessary to abstract over both Antlr and \gls{lsp} as a token source.
+Retrieving \gls{lsp} tokens also required a bit more scaffolding code (\eg, semantic tokens are not always immediately available when opening the file, making it necessary to poll the \gls{ls} until the tokens are ready), and I noticed some bugs with the way the existing syntax highlighting was implemented into the \glspl{window}.
+Also, the semantic tokens returned by the \gls{ls} uses a very compact encoding, consisting of only a list of integers that decode to token types along with positions relative to the previous token~\cite{lsp}---since the \glspl{window} need absolute positions to be able to determine the start and end of the rich text tags instead, another decoding and conversion\footnote{
+	Yet \emph{another} issue was the fact that semantic tokens, in contrast to Antlr tokens, do not cover the whole document (\eg, there are no token types for whitespace), so we have to read through the document while iterating over the semantic tokens to construct the final set of tokens that can be used by the \glspl{window}.
+} step was necessary here.
+Finally, support for token modifiers---a concept exclusive to semantic tokens---had to be added.
+I decided on the following mapping from modifiers\footnote{
+	There are more modifiers than this, such as one for asynchronous code, but at this point I ran out of available (and reasonable) rich text tags.
+} to rich text tags (in accordance to how \glspl{ide} usually handle this):
+\begin{itemize}
+	\item Static elements and documentation are rendered in \textit{italic text}.
+	\item Deprecated elements are rendered in \st{strikethrough text}.
+	\item Variables that are modified are rendered in \underline{underlined text}.
+\end{itemize}
 
-% Reference table: This is where most LOCs came from.
+Due to all of the above making it quite a bit more complicated to support semantic tokens than I first thought, this is where most of the effort and changed lines referenced in the row for the corresponding pull request in \cref{tab:code} went,
+so subsequent subsections shall seem shorter and substantially simpler.
 
-% Semantic Tokens
-% Diagnostics
-% Hover
-% Navigation
-% Mention reported bug
+\subsection{Hover information}
+Implementing the hover functionality was fairly straightforward, as the hovering functionality has already been implemented for \glspl{city}.
+The only thing I had to work around was that, within Unity, I could only get the offset of the clicked character within the text as a whole, while the \gls{lsp} hover information can only be queried for a two-dimensional \gls{range}.
+To fix this without sacrificing too much performance, we have to maintain a mapping from line numbers to the "global" offset of the newline character, which we can then use to convert from a global offset to a \gls{range}.
 
-\fxfatal{}
+\subsection{Diagnostic Highlighting}
+Highlighting diagnostics in the \glspl{window} were already implemented with the Axivion Dashboard as a source, so
+similar to the semantic tokens, I had to implement an abstraction over diagnostics' sources, although this was much easier than abstracting over token sources.
+Diagnostics show up in two ways in the \glspl{window}:
+By highlighting the corresponding code range in a color corresponding to the type of diagnostic, and by providing the diagnostic's content when hovering over that code range (both of these were already implemented for my bachelor's thesis~\cite{galperin2021}).
+I modified the hover text to indicate the source of the diagnostic and added special handling for the "element unused" diagnostic to render the text in grey, as is done in many \glspl{ide}.
+The rest just involved mapping the \gls{lsp} diagnostics' offset to the global offset in order to insert the rich text tags that highlight the code range at the correct position.
+
+\subsection{Navigation}
+Similar to \cref{subsec:citycontext}, I added the ability to right-click code elements and open a context menu with various navigation options (\eg, "go to definition", "show references").
+Taking "show references" as an example, if there are multiple targets, a dialog is shown in which the references are shown as a list of files along with their ranges.
+The user can then select one of these ranges.
+This step is skipped if there is only a single target.
+After selecting a reference, if it belongs to the current file, the range is simply scrolled into view and the corresponding line is highlighted, otherwise a new \gls{window} (or an existing one, if the file is already open elsewhere) is opened first.
+While implementing this, I also noticed a bug in the OmniSharp \gls{lsp} library that causes the call hierarchy request not to work correctly, so I implemented a workaround and submitted an issue.\footnote{
+	\web{https://github.com/OmniSharp/csharp-language-server-protocol/issues/1303}{2024-12-27}
+}
+
+As an additional feature copied from popular \glspl{ide}, it is possible to hold down \keystroke{Ctrl} and then click on an element in the \gls{window}, which has the same effect as right-clicking that word first and then selecting "Go to definition".
+This is useful because it allows the user to quickly jump to the definition of, for example, a function (which is a very common operation) to find out its content.
+\fxwarning{Screenshot for navigation menus}
 
 \section{Technical Evaluation}\label{sec:techeval}
 Before ending this chapter, we want to briefly evaluate the implementation on a technical level.
@@ -476,7 +515,7 @@ We have run the city generation algorithm on the following projects:
 	\item \textbf{JabRef}~\cite{jabref}: A bibliography manager written in Java.
 	\item \textbf{SpotBugs}~\cite{spotbugs}: A bug-detector using static analysis for Java code.
 	\item \textbf{\proptt{dcaf-rs}}~\cite{dcaf}: A Rust project about authentication in the Internet of Things.
-	\item \textbf{\proptt{aaoffline}}~\cite{aaoffline}: A Rust downloader for a certain kind of online-hosted mystery game.
+	\item \textbf{\proptt{aaoffline}}~\cite{aaoffline}: A Rust downloader for a certain kind of online mystery game.
 	\item \textbf{\LaTeX{} source of this master's thesis}\footnote{
 		      I could not use the whole content of the thesis---for example, it would have been difficult to include the results of the technical evaluation while I was still in the process of collecting them.
 	      }: Self-explanatory.
