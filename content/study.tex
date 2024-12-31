@@ -12,9 +12,13 @@ First, we will outline the general aim of this study by going over some existing
 Next, we will explain the details of the design of the study itself, before analyzing its results with the \participants{} participants in detail.
 Finally, we describe some relevant threats to validity.
 
-As a quick aside before we begin, we will frequently use \glspl{violin} in this chapter to visualize datasets, especially to visually compare two datasets against one another.
-To estimate the probability density for the plots, we need to use a non-parametric kernel density estimation (since we do not know which shape the underlying distribution has)---for the kernel itself, we simply use a gaussian function, but a much more important question is the choice of the bandwidth parameter~\cite{heidenreich2013}.
-Here, we use an algorithm by \textcite{sheather1991} that has been improved to be made more performant and handle multimodal distributions better by \textcite{botev2010a}:
+As a quick aside before we begin, we will frequently use \glspl*{violin} in this chapter to visualize datasets, especially to visually compare two datasets against one another.
+A \gls{violin} visualizes the distribution of a collection of data points along with an estimated probability density~\cite{hintze1998}.
+The black/white data points are randomly "jittered" along the $x$-axis to make them more differentiable from one another.
+A bigger, green point marks the average of the dataset.
+
+To estimate the probability density for the plots, we need to use a non-parametric kernel density estimation (since we do not know which shape the underlying distribution has)---for the kernel itself, we simply use a Gaussian function, but a much more important question is the choice of the bandwidth parameter~\cite{heidenreich2013}.
+Here, we use an algorithm by \textcite{sheather1991} that has been improved by \textcite{botev2010a} to be made more performant and handle multimodal distributions better:
 The \emph{Improved Sheather--Jones} method, which is a robust choice when one cannot assume normality~\cite{akinshin2020}.
 As the algorithm for this method, we use \tt{KDEpy}~\cite{odland2018}, whose implementation of the method is based on \textcite[326--328]{kroese2011}.
 A drawback here is that this algorithm does not necessarily converge.
@@ -50,7 +54,7 @@ Limiting ourselves, then, to the \gls{city}-related changes from \cref{sec:intoc
 	      \end{description}
 \end{enumerate}
 
-It appears that the only \glspl{capability} that are reasonably evaluable in a user study of this form are actually the ones used in the generation of the \gls{city} in \cref{sec:generate}.
+It appears that the only \glspl{capability} that are worth to be evaluated in a user study of this form are actually the ones used in the generation of the \gls{city} in \cref{sec:generate}.
 Besides, the bulk of the implementation pertains to the generation of \glspl{city}, so it makes sense to focus on them here.
 As a result, the user study is now actually of a form (directly comparing \glspl{city} against \glspl{ide}) that has been researched in previous literature before, so let us take a look at that research first before designing our own study.
 
@@ -61,10 +65,11 @@ Two of these evaluate debugging capabilities that have been implemented into \SE
 \textcite{lennartkipka2020} compares those with Eclipse\footnote{
 	\web{https://www.eclipse.org/}{2024-11-17}
 }'s debugger, while \textcite{rohlfing2024} uses the debugger of \gls{vscode} as a baseline.
-The final of these studies has \textcite{schramm2022} compare pure \gls{ide} usage (in this case, Microsoft's Visual Studio) with a combination of Visual Studio and \SEE{} in which Visual Studio has a plugin setup that integrates it with \SEE{}.
+The final one of these studies has \textcite{schramm2022} compare pure \gls{ide} usage (in this case, Microsoft's Visual Studio) with a combination of Visual Studio and \SEE{} in which Visual Studio has a plugin setup that integrates it with \SEE{}.
 The result here was a significant improvement for usability and a partial improvement for efficiency in favor of the combination of Visual Studio and \SEE{}.
 Almost all of these \SEE{}-related studies also measure its usability in the form of the \gls{sus}, which we will do in our own study, as well.
 I have collected the existing scores of those studies in a \gls{violin} in \cref{fig:seesus}.
+As a reminder, the big green point marks the average of the dataset.
 
 \pgfplotsset{axis line style={draw=none}}
 
@@ -156,7 +161,7 @@ Also shown in that chapter was a context menu with various options to make use o
 Additionally, \gls{vscode} users can also jump to the definition of a symbol by holding down \keystroke{Ctrl} and clicking on that symbol, the same as in \cref{sec:intowindow}.
 
 However, a feature of \SEE{} which \emph{does not} have a clear alternative in \gls{vscode} is the ability to quickly be able to tell certain metrics, such as the number of methods in a file.
-In \SEE{}, we could simply visualize that by encoding it as the size of each building, but in \gls{vscode}, participants would need to manually count each method, so to remedy this, we offer a table with such metrics.
+In \SEE{}, we could simply visualize that by encoding it as the size of each building, but in \gls{vscode}, participants would need to manually count each method, so to remedy this, we offer a table with such metrics, analogously to Wettel's study.
 The table is hosted on Google Spreadsheets\footnote{
 	\web{https://docs.google.com/spreadsheets/d/1Z2AQDk2-XeVBB1kAtcpc18mFkPI5ZSsSz\_yOwS4pQ88}{2024-11-20} and \web{https://docs.google.com/spreadsheets/d/1erJZTwYtG-CQfZJPT-zt-chX\_VHL9jLrVfWAWZMFvEo}{2024-11-20}.
 } and can be sorted by any column as well as searched.
@@ -246,7 +251,7 @@ Additionally, we would like to follow the "wish list" compiled by \textcite[122-
 	\item \textbf{\enquote{Avoid comparing using a technique against not using it.}}
 	      We are comparing \gls{vscode} against \SEE{}. \cyes
 	\item \textbf{\enquote{Involve participants from industry.}}
-	      Roughly half of our participants have reported working on bigger software projects (either within a company or as open-source contributions) for at least 3 years (see \cref{subsec:demographics}). \cyes
+	      Roughly half of our participants have reported working on bigger software projects (either within a company or as open-source contributions) for at least 3 years (see \cref{subsec:demographics}), but I have neglected to explicitly ask whether a participant is involved in the industry. \chmm
 	\item \textbf{\enquote{Provide a not-so-short tutorial of the experimental tool to the participants.}}
 	      We do give a tutorial of each tool to participants, but it only covers the essentials required for the tasks (since we do not want to drag out the participation longer than necessary.) \chmm
 	\item \textbf{\enquote{Avoid, whenever possible, to give the tutorial right before the test.}}
@@ -275,7 +280,7 @@ Additionally, we would like to follow the "wish list" compiled by \textcite[122-
 	      We are taking a rigorous look at the effects of experience in \cref{subsec:experience}. \cyes
 \end{enumerate}
 
-In total, we were able to fulfill 7/13 items on the wish list, with 3/13 being questionably fulfilled and 2/12 not being implemented.
+In total, we were able to fulfill 7/13 items on the wish list, with 4/13 being questionably fulfilled and 2/13 not being implemented.
 The reasoning behind the unimplemented two were that it would otherwise lengthen the participation time and may strain participants.
 
 \subsection{Questionnaires}\label{subsec:question}
@@ -323,6 +328,7 @@ Because we need a validated German translation, we can also strike out the Engli
 This leaves the \emph{\glsentrylong{sus}} as a fitting option:
 It has a validated German translation~\cite{reinhardt2015}, is the most used \gls{poststudy} questionnaire for this purpose~\cites[1615]{sauro2009}[577]{lewis2018}, and is very well-suited for comparing two systems or interfaces~\cites[195]{peres2013}[590--591]{bangor2008}.
 It consists of ten \gls{likert} questions which alternate between positive and negative aspects of the system and returns a score between 0 and 100, representing the system's usability~\cite{brooke1996}.
+These questions are collected in \cref{app:susq}.
 Existing measured \gls{sus} scores for \SEE{} are given in \cref{fig:seesus}.
 
 \paragraph{KoboToolbox}
@@ -338,6 +344,7 @@ Among the tools that can handle this for free, \textit{KoboToolbox}\footnote{
 	\web{https://www.kobotoolbox.org/}{2024-11-23}
 } seems like the most mature and robust option.
 It accepts form based on the \gls{xlsform} specification, which makes forms (relatively) easy to create with a spreadsheet editor.
+KoboToolbox has also proven itself as a valuable tool in my bachelor's thesis.
 
 Before each task, we tell the user that their time will be measured as soon as they advance to the next page.
 Then, we keep a timestamp for each editable field in the task, including a checkbox the user can check to indicate they have finished the task.
@@ -411,11 +418,12 @@ Thus, we will focus on tasks from the first group:
 	      \end{description}
 	\item \enquote{Look for the term $T$ in the names of the classes and their attributes and methods, and describe the spread of these classes in the system.}
 	      \begin{description}
-		      \item[\follows{}] The concept of "spread" would take time to properly introduce and may be misunderstood by some participants, so we exclude this task.
+		      \item[\follows{}] The concept of "spread" would take time to properly introduce and may be misunderstood by some participants.
+		            In addition, quantifying the correctness would be hard here, so we exclude this task.
 	      \end{description}
 	\item \enquote{Evaluate the change impact of class $C$ defined in package $P$, by considering its caller classes. The assessment is done in terms of both intensity and dispersion.}
 	      \begin{description}
-		      \item[\follows{}] This seems like a complex task that takes time both to properly understand it and then also to execute it, so we exclude it.
+		      \item[\follows{}] This seems like a complex task that takes time both to properly understand it and then also to execute it, so we exclude it for similar reasons as the previous task.
 	      \end{description}
 	\item \enquote{Find the three classes with the highest \gls{nom} in the system.}
 	      \begin{description}
@@ -440,10 +448,11 @@ If one of the options is then chosen (\eg, \enquote{Centralized}), users have to
 A full visual overview of our study along with its tasks is given in \cref{fig:taskflow}.
 
 \begin{figure}
+	\captionsetup{format=plain}
 	\centering
 	\includegraphics{tikz/taskflow.tikz}
-	\caption{Flow of the tasks the participants worked on.
-		$A^c$ and $A^e$ were gathered after each task.
+	\caption{Flow of the tasks the participants worked on.\\
+		The post-task \gls{asq} questions were asked after each task to gather $A^c$ and $A^e$.
 	}\label{fig:taskflow}
 \end{figure}
 
@@ -459,7 +468,7 @@ As mentioned before, we use a significance level of $\alpha = 0.05$.
 We can neither assume normal distributions for our data, nor is it always interval-scaled, so we choose the \gls{mwu} to determine statistically significant differences between either our two groups $\Psi$ and $\Omega$ or between the two tools \SEE{} and \gls{vscode}.
 To help the reader quickly identify important results, we put a star ($\bigstar$) in the heading of a paragraph to indicate that it lead to the rejection of a null hypothesis.
 
-\subsection{Study Procedure}
+\subsection{Study Procedure}\label{subsec:procedure}
 Before we started with the actual study, we did a small-scale pilot study with two participants, one of them being this thesis's first reviewer Prof.\ Dr.\ Rainer Koschke.
 Through their valuable feedback, I was able to see some issues I had not noticed myself before starting the study, such as a few bugs in \SEE{}, confusion regarding the term \gls{base}, and errors unpacking the prepared compressed builds of \SEE{} and \gls{vscode}\footnote{
 	As a sidenote, using prepared builds also prevents any potential problems with pre-installed versions of the tools.
@@ -481,8 +490,8 @@ For this purpose, we define null hypotheses of the form \enquote{Variable $X$ is
 This also allows us to compare merely ordinal data.
 
 All answers to the demographic questions can be viewed as bar charts in \cref{fig:demobars}.
-Two exceptions are the non-categorical variables, namely age and the total time it took participants to finish the study, which we are going to go over first.
-We have also excluded the question "Have you ever used the program SpotBugs?", as there was only one participant answering "Heard of it", with all others answering "No."
+Two exceptions are the non-categorical variables, namely age and the total time it took participants to finish the study\footnote{This technically does not belong into the "Demographics" category, but it still seems most fitting to include it here rather than in one of the other sections.}, which we are going to go over first.
+We have also excluded the question "Have you ever used the program SpotBugs?", as there was only one participant answering "Heard of it," with all others answering "No."
 
 
 \paragraph{Age}
@@ -636,7 +645,7 @@ We chose this test instead of the more frequently used $\chi^2$ test~\cite{pears
 We can make several observations here:
 First, performance compared across the two object systems JabRef and SpotBugs is remarkably similar within tasks, which tells us that neither of the two systems was harder to analyze than the other under our tasks.
 We can also see a slight difference across subject systems in task $B$, where participants gave slightly more correct answers when using \gls{vscode} for $B_1$ and when using \SEE{} for $B_2$, but none of the $p$ values come close to our significance level, meaning that the choice of subject system did not affect the correctness for these tasks.
-Finally, we can tell that tasks $A$ and $C$ were easy (with only one or two participants making mistakes), while task $B$ was seemingly hard (with the wrong/correct divide being closer to 50\%).
+Finally, we can tell that tasks $A$ and $C$ were easy (with only one or two participants per task making mistakes), while task $B$ was seemingly hard (with the wrong/correct divide being closer to 50\%).
 
 As a reminder, task $B$ was about determining how unit tests were organized in the system.
 For SpotBugs, there actually were no unit tests under the root package we included---there were some files with \tt{Test} in their name, but as SpotBugs is a static analysis tool, these were actually about detecting and handling tests for the projects that SpotBugs analyzes.
@@ -721,8 +730,8 @@ With the \gls{asq} after each task (six times total), which we will examine firs
 
 \paragraph{\gls{asq}: Complexity}
 The \gls{asq} consists of two questions, the first of which is about the "cognitive" complexity or difficulty of solving the task---this is the factor we will examine here.
-Comparisons of this factor between the two systems are visualized in \cref{fig:asqc}..
-Note that the values are \gls{likert} responses to the question given in \cref{subsec:question}, meaning that \emph{lower} scores corresponds to \emph{higher} complexity.
+Comparisons of this factor between the two systems are visualized in \cref{fig:asqc}.
+Note that the values are \gls{likert} responses to the question given in \cref{subsec:question}, meaning that \emph{lower} scores correspond to \emph{higher} complexity.
 
 \begin{figure}
 	\begin{subfigure}[T]{0.5\textwidth}
@@ -763,7 +772,7 @@ Note that the values are \gls{likert} responses to the question given in \cref{s
 \Cref{fig:a1ac,fig:b1ac,fig:b2ac,fig:c2ac} for tasks $A_1$, $B_1$, $B_2$, and $C_2$, respectively, show only negligible or even close to no differences between the two systems.
 The only differences that come at least within an order of magnitude of our significance level of $\frac{\alpha}{2} = 0.025$ are the results for tasks $A_2$ and $C_1$, but even those are due to one or two outliers with very high complexity on the side of \SEE{} without which their $p$-value comes closer to those of the other tasks.
 
-Thus, from both a qualitative view (\ie, by looking at the \glspl{violin}) and a quantitative view (\ie, through the \glspl{mwu}) we cannot draw any significant conclusions on the difference in perceived complexity here and keep the null hypothesis $H_{d_0}$, that is, we keep the assumption that $A^c_V = A^c_S$.
+Thus, from both a qualitative view (\ie, by looking at the \glspl{violin}) and a quantitative view (\ie, through the \glspl{mwu}) we cannot draw any conclusions that are backed by statistically significant differences on the perceived complexity here and keep the null hypothesis $H_{d_0}$, that is, we keep the assumption that $A^c_V = A^c_S$.
 
 \paragraph{$\bigstar$ \gls{asq}: Effort}
 The second factor measured by the \gls{asq} is the "temporal" effort, that is, whether participants were happy with the amount of time it took them to solve a given task.
@@ -832,11 +841,11 @@ We have 38 datapoints here because participants were asked to rate both systems.
 As one might guess from the star in the heading, the difference here is significant when we apply the \gls{mwu}, specifically in favor of \gls{vscode} ($U = 114.5, p \approx 0.02116$).
 The average \gls{sus} score for \SEE{} is $69.5$, with a median of $68.75$, while the \gls{sus} score for \gls{vscode} was on average $80.5$, with a median of $82.5$.
 Our measured score for \SEE{} falls in line with the average for \SEE{} established from other experiments (see~\cref{fig:seesus}), and its difference to a traditional tool also replicates the results of the study for my bachelor's thesis~\cite{galperin2022}.
-There are multiple possible reasons why \SEE{} does worse than \gls{vscode} here:
+There may be multiple reasons why \SEE{} does worse than \gls{vscode} here:
 As a research project, it is less polished than the professionally developed \gls{vscode}, it uses paradigms and controls that users may be less familiar with than those in a traditional \gls{ide}, or there may be specific grievances users had with \SEE{}.
 We can at least cast light on the last of these explanations by examining the feedback participants have left about \SEE{}, which we will do in \cref{subsec:comments}.
 
-Summarizing, we can reject $H_{c_0}$ and accept the alternative hypothesis $H_{c_1}$, specifically, that $S_V > S_S$.
+In summary, we can reject $H_{c_0}$ and accept the alternative hypothesis $H_{c_1}$, specifically, that $S_V > S_S$.
 
 \subsection{The Effects of Experience}\label{subsec:experience}
 As noted before, we now want to see if there is a correlation between any independent variables (especially ones related to experience) and any dependent variables (such as correctness).

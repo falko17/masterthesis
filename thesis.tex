@@ -600,8 +600,12 @@ All passages that have been quoted verbatim or paraphrased from published source
 
 % TOC
 \pdfbookmark[0]{\contentsname}{tableofcontents}
-\tableofcontents
+{
+	\hypersetup{hidelinks}
+	\tableofcontents
+}
 \fxerror{Listings appear twice in TOC}
+\fxerror{Lists of ... should be in single appendix}
 \cleardoublepage
 
 \mainmatter
