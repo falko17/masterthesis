@@ -178,8 +178,7 @@ We then take the minimum over these nodes twice to determine the nodes with the 
 This function is called once per added edge, and also once per diagnostics (because diagnostics also need to be associated to nodes), so part II's runtime can be said to be in $\Theta((|E| + n_d) \cdot |V|)$, where $n_d$ refers to the total number of diagnostics for the project.
 
 Hence, the runtime for \cref{alg:generate} as a whole lies in $\Theta(|V| + |E| \cdot |V| + n_d \cdot |V| + |V|)$.
-% TODO: Or \ll and \ggg
-In practice for \gls{lsp}-built \glspl{city}, assuming the default configuration, $n_d < |V|$, but $|E| \gg |V|$.\fxnote{Put in examples or more concrete estimation of how much more edges there are than nodes.} % e.g., |E| > |V|^3.
+In practice for \gls{lsp}-built \glspl{city}, assuming the default configuration, $n_d < |V|$, but $|E| \gg |V|$ (see, for example, \cref{tab:benchmark}).
 Hence, part II with $\Theta(|E| \cdot |V|)$ easily dwarfs the rest of the algorithm's runtime due to the high cost of \textsc{FindNodesByLocation}, which searches through every node for every added edge.
 For this reason, it would be nice to optimize that function somehow.
 \fxwarning{Do actual comparison between two ways of finding target nodes. Also mention example times from eval section at end.}
@@ -412,7 +411,6 @@ An example for a "rich" hover info tooltip like this can be seen in \cref{fig:ho
 
 \subsection{Context Menu Navigation}\label{subsec:citycontext}
 While the various connections between nodes (\ie{}, references, definitions, etc.) can already visually be represented as edges in the scene, this is not always the most accessible option.
-% TODO: Link to benchmark here about edge vs node count count
 For example, in very large projects, the huge number of edges would make it very hard to discern individual connections, so edges are often excluded from the rendering.
 Another problem with edges is that, as the evaluation will show (see \cref{subsec:comments}), it is sometimes hard to discern which node a certain edge points to.
 
