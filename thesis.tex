@@ -94,7 +94,7 @@
 \usepackage{bm}
 \usepackage{pifont}
 
-% FIXME: Using my fork here until the PR regarding jitter is merged and released.
+% Using my fork here until the PR regarding jitter is merged and released.
 \usepackage{stringstrings}
 \usepackage{../tikzviolinplots/tikzviolinplots}
 
@@ -512,7 +512,6 @@
 \frontmatter
 
 \begin{titlepage}
-	\fxwarning{Make sure this is centered!}
 	\begin{addmargin}[-2cm]{-2.5cm}
 		\pdfbookmark[0]{Titlepage}{Titlepage}
 		\tgherosfont
@@ -627,15 +626,15 @@ All passages that have been quoted verbatim or paraphrased from published source
 
 \appendix
 
-\renewcommand{\ctchapternumber}[1]{%
-	\usekomafont{chapter}%
-	\begin{minipage}[t]{0.3\textwidth}%
-		\raggedleft{%
-			{\color{ctcolorchapterline}\rule[-5pt]{2pt}{5cm}}%
-			\quad%
-			{\color{ctcolorchapternum}\fontsize{60}{60}\letterfamily\selectfont#1}%
-		}%
-	\end{minipage}}
+% \renewcommand{\ctchapternumber}[1]{%
+% 	\usekomafont{chapter}%
+% 	\begin{minipage}[t]{0.3\textwidth}%
+% 		\raggedleft{%
+% 			{\color{ctcolorchapterline}\rule[-5pt]{2pt}{5cm}}%
+% 			\quad%
+% 			{\color{ctcolorchapternum}\fontsize{60}{60}\letterfamily\selectfont#1}%
+% 		}%
+% 	\end{minipage}}
 
 \makeatletter
 \renewcommand\listoffigures{%
@@ -669,7 +668,7 @@ All passages that have been quoted verbatim or paraphrased from published source
 \listoffixmes
 
 \printglossary[type=main,style={index}]
-\printglossary[type=\acronymtype]
+\printglossary[type=\acronymtype,style={index}]
 \printunsrtglossary[type=file,style={long-name-desc}]
 
 \subfile{content/data}
