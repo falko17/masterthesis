@@ -819,11 +819,15 @@ Still, this should not be a big problem, as the structure of the \gls{city} stil
 In this chapter, we covered how we implemented the various aspects of the \gls{lsp} integration, placing a special focus on the generation algorithm for \glspl{city}.
 We closed out the chapter by evaluating the implementation and benchmarking its performance.
 
+\fxwarning{Find all LOC, replace with units}
+
 The technical evaluation revealed that the implementation does work well for the tested projects and that the implemented optimizations make sense, but the total runtime still is not really at the level where this system can be used productively for larger projects.
-For example, generating a city for SpotBugs, a project with around \num{200000} \gls{loc}, took almost ten minutes---and this was with almost all node and edge types being disabled!
-Actually generating a \gls{city} for projects on the order of $\num{1000000}$ \gls{loc} from \gls{lsp} information with all available information being present (\ie, all nodes, all edges, all diagnostics) still seems intractable, but I am unsure whether this is due to additional inefficiencies in the algorithm or if the \glspl{ls} themselves are at fault.\footnote{
+For example, generating a city for SpotBugs, a project with around \qty{200000}{\loc}, took almost ten minutes---and this was with almost all node and edge types being disabled!
+Actually generating a \gls{city} for projects on the order of \qty{1000000}{\loc} from \gls{lsp} information with all available information being present (\ie, all nodes, all edges, all diagnostics) still seems intractable, but I am unsure whether this is due to additional inefficiencies in the algorithm or if the \glspl{ls} themselves are at fault.\footnote{
 	Of course, this is a slightly unfair assessment---\glspl{ls} were never developed with the intent to be used in high-throughput scenarios like this, only for moderate use in \glspl{ide}.
 }
+Thus, we have to answer our first research question \textsf{RQ1} with caveats:
+While it is feasible to generate \glspl{city} using the \glsentrylong{lsp}, more research and work needs to be done for this to work well with very large software projects.
 
 \Cref{tab:code} contains a summary of all pull requests created for this thesis, along with the number of added and deleted lines.
 There is one more pull request here that I have not mentioned yet, since it only contains disparate fixes and small additions that were done for the user study that we will talk about in the next chapter.

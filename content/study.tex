@@ -1033,7 +1033,7 @@ Identifying the biggest components in the codebase is a good starting point for 
 when adding new tests to a project, it is a good idea to first identifying the convention with which existing tests are organized;
 and when trying to understand a certain class, it is often necessary to navigate up its inheritance hierarchy to investigate parts specified in superordinate classes.
 However, in retrospect, some of the tasks (specifically $A$ and $C$) may have been too easy, given that almost no participants made any mistake, as seen in \cref{fig:correctness}.
-This makes analysis of this aspect a bit harder insofar that we may miss relevant answers to our research question here (\eg, maybe there \emph{are} significant differences between \gls{lsp}-enabled \glspl{city} and \glspl{ide}, and our tasks were just too easy to catch them), but it should not be a big problem for the study as a whole, because time and usability were varied enough to cause meaningful results.
+This makes analysis of this aspect a bit harder insofar that we may miss relevant answers to our research question \textsf{RQ2} here (\eg, maybe there \emph{are} significant differences between \gls{lsp}-enabled \glspl{city} and \glspl{ide}, and our tasks were just too easy to catch them), but it should not be a big problem for the study as a whole, because time and usability were varied enough to cause meaningful results.
 
 As for the setup, it consists of the subject systems (\SEE{} and \gls{vscode}) and the object systems (JabRef and SpotBugs).
 JabRef and SpotBugs should be reasonably representative (see \cref{sec:design}) but the combination of \gls{vscode} together with external tables might be somewhat unusual.
@@ -1043,7 +1043,7 @@ However, even though we tried to reduce it (as discussed in \cref{sec:design}), 
 For example, I was not physically present for the tasks, but just knowing that they were being timed could have caused participants to perform worse than they would have without any perceived time pressure~\cite[\eg,][]{sussman2022a}.
 
 \section{Interim Conclusion}
-In this chapter, we evaluated our research question by conducting a user study.
+In this chapter, we evaluated our second research question \textsf{RQ2} by conducting a user study.
 The study consisted of six program understanding tasks and compared the \gls{lsp}-integrated version of \SEE{} from \cref{ch:implementation} to the \gls{lsp}-enabled \gls{ide} \gls{vscode} together with tables listing code metrics.
 Using the data of \participants participants, it turned out that some tasks took less perceived effort and were faster to solve when using \gls{vscode} instead of \SEE{}, with no other significant results.
 Additionally, participants found \gls{vscode} significantly more usable than \SEE{}.
@@ -1064,7 +1064,7 @@ Additionally, participants found \gls{vscode} significantly more usable than \SE
 	\end{tabular}
 \end{table*}
 
-Based on this data, we can answer our research question as follows:
+Based on this data, we can answer \textsf{RQ2} as follows:
 \Glspl{city} are a suitable means to present \gls{lsp} information, but developers work faster and report both lower perceived effort and higher usability ratings when using traditional \glspl{ide}, at least in the case of \SEE{} versus \gls{vscode}.
 It is unclear what the exact cause of this difference is.
 The \gls{sus} score of \SEE{} is very close to average \gls{sus} scores~\cite{sauro2013}, while \gls{vscode} reaches a very high score, so one possible reason is that \gls{vscode} is a much more polished and "tried-and-tested" product than \SEE{}, which made it easier to use.
