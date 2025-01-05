@@ -232,9 +232,9 @@ We will use a significance level of $\alpha = 0.05$ for all of our tests, though
 \section{Design}\label{sec:design}
 Since all the hypotheses we just listed compare \SEE{} to \gls{vscode}, the general form of our study should be to have participants solve representative software engineering related tasks, with one group solving tasks in \SEE{} and the other using \gls{vscode}.
 There are going to be six tasks, each taking no longer than ten minutes, which we will go over in \cref{subsec:tasks}.
-To maximize the number of collected datapoints, we will have each group use both tools.
+To maximize the number of collected data points, we will have each group use both tools.
 Specifically, group $\Psi$ will use \SEE{} for the first three tasks and \gls{vscode} for the last three tasks, while this will be switched around for group $\Omega$.
-We will then have $\lfloor \frac{n}{2} \rfloor$ datapoints per tool for each task, which we can then compare against one another to test for significant differences.
+We will then have $\lfloor \frac{n}{2} \rfloor$ data points per tool for each task, which we can then compare against one another to test for significant differences.
 This flow is illustrated in \cref{fig:taskflow}.
 
 We have several constraints for our study.
@@ -407,7 +407,7 @@ It compares a desktop \gls{city} implementation against a traditional \gls{ide} 
 In addition, the paper provides a great number of details, including detailed task definitions, and a wish list which we went over at the beginning of \cref{sec:design}.
 
 Wettel uses two kinds of tasks~\cite[128--130]{wettel2011}:
-Those concerened with program comprehension and those concerned with design quality assessment.
+Those concerned with program comprehension and those concerned with design quality assessment.
 Of these, the latter requires deeper software engineering knowledge that may not be present in all participants, since a large proportion of them are still going to be students.
 Thus, we will focus on tasks from the first group:
 \begin{enumerate}
@@ -487,11 +487,12 @@ Participants were gained via convenience sampling, that is, I asked fellow stude
 First, we want to take a quick look at the demographics of our study.
 We also take this opportunity to find any significant differences between the two groups $\Psi$ and $\Omega$, to make sure any results in the dependent variables later on are not just due to such differences.
 For this purpose, we define null hypotheses of the form \enquote{Variable $X$ is not different between groups $\Psi$ and $\Omega$}, which we check with a two-sided \gls{mwu}, as we cannot assume normal distributions.
-This also allows us to compare merely ordinal data.
+This also allows us to compare data that is only ordinal.
 
 All answers to the demographic questions can be viewed as bar charts in \cref{fig:demobars}.
 Two exceptions are the non-categorical variables, namely age and the total time it took participants to finish the study\footnote{This technically does not belong into the "Demographics" category, but it still seems most fitting to include it here rather than in one of the other sections.}, which we are going to go over first.
 We have also excluded the question "Have you ever used the program SpotBugs?", as there was only one participant answering "Heard of it," with all others answering "No."
+We have also excluded gender from analysis, since we only have one female participant.
 
 
 \paragraph{Age}
@@ -667,7 +668,7 @@ As mentioned before, we calculated the time it took to complete a task using the
 This ensures that the actual time is no higher than $\hat{t}$, but it does not catch the opposite:
 It is possible that participants were, for example, distracted and had to stop solving the task to attend some other matter, which could explain outliers like the twenty minute participation time for one participant in task $A_1$ (see \cref{fig:a1t}).
 Still, while there are some such outliers, the measured times were relatively consistent, so this method should have been accurate enough for our purposes.
-While the \glspl{violin} in \cref{fig:time} include all datapoints, for the \glspl{mwu} we exclude datapoints belonging to incorrect answers for the respective tasks (as we do not want to count quick but wrong solutions).
+While the \glspl{violin} in \cref{fig:time} include all data points, for the \glspl{mwu} we exclude data points belonging to incorrect answers for the respective tasks (as we do not want to count quick but wrong solutions).
 
 \begin{figure}
 	\begin{subfigure}[T]{0.5\textwidth}
@@ -830,7 +831,7 @@ Finally, the \glsentrylong{sus} measures the usability of a system as a whole wi
 To map a set of answers onto a score from 0--100, we apply the formula by \textcite{brooke1996}, that is, $2.5 \cdot (20 + \sum\limits_{i = 1}^{10} (-1)^{i+1} \cdot s_i)$, where $s_i$ is the answer to the $i$-th \gls{sus} question on a \gls{likert} from 0--4.
 The alternation introduced by the factor $(-1)^{i+1}$ exists due to the fact that even-numbered questions are inverted phrasings of the odd-numbered questions.
 \Cref{fig:sus} exhibits the difference in measured \gls{sus} scores between \SEE{} and \gls{vscode}.
-We have 38 datapoints here because participants were asked to rate both systems.
+We have 38 data points here because participants were asked to rate both systems.
 
 \begin{figure}
 	\center
@@ -862,7 +863,7 @@ Still, this leaves us with $90$ tests, where we can expect roughly 5 false posit
 There are a few ways to solve this, one of the most famous being the Bonferroni correction, which simply divides the significance level by the number of hypotheses~\cite[66 \psq]{miller1981}.
 However, this method of controlling the \gls{fwer} is known to be very conservative---with our moderate sample size of $n=\participants$ we would prefer a method less likely to result in false negatives.
 Luckily, such a tool exists in the procedure by \textcite{benjamini1995} to control the \gls{fdr}.
-Since our datapoints here might not be fully independent, we choose the variation by \textcite{benjamini2001} and fix the \gls{fdr} at our usual $\alpha$ of $0.05$.
+Since our data points here might not be fully independent, we choose the variation by \textcite{benjamini2001} and fix the \gls{fdr} at our usual $\alpha$ of $0.05$.
 We designate the "original" $p$-value (\ie, the one before fixing the \gls{multiplecomp}) as $\xcancel{p}$.
 
 For the correlations themselves, we follow the recommendations by \textcite[157,159]{khamis2008} and use Kendall's coefficient of rank correlation $\tau_b$ for comparisons with ordinal independent variables~\cite{kendall1938, kendall1945}, and Spearman's rank correlation coefficient $r$\footnote{
@@ -943,7 +944,7 @@ Since this is where most of the comments were left, I will group these comments 
 			            Showing paths for every node in the city would overcrowd it a bit.}
 		      \item The "show in city" effect should stop more quickly. \agree
 		      \item A key combination to trigger edges for a given node would be useful to quickly navigate using edges.
-		            \answer{As I write this, we are working on a new keyboard shortcut system that would accomodate this.}
+		            \answer{As I write this, we are working on a new keyboard shortcut system that would accommodate this.}
 		      \item A gradient may have been better on the nodes.
 		            The single color makes it harder to distinguish nodes whose \gls{nom} is similar. \agree \fxnote{Do we already support using a gradient? I can't remember.}
 		      \item A less three-dimensional view may have been useful to navigate this city more easily.
@@ -979,9 +980,9 @@ Since this is where most of the comments were left, I will group these comments 
 	\item It was great to use. $\bm{[2\times]}$
 	\item An extension in \gls{vscode} with which metrics can be viewed directly in the \gls{ide} would have been helpful. $\bm{[2\times]}$
 	      \answer{A related work is the bachelor's thesis by \textcite{herrmann2024}, which explores how visualizations of such metrics can be integrated into \gls{vscode} via an extension.}
-	\item The featureset is huge.
+	\item The feature set is huge.
 	\item I was unsure if we were allowed to use the table for task $A$, which is why I slightly hesitated at first.
-	\item The task seemed to only be solveable using the provided table.
+	\item The task seemed to only be solvable using the provided table.
 	      \answer{This was intentional---the table was added to make the comparison to \SEE{} fair.}
 	\item I would have rather used the command-line on Linux to solve tasks more quickly.
 	      \answer{I agree that this would have been faster for an experienced developer, but the aim of the study was to compare \emph{\glspl{ide}} with \glspl{city}.}
@@ -1001,9 +1002,64 @@ Since this is where most of the comments were left, I will group these comments 
 \end{itemize}
 
 \section{Threats to Validity}\label{sec:threats}
-\fxfatal{}
+Before finishing this chapter, we want to take a look at some possible ways that the results from our study may be incorrect or misleading in some manner.
+We group these potential problems into two categories:
+\emph{Internal} threats to validity, which are about whether our study really measures the causal relationship between the independent and dependent variables, and \emph{external} threats to validity, which are about whether our results are generalizable.
+We use the relevant threats listed by \textcite{campbell1963} as a basis here.
+
+\subsection{Internal Validity}
+We are controlling for \emph{selection} effects that would otherwise become an issue by randomly assigning participants to groups $\Psi$ and $\Omega$, both of which answer both task versions with opposite tools (see \cref{fig:taskflow}).
+This way, there should be no systematic differences (such as \emph{History}, \emph{Experimental Mortality}) between the two groups\footnote{
+	Seemingly by coincidence, there still were some significant differences between $\Psi$ and $\Omega$, but as \cref{subsec:experience} revealed, this should not have significantly influenced any of the dependent variables.
+} that would bias the comparison between \gls{vscode} and \SEE{}.
+
+By keeping the study relatively short, the threat of \emph{maturation} should also be adequately addressed.
+There were some outlier participants that needed long enough for maturation effects like tiredness to become a concern, but as discussed in \cref{subsec:demographics}, they were almost certainly related to breaks rather than an actually long-winded participation time.
+Additionally, the correctness results of the final JabRef tasks are proportionally very similar to the first SpotBugs tasks, which also suggests that participants did not get noticeably more tired as the study went on.
+
+There may be some other interfering factors that caused type I or type II errors.
+For example, as several participants noted, a copy-paste feature in \SEE{} (as it exists in \gls{vscode}) would have been helpful---while I do not personally think it would have mattered enough to cause any change in the results, it is possible that copy-pasting might have increased \SEE{}'s usability or decreased the time spent on tasks enough to cause a significant difference.
+Another factor we may need to be aware of is that some participants know me personally.
+Those participants could have (intentionally or unintentionally) tried to achieve a favorable result for me, such as \SEE{} having a higher usability rating than \gls{vscode}.
+However, given that all significant differences point towards \gls{vscode} as the better tool, I am only left with the disturbing possibility that participants who know me personally tried to achieve a worse result for me, which (I hope) seems unlikely.
+
+\subsection{External Validity}
+While we tried to make this study as realistic as we could (\eg, by following the checklist by \textcite{wettel2011}), there are still several reasons why it might not have been completely representative of real-world scenarios.
+For example, one concern is that our set of participants contains only one woman, and that a majority of participants are students who have helped develop \SEE{} (see \cref{subsec:demographics}), which is not necessarily representative.
+
+Another potential problem is that the tasks or the setup could have been too unusual to be meaningfully realistic.
+Two of the three tasks have been based on existing literature, and all seem reasonably typical to me in the context of trying to understand large software projects:
+Identifying the biggest components in the codebase is a good starting point for finding \glspl{smell};
+when adding new tests to a project, it is a good idea to first identifying the convention with which existing tests are organized;
+and when trying to understand a certain class, it is often necessary to navigate up its inheritance hierarchy to investigate parts specified in superordinate classes.
+
+As for the setup, it consists of the subject systems (\SEE{} and \gls{vscode}) and the object systems (JabRef and SpotBugs).
+JabRef and SpotBugs should be reasonably representative (see \cref{sec:design}) but the combination of \gls{vscode} together with external tables might be somewhat unusual.
+It is probably more common to encounter a setup where such information is integrated into the \gls{ide}, for example, in the form of a \gls{smell} tool that tells the developer when components exceed certain metrics.
+Still, this should not be too big a problem, as on the one hand, the same setup was used in Wettel's study, and on the other hand, setups like this do exist in the real world (\eg, the Axivion Dashboard, used in a similar comparative study~\cite[section~4.1]{galperin2021}, is such a tabular external tool).
+However, even though we tried to reduce it (as discussed in \cref{sec:design}), our results might be biased due to the \gls{hawthorne} or related effects.
+For example, I was not physically present for the tasks, but just knowing that they were being timed could have caused participants to perform worse than they would have without any perceived time pressure~\cite[\eg,][]{sussman2022a}.
 
 \section{Interim Conclusion}
 \fxfatal{}
+
+% some tasks too easy
+
+\begin{table*}[htbp]
+	\caption{Significant differences between the variables, all in favor of \gls{vscode}.}\label{tab:results}
+	\centering
+	\begin{tabular}{@{}lcccccc@{}}
+		\toprule
+		\textbf{Variable}            & $\bm{A_1}$                              & $\bm{B_1}$ & $ \bm{C_1}$        & $\bm{A_2}$          & $\bm{B_2}$ & $\bm{C_2}$         \\\midrule
+		\emph{Correctness}           & ---                                     & ---        & ---                & ---                 & ---        & ---                \\
+		\emph{Time}                  & ---                                     & ---        & $p \approx 0.0015$ & ---                 & ---        & $p \approx 0.0247$ \\
+		\emph{\gls{asq}: Complexity} & ---                                     & ---        & ---                & ---                 & ---        & ---                \\
+		\emph{\gls{asq}: Effort}     & ---                                     & ---        & $p \approx 0.0142$ & $p \approx 0.00531$ & ---        & ---                \\
+		\emph{\gls{sus}}             & \multicolumn{6}{c}{$p \approx 0.02116$}                                                                                           \\
+		\bottomrule
+	\end{tabular}
+\end{table*}
+
+
 
 % Table with all results
