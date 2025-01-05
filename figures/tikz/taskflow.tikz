@@ -9,7 +9,7 @@
 
 	% Left title box.
 	\node[draw, thick, minimum width=7cm, minimum height=14.5cm] (left) at (0,0) {};
-	\node[heading,align=center] at (0,6.4) {Group $\Psi$: SEE\\Group $\Omega$: VSCode};
+	\node[heading,align=center] at (0,6.4) {\textsf{Group $\Psi$: SEE}\\\textsf{Group $\Omega$: VSCode}};
 
 	% Boxes for tasks to the left.
 	\node[scalebox] (D) at (0, 4.4) {\itshape\color{Gray!50!Black}Demographics};
@@ -20,7 +20,7 @@
 
 	% Right title box.
 	\node[draw, thick, minimum width=7cm, minimum height=14.5cm] (right) at (8,0) {};
-	\node[heading,align=center] at (8,6.4) {Group $\Psi$: VSCode\\Group $\Omega$: SEE};
+	\node[heading,align=center] at (8,6.4) {\textsf{Group $\Psi$: VSCode}\\\textsf{Group $\Omega$: SEE}};
 
 	% Boxes for tasks to the right.
 	\taskbox[anchor=north]{A2}{8, |- D.north}{Task $A_2$}{Find the three classes with the highest number of methods in JabRef.};

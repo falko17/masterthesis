@@ -306,7 +306,7 @@ In this chapter, we have taken a detailed look at the concepts behind the two to
 We have also motivated and laid out the specific ways in which the existing \gls{lsp} \glspl{capability} could be integrated into \SEE{}, including a formalization of the project graph that will become central to \cref{sec:generate}.
 
 We are now ready to tackle the actual implementation in the next chapter.
-As a quick overview and recap before then, there is a table of planned \glspl{capability} along with their intended use in \SEE{} in \cref{tab:capabilities}.
+As a quick overview and recap before then, the planned \glspl{capability} along with their intended use in \SEE{} are collected in \cref{tab:capabilities}.
 
 \begin{table}[htbp]
 	\caption{\gls{lsp} \glspl{capability} that will be integrated into \SEE{} as part of this thesis.}\label{tab:capabilities}
@@ -316,10 +316,10 @@ As a quick overview and recap before then, there is a table of planned \glspl{ca
 		\textit{Call hierarchy}                 & Show incoming/outgoing calls and allow jumping to caller                & Generate corresponding edges                        \\
 		\textit{Diagnostics}                    & Highlight corresponding code \glspl{range} and display details on hover & Display code smell icons~\cite[see][]{galperin2021} \\
 		\textit{References}                     & Show references and allow jumping to usage                              & Generate corresponding edges                        \\
-		\textit{Document symbols}               & ---                                                                     & Generate corresponding nodes and hierarchy          \\
+		\textit{Document symbols}               & \multicolumn{1}{c}{---}                                                 & Generate corresponding nodes and hierarchy          \\
 		\textit{Go to location$^*$}             & Show locations and allow jumping to them                                & Generate corresponding edges                        \\
 		\textit{Hover}                          & Show hover information when hovering above item                         & Show hover information when hovering above node     \\
-		\textit{\Glspl{token}}                  & Extended ("semantic") syntax highlighting                               & ---                                                 \\
+		\textit{\Glspl{token}}                  & Extended ("semantic") syntax highlighting                               & \multicolumn{1}{c}{---}                             \\
 		\textit{Type hierarchy}                 & Show sub-/supertypes and allow jumping to them                          & Generate corresponding edges                        \\\bottomrule
 	\end{tabularx}
 	\caption*{\footnotesize $^*$This includes the \textit{Go to declaration / definition / implementation / type definition} capabilities.}

@@ -480,7 +480,7 @@ There luckily were no other major issues in the actual study after these problem
 There have been \participants participants in total, though we had to exclude one participant from most analyses because he indicated he had no knowledge of Java.
 Participants were gained via convenience sampling, that is, I asked fellow students, colleague developers from Axivion, and other acquaintances who had software engineering experience to participate.
 
-\fxnote{In Appendix, give answer key.}
+\fxwarning{In Appendix, give answer key.}
 
 \subsection{Demographics}\label{subsec:demographics}
 
@@ -1021,7 +1021,7 @@ There may be some other interfering factors that caused type I or type II errors
 For example, as several participants noted, a copy-paste feature in \SEE{} (as it exists in \gls{vscode}) would have been helpful---while I do not personally think it would have mattered enough to cause any change in the results, it is possible that copy-pasting might have increased \SEE{}'s usability or decreased the time spent on tasks enough to cause a significant difference.
 Another factor we may need to be aware of is that some participants know me personally.
 Those participants could have (intentionally or unintentionally) tried to achieve a favorable result for me, such as \SEE{} having a higher usability rating than \gls{vscode}.
-However, given that all significant differences point towards \gls{vscode} as the better tool, I am only left with the disturbing possibility that participants who know me personally tried to achieve a worse result for me, which (I hope) seems unlikely.
+However, given that all significant differences point towards \gls{vscode} as the better tool, I am only left with the disturbing possibility that participants who know me personally tried to achieve a worse result for me, which is hopefully unlikely.
 
 \subsection{External Validity}
 While we tried to make this study as realistic as we could (\eg, by following the checklist by \textcite{wettel2011}), there are still several reasons why it might not have been completely representative of real-world scenarios.
@@ -1032,6 +1032,8 @@ Two of the three tasks have been based on existing literature, and all seem reas
 Identifying the biggest components in the codebase is a good starting point for finding \glspl{smell};
 when adding new tests to a project, it is a good idea to first identifying the convention with which existing tests are organized;
 and when trying to understand a certain class, it is often necessary to navigate up its inheritance hierarchy to investigate parts specified in superordinate classes.
+However, in retrospect, some of the tasks (specifically $A$ and $C$) may have been too easy, given that almost no participants made any mistake, as seen in \cref{fig:correctness}.
+This makes analysis of this aspect a bit harder insofar that we may miss relevant answers to our research question here (\eg, maybe there \emph{are} significant differences between \gls{lsp}-enabled \glspl{city} and \glspl{ide}, and our tasks were just too easy to catch them), but it should not be a big problem for the study as a whole, because time and usability were varied enough to cause meaningful results.
 
 As for the setup, it consists of the subject systems (\SEE{} and \gls{vscode}) and the object systems (JabRef and SpotBugs).
 JabRef and SpotBugs should be reasonably representative (see \cref{sec:design}) but the combination of \gls{vscode} together with external tables might be somewhat unusual.
@@ -1041,9 +1043,11 @@ However, even though we tried to reduce it (as discussed in \cref{sec:design}), 
 For example, I was not physically present for the tasks, but just knowing that they were being timed could have caused participants to perform worse than they would have without any perceived time pressure~\cite[\eg,][]{sussman2022a}.
 
 \section{Interim Conclusion}
-\fxfatal{}
-
-% some tasks too easy
+In this chapter, we evaluated our research question by conducting a user study.
+The study consisted of six program understanding tasks and compared the \gls{lsp}-integrated version of \SEE{} from \cref{ch:implementation} to the \gls{lsp}-enabled \gls{ide} \gls{vscode} together with tables listing code metrics.
+Using the data of \participants participants, it turned out that some tasks took less perceived effort and were faster to solve when using \gls{vscode} instead of \SEE{}, with no other significant results.
+Additionally, participants found \gls{vscode} significantly more usable than \SEE{}.
+\Cref{tab:results} summarizes these results.
 
 \begin{table*}[htbp]
 	\caption{Significant differences between the variables, all in favor of \gls{vscode}.}\label{tab:results}
@@ -1060,6 +1064,25 @@ For example, I was not physically present for the tasks, but just knowing that t
 	\end{tabular}
 \end{table*}
 
+Based on this data, we can answer our research question as follows:
+\Glspl{city} are a suitable means to present \gls{lsp} information, but developers work faster and report both lower perceived effort and higher usability ratings when using traditional \glspl{ide}, at least in the case of \SEE{} versus \gls{vscode}.
+It is unclear what the exact cause of this difference is.
+The \gls{sus} score of \SEE{} is very close to average \gls{sus} scores~\cite{sauro2013}, while \gls{vscode} reaches a very high score, so one possible reason is that \gls{vscode} is a much more polished and "tried-and-tested" product than \SEE{}, which made it easier to use.
+Another possible cause is that software developers have much more day-to-day experience with traditional \glspl{ide} than with approaches like \SEE{}, making \gls{vscode} more intuitive and thus quicker and easier to use.
+There are other possible reasons, such as our tasks possibly favoring \gls{vscode}'s interface:
+For example, task $C$ is extremely easy and quick to do in \gls{vscode}:
+After having found the initial file the task asks for, the participant merely needs to hold down \keystroke{Ctrl} and repeatedly click the name of the parent class, which is always right near the mouse cursor.
+In \SEE{}, the participant instead has to visually follow the edges into what may be a pretty dense cluster of nodes, zoom in, and move the city around until the target of the edge is identified.
 
+Looking at the existing research, we cannot replicate the results of \textcite{wettel2011,romano2019}, even though these use very similar tasks.
+Both studies have as a result that \glspl{city} perform significantly better than \glspl{ide} under the factors of correctness and time, while we have the opposite result for time and no significant difference for correctness (though this latter part may have been because our tasks were too easy).
+While \citeauthor{wettel2011}'s study did not measure usability, \citeauthor{romano2019}'s did, and found no difference when comparing the two tools, which is also different from our result where the \gls{ide} does better.
+These differences could come from the fact that more tasks were used (twelve for \citeauthor{wettel2011} and ten for \citeauthor{romano2019}), making their experiments more representative, but it could also have been due to the choice of Eclipse as the \gls{ide}, which in one study by \textcite{morales2019} received an average \gls{sus} of $60.9$, lower than our average \SEE{} \gls{sus} score of $69.5$.
 
-% Table with all results
+We can also make a comparison with the study for my bachelor's thesis, whose tasks $A$ and $B$ are very similar to our task $A$~\cite{galperin2022}.
+There, I compared \SEE{} against the Axivion Dashboard, a web-based tabular \gls{smell} explorer, with the result being that using the Dashboard leads to higher correctness, but using \SEE{} leads to higher speed and a better \gls{asq} effort rating.
+While this also goes against our results, we can at least replicate the difference between the \gls{sus}, as the Dashboard (analogously to \gls{vscode}) received a significantly higher score than \SEE{}.
+
+In summary, our results here go against most of the existing literature covered in \cref{subsec:research}, especially when looking at \cref{tab:compresults}.
+As said before, this may be due to the choice of \gls{ide} (the most-used \gls{ide} by other studies has been Eclipse, while we used \gls{vscode}), choice of \gls{city} implementation, or choice of tasks.
+Further investigation into the exact causes here---perhaps by rigorously comparing various \glspl{ide}, \gls{city} tools, tasks, and so on, against each other in further user studies---could be a good avenue for future research.

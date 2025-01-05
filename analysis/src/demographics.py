@@ -15,7 +15,6 @@ from scipy.stats import (
 
 from .util import print_statistic, write_dat
 
-# FIXME
 iv_interval = [
     "age",
     # "start",
