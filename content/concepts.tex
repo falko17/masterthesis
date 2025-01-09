@@ -265,7 +265,7 @@ There are actually two different possible kinds of symbols that this \gls{capabi
 	      Because of this limitation, if a \gls{ls} is only able to return symbols of this data type, we cannot use it to build \glspl{city}.
 	      This is an older data type, and instead modern \glspl{ls} should rather return
 	\item an array of \tt{DocumentSymbol}.
-	      This contains a field \tt{children}, which stores \tt{DocumentSymbol}s that are contained in this one.
+	      This contains a field \tt{children}, which stores \proptt{DocumentSymbol}s that are contained in this one.
 	      Using this property, we can establish a hierarchy and build a \gls{city} by recursively enumerating all \tt{DocumentSymbol}s and their children for each file, then querying for all relevant information by using the other \glspl{capability} outlined before.
 \end{enumerate}
 

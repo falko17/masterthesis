@@ -156,6 +156,7 @@ To this end, the main contribution is a way of generating \glspl{city} using the
 This is an unintended (or at the very least, unusual) use of \gls{lsp} and may require some experimentation.
 
 \begin{wrapfigure}{L}{0.6\textwidth}
+	\captionsetup{type=figure}
 	\centering
 	\includegraphics[width=0.6\textwidth,trim={30.5cm 22cm 6cm 0},clip]{../figures/SEE_readme}
 	\caption{A code window.}\label{fig:window}
@@ -172,7 +173,7 @@ Consult \cref{subsec:capabilities} for a full list of \gls{lsp} capabilities imp
 
 Additionally, I will not implement the C\# interface to the \gls{lsp} (\ie, translating between C\# method calls and \glspl{jrpc}).
 There already exist well-made interfaces for this purpose\footnote{
-	Such as OmniSharp's implementation of \gls{lsp} in C\#~\cite{csharplanguageserverprotocol2025}, which I will use.
+	Such as OmniSharp's implementation of \gls{lsp} in C\#~\cite{csharplanguageserverprotocol2023}, which I will use.
 }, and the focus of the thesis will be on the integration of the protocol's \emph{data} into \SEE{}'s \glspl{city} and \glspl{window}, not the integration of the protocol itself.
 
 Hence, the goals for this thesis can be summarized as follows:

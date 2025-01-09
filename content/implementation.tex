@@ -48,7 +48,7 @@ After addressing the resulting code review, it has been merged, and the changes 
 \subsection{Preparing SEE}
 There was not much I had to do in terms of getting \SEE{} ready, so this section will be very short:
 \begin{itemize}
-	\item I have integrated the OmniSharp \gls{lsp} C\# library~\cite{csharplanguageserverprotocol2025} into \SEE{}, which we will leverage in the subsequent sections so that we can use \gls{lsp} without needing to worry about \gls{jrpc} encoding, data models, and so on.
+	\item I have integrated the OmniSharp \gls{lsp} C\# library~\cite{csharplanguageserverprotocol2023} into \SEE{}, which we will leverage in the subsequent sections so that we can use \gls{lsp} without needing to worry about \gls{jrpc} encoding, data models, and so on.
 	\item \Glspl{window} have previously been made editable by \textcite{moritz} in his bachelor thesis, also enabling collaborative editing over the internet.
 	      I unfortunately had to remove these changes because they did not work anymore in the current version of \SEE{}, and additionally caused a lot of complexity overhead in the \gls{window} implementation that would have made the \gls{lsp} integration much harder to accomplish.
 	\item Finally, the attribute space $\mathcal{A}$ in \SEE{} did not allow for \glspl{range} of the form \gls{lsp} needs, so I had to replace the existing attributes (which track the line and column, but not a full range) with a proper set of \gls{range} attributes.
@@ -71,7 +71,7 @@ We will take a look at the algorithm in a generalized and programming language i
 In this form, the algorithm takes as input a set of source code documents, as well as a family of \gls{lsp} functions belonging to a specific instantiation of a \gls{ls}.
 These functions will be used to analyze the documents and extract the required information from them.
 The output of the algorithm, then, is a graph representing the given software project.
-\fxnote{Improve coloring of inner boxes.}
+\fxnote{Improve coloring of inner boxes and reduce height of boxes.}
 
 \begin{figure}
 	\begin{center}
@@ -192,7 +192,7 @@ There are a few possible ways to solve this problem (which is in essence a varia
 
 A detailed explanation of augmented \glspl{intervaltree} can be found in \textcite[section~17.3]{cormen2022}, while \glspl{kdtree} are described in a paper by \textcite{bentley1975}.
 In our case, we can create the tree by constructing a 2d-tree\footnote{
-	Note that, in the actual implementation, the construction of the \gls{kdtree} (excluding its augmentation to an \gls{intervaltree}) is handled by the external \tt{Supercluster.KDTree} library~\cite{regina2024}.
+	Note that, in the actual implementation, the construction of the \gls{kdtree} (excluding its augmentation to an \gls{intervaltree}) is handled by the external \tt{Supercluster.KDTree} library~\cite{regina2017}.
 } out of all elements (as explained in the previous sources), where the key is the starting position of the \gls{range}.
 Afterwards, we save in each node the maximum line number and maximum character offset, respectively, for the subtree rooted by that node, thereby turning this \gls{kdtree} into an \gls{intervaltree}.
 
