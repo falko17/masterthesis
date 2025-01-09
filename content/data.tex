@@ -19,6 +19,23 @@ Here are all ten questions of the \glsentrylong{sus}:
 	\item "I needed to learn a lot of things before I could get going with the system."
 \end{enumerate}
 
+\section{Technical Evaluation Data \& Scripts}\label{app:techdata}
+The data measured by the technical evaluation is provided in the ZIP file \gls{benchmark} as CSV files, one for each run.
+The filename for each of these follows the scheme \proptt{perf-<project>-<type><number>.csv}, where \texttt{<project>} is one of:
+\begin{itemize}
+	\item \texttt{aao} for \texttt{aaoffline},
+	\item \texttt{bachelor} for my bachelor's thesis,
+	\item \texttt{dcaf} for \texttt{dcaf-rs},
+	\item \texttt{jab} for JabRef,
+	\item \texttt{master} for this master's thesis,
+	\item or \texttt{spot} for SpotBugs.
+\end{itemize}
+On the other hand, \texttt{<type>} is either \texttt{norm} for \cref{alg:interval} or \texttt{x} for the brute-force \cref{alg:generate}, and \texttt{<number>} is just an ascending number assigned to each benchmark run.
+The code which has been used to generate these CSV files is available on branch \proptt{performance-changes-falko} on the \SEE{} repository.
+
+In addition to the CSV files, the ZIP archive contains a \texttt{benchmark.py} Python script, which reads the provided CSV files and generates the DAT files used by \LaTeX{} for the plots in \cref{sec:techeval}.
+For convenience, the generated DAT files have also been included in the archive.
+
 \section{Generation Time Without Edges}\label{app:noedge}
 The breakdown of the generation algorithm components for the sample projects in the technical evaluation in \cref{sec:techeval} made it hard to tell the distribution of other components, since the edge components took up so much space.
 For this reason, we present another version of the diagram in \cref{fig:techevalnoedges} with the edge component removed.
@@ -158,3 +175,71 @@ For this reason, we present another version of the diagram in \cref{fig:techeval
 		The suffix \emph{O} denotes the optimized (\gls{intervaltree}) version of the algorithm, while \emph{B} refers to the brute-force version.
 	}\label{fig:techevalnoedges}
 \end{figure}
+
+\section{User Study Data \& Scripts}\label{app:scripts}
+Here, we give all data that is necessary\footnote{
+	With the exception of the full result data, which I have redacted for privacy reasons.
+} to replicate the study (either as a new study, or by re-analyzing the data).
+
+\subsection{Participation Data}
+The user data, in pseudonymized form (\ie, with all potentially identifying information scrubbed and replaced with the string \texttt{[REDACTED]}), is attached as \gls{psi} for group $\Psi$ and \gls{omega} for group $\Omega$.
+
+\subsection{Analysis Scripts}
+The analysis scripts are attached as \gls{analysis}, with the following points to bear in mind:
+\begin{itemize}
+	\item \texttt{analyze.py} acts as the entry-point of the script---this is the only script that actually needs to be run.
+	\item The script expects a file \texttt{SEE-VSCode.csv} and \texttt{VSCode-SEE.csv} to be in the same directory as itself.
+	      This script should be the direct result of downloading the participation data from KoboToolbox.
+	      You could use the redacted versions mentioned above, but will likely run into errors since we expect the redacted fields to be filled out properly, so you would either have to manually modify the code to not analyze those potentially identifying parts of the questionnaire, or add in some dummy data into the CSVs.
+	\item The ZIP file also contains two files by the name of \texttt{correctness\_values\_sv.json} and \texttt{correctness\_values\_vs.json}.
+	      These are my "cached" answers to which participant responses were correct or incorrect.
+	      If you delete them, the script will prompt you for the information instead.
+	\item The script creates a bunch of DAT files under the \texttt{dat/} directory, which is what \LaTeX{} uses to generate the plots for \cref{ch:evaluation}.
+\end{itemize}
+
+\subsection{Full Questionnaire}\label{app:questionnaire}
+Finally, the full questionnaire in \gls{xlsform} standard that can be directly imported into KoboToolbox is given at \gls{psitest} for group $\Psi$ and at \gls{omegatest} for group $\Omega$.
+
+\subsection{Answer Key}\label{app:answer}
+% === ANSWER KEY ===
+% Original FindBugs study by Wettel:
+% A1 = unit test dispersion (FB: Dispersed)
+% A4.1 = 3 classes with highest num methods (FB: AbstractFrameModelingVisitor, MainFrame, BugInstance/TypeFrameModelingVisitor)
+% SpotBugs:
+% 1) AbstractFrameModelingVisitor (198), BugInstance (165), TypeFrameModelingVisitor (126)
+% 2) EITHER centralized spotbugs-test, OR allow dispersed TestDataflowAnalysis OR none
+%    => SpotBugs detects tests (and "tests" things for bugs), so participants might have been confused due to that.
+% 3) BetterVisitor/Visitor
+% JabRef:
+% 4) BibTexParserTest (143), JabRefPreferences (136), AuthorListTest (127)
+% 5) Centralized: src.test.java.org.jabref (or src.test, or test)
+% 6) AbstractViewModel
+
+Here are the accepted answers to each of the six tasks:
+\begin{description}
+	\item[$\bm{A_1}$]
+	      \begin{enumerate}
+		      \item \texttt{AbstractFrameModelingVisitor} ($198$ methods)
+		      \item \texttt{MainFrame} ($165$ methods)
+		      \item \texttt{BugInstance} \emph{or} \texttt{TypeFrameModelingVisitor} ($126$ methods each)
+	      \end{enumerate}
+	\item[$\bm{B_1}$] We accept \emph{either} of:
+	      \begin{itemize}
+		      \item "Centralized" with \texttt{spotbugs-test} as the root\footnote{
+			            This would only be visible on \gls{vscode} if participants incorrectly opened the project, which is why this is not the canonical answer.
+		            }
+		      \item "Dispersed" with \texttt{TestDataflowAnalysis} (which may reasonably be construed as a class that tests something) as an example
+		      \item "None"
+	      \end{itemize}
+	\item[$\bm{C_1}$] \texttt{BetterVisitor} \emph{or} \texttt{Visitor}\footnote{
+		      We accept either because the former is the base class, and the latter is the base interface, which is close enough.
+	      }
+	\item[$\bm{A_2}$]
+	      \begin{enumerate}
+		      \item \texttt{BibTexParserTest} ($143$ methods)
+		      \item \texttt{JabRefPreferences} ($136$ methods)
+		      \item \texttt{AuthorListTest} ($127$ methods)
+	      \end{enumerate}
+	\item[$\bm{B_2}$] "Centralized" with root \texttt{src.test.java.org.jabref} \emph{or} \texttt{src.test} \emph{or} \texttt{test}
+	\item[$\bm{C_2}$] \texttt{AbstractViewModel}
+\end{description}

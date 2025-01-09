@@ -1,0 +1,18 @@
+
+\begin{tikzpicture}[
+		node distance=1cm,
+		graphnode/.style={draw,rounded corners=2pt,align=center,thick,fill=Maroon!10,blur shadow}
+	]
+
+	\node[graphnode] (pow) {\textcolor{Peach}{\textbf{\texttt{pow}}}\\\small\emph{key}: $(3,2)$\\\small\emph{max}: $(7,32)$};
+	\node[graphnode,below right=of pow] (num) {\textcolor{OliveGreen}{\textbf{\texttt{num}}}\\\small\emph{key}: $(3,25)$\\\small\emph{max}: $(4,32)$};
+	\node[graphnode,below left=of num] (result) {\textcolor{Brown}{\textbf{\texttt{result}}}\\\small\emph{key}: $(4,4)$\\\small\emph{max}: $(4,27)$};
+	\node[graphnode,below left=of pow] (someValue) {\textcolor{Emerald}{\textbf{\texttt{someValue}}}\\\small\emph{key}: $(1,2)$\\\small\emph{max}: $(7,28)$};
+	\node[graphnode,below left=of someValue] (Example) {\textcolor{red}{\textbf{\texttt{Example}}}\\\small\emph{key}: $(0,0)$\\\small\emph{max}: $(7,1)$};
+
+	\draw (pow) -- (num);
+	\draw (num) -- (result);
+	\draw (pow) -- (someValue);
+	\draw (someValue) -- (Example);
+
+\end{tikzpicture}

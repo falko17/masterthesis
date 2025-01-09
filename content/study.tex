@@ -30,11 +30,7 @@ Our main aim here is to answer our second research question that we defined in \
 	Are \glspl{city} a suitable means to present \gls{lsp} information to developers as compared to \glspl{ide} + tables (on the dimensions of speed, accuracy, and usability)?
 \end{displayquote}
 
-To empirically evaluate this research question, we will devise a series of short software engineering related tasks on the real-world software projects \emph{JabRef}\footnote{
-	\web{https://github.com/JabRef/jabref}{2024-11-22}
-} and \emph{SpotBugs}\footnote{
-	\web{https://github.com/spotbugs/spotbugs}{2024-11-22}
-}.
+To empirically evaluate this research question, we will devise a series of short software engineering related tasks on the real-world software projects \emph{JabRef}~\cite{jabref} and \emph{SpotBugs}~\cite{spotbugs}.
 Participants then get randomly assigned to either use \SEE{} (along with our implementation from \cref{ch:implementation}) or \gls{vscode} (with an active \gls{ls}).
 However, evaluating the supported \glspl{capability} (see \cref{tab:capabilities}) in this way turns out to be quite difficult---for example, how would one evaluate the \emph{Hover} \gls{capability}, let alone features like \glspl{token} which are almost identically implemented across \SEE{} and \gls{vscode}?
 For this reason, we will abstain from incorporating the \gls{window}-related \glspl{capability} from \cref{sec:intowindow}.
@@ -80,7 +76,7 @@ As a reminder, the big green point marks the average of the dataset.
 \end{figure}
 
 Outside of \SEE{}, there are a number of other \gls{city} implementations, such as \emph{CodeCity}~\cite{wettel2007} or \emph{Software World}~\cite{knight2000} (see also the overview by \textcite{jeffery2019}).
-In their evaluations, these papers often compare different platforms (such as Desktop to VR/AR)~\cite[\eg,][]{merino2017,fittkau2015, merino2018}, but as with the \SEE{}-related theses above, we are most interested in those that have controlled experiments comparing a \gls{city} tool with a traditional \gls{ide}.
+In their evaluations, these papers often compare different platforms (such as Desktop to VR/AR)~\cite[\eg,][]{merino2017,fittkau2015, merino2018}, but as with the \SEE{}-related theses, we are most interested in those that have controlled experiments comparing a \gls{city} tool with a traditional \gls{ide}.
 
 One such study was done by \textcite{wettel2011} and compares \emph{CodeCity} against the Eclipse \gls{ide}, with the caveat that participants using Eclipse can also access an Excel spreadsheet of software metrics, as the \gls{city} implementation would otherwise have an unfair advantage.
 He based his study on an extensive survey of existing empirical work on software visualization, constructing a "wishlist" of desiderata for such studies~\cite[chapter 7]{wettel2011}.
@@ -165,7 +161,7 @@ In \SEE{}, we could simply visualize that by encoding it as the size of each bui
 The table is hosted on Google Spreadsheets\footnote{
 	\web{https://docs.google.com/spreadsheets/d/1Z2AQDk2-XeVBB1kAtcpc18mFkPI5ZSsSz\_yOwS4pQ88}{2024-11-20} and \web{https://docs.google.com/spreadsheets/d/1erJZTwYtG-CQfZJPT-zt-chX\_VHL9jLrVfWAWZMFvEo}{2024-11-20}.
 } and can be sorted by any column as well as searched.
-The script with which the metrics were extracted is attached as \fxwarning*{Attach script in appendix.}{TODO}.
+The script with which the metrics were extracted is attached as \gls{extract}.
 
 \subsection{Hypotheses}\label{subsec:hypotheses}
 
@@ -263,17 +259,16 @@ Additionally, we would like to follow the "wish list" compiled by \textcite[122-
 	\item \textbf{\enquote{Find a set of relevant tasks.}}
 	      Our tasks are representative of real-world activities (see \cref{subsec:tasks}), but some may turn out to have been too easy, as we will see in the analysis in \cref{subsec:correct}. \chmm
 	\item \textbf{\enquote{Choose real object systems that are relevant for the tasks.}}
-	      We have chosen \emph{SpotBugs} (3.5k GitHub stars, $\approx$ 216 k\gls{loc}) and \emph{JabRef} (3.6k GitHub stars, $\approx$ 179 k\gls{loc}).
+	      We have chosen \emph{SpotBugs} (\num{3.5}k GitHub stars, $\approx \qty{216}{\kilo\loc}$) and \emph{JabRef} (\num{3.6}k GitHub stars, $\approx \qty{179}{\kilo\loc}$).
 	      The former is a fork of the abandoned static analysis tool \emph{FindBugs} that Wettel used for his study, while the latter is a bibliography manager that is well-known enough that some of our participants have heard about or even used it before (see \cref{subsec:demographics}).~\cyes
 	\item \textbf{\enquote{Include more than one subject system in the [experiment].}}
 	      See first item. \cyes
 	\item \textbf{\enquote{Provide the same data to all participants.}}
 	      The tasks for both participants (and accompanying data) are identical, and \gls{vscode} participants get access to a table of metrics so that the same data is present. \cyes
 	\item \textbf{\enquote{Limit the amount of time allowed for solving each task.}}
-	      Integrating a time limit like this into the tool we used for the questionnaire would have been difficult, but the tasks were comparatively simple and participants were aware that their completion time was measured, so we should hopefully have avoided the effects Wettel references here. \chmm
+	      Integrating a time limit like this into the tool we used for the questionnaire would have been difficult, but the tasks were comparatively simple and participants were aware that their time was measured, so we should hopefully have avoided the effects referenced here.~\chmm
 	\item \textbf{\enquote{Provide all the details needed to make the experiment replicable.}}
-	      I have included (pseudonymized) participation data, the full definition of the questionnaire, and the analysis script which performed data cleanup and statistical tests. \cyes
-	      \fxwarning{Link to appendix here.}
+	      In \cref{app:scripts}, I have included (pseudonymized) participation data, the full definition of the questionnaire, and the scripts which performed data cleanup, statistical tests, and generated the data for the graphs shown in this chapter.~\cyes
 	\item \textbf{\enquote{Report results on individual tasks.}}
 	      We are going over each task individually when reporting results in \cref{sec:results}. \cyes
 	\item \textbf{\enquote{Take into account the possible wide range of experience level of the participants.}}
@@ -350,7 +345,7 @@ Before each task, we tell the user that their time will be measured as soon as t
 Then, we keep a timestamp for each editable field in the task, including a checkbox the user can check to indicate they have finished the task.
 Using the set of those timestamps $T$ and the timestamp $t_0$ of when they started the task, the time for the task can then be calculated as $\max T - t_0$.
 This also ensures we catch "cheating" in the form of participants editing fields after they have indicated they are finished with the task.
-The survey in \gls{xlsform} is linked in \fxwarning*{Link to questionnaire in appendix}{TODO}, and a screenshot of the starting page is shown in \cref{fig:kobo}.
+The survey in \gls{xlsform} is linked in \cref{app:questionnaire}, and a screenshot of the starting page is shown in \cref{fig:kobo}.
 
 \begin{figure}
 	\begin{center}
@@ -361,7 +356,7 @@ The survey in \gls{xlsform} is linked in \fxwarning*{Link to questionnaire in ap
 
 
 To equally partition participants into two groups, we create two versions of the survey, one for group $\Psi$ and one for group $\Omega$.
-We then access KoboToolbox's REST API to redirect the participants to version $\Psi$ or $\Omega$---the algorithm we are using is given in \cref{alg:redirect}, or can alternatively be seen in \fxwarning*{Link to script in appendix}{TODO}.
+We then access KoboToolbox's REST API to redirect the participants to version $\Psi$ or $\Omega$---the algorithm we are using is given in \cref{alg:redirect}, or can alternatively be seen in \gls{redirect}.
 Inviting others to participate then becomes as simple as passing the link to the redirection script around\footnote{
 	\url{https://falko.de/master-evaluation}, but this link may not stay up forever.
 }.
@@ -432,7 +427,7 @@ Thus, we will focus on tasks from the first group:
 	      \end{description}
 \end{enumerate}
 
-Note, however, that none of the tasks we selected above test any edge-related behavior, so we will add one task of our own.
+Note, however, that none of the tasks we selected here test any edge-related behavior, so we will add one task of our own.
 This \textbf{task $\bm{C}$} will be to \enquote{find the \gls{base} for class $c$ in the system.}
 Its drawback is that it requires a short explanation of \glspl{base} before the task, but its upsides are that it is both a realistic task and additionally forces participants to have more than a cursory interaction with the edges (specifically, the \tt{Extend} edges\footnote{
 	We should also note that the \glspl{city} for this study \emph{only} contain \tt{Extend} edges---otherwise, there would be too many edges for \SEE{} to handle in a performant manner.
@@ -441,7 +436,7 @@ Its drawback is that it requires a short explanation of \glspl{base} before the 
 Now we only need to choose a fitting $c$ for both JabRef and SpotBugs, our two object systems.
 To make sure the task is not too easy, we choose the class which is deepest in the inheritance tree for both systems.
 For JabRef, this is \tt{GenderEditorViewModel} (five levels deep), while for SpotBugs, this is \tt{OptionalReturnNull} (seven levels deep).
-This way, we can also evaluate the transitive edge animations we added in \fxwarning*{Where?}{some section}.
+This way, we can also evaluate the transitive edge animations we added in \cref{sec:implconclusion}.
 
 We should also mention that, for task $B$, like Wettel, we give multiple choice options for the various kinds of conventions along with brief descriptions to make sure they are understood correctly.
 If one of the options is then chosen (\eg, \enquote{Centralized}), users have to give follow-up information (\eg, \enquote{What is the full name of the root package for test classes?}) to make sure the correct answer was not just guessed.
@@ -479,8 +474,6 @@ There luckily were no other major issues in the actual study after these problem
 
 There have been \participants participants in total, though we had to exclude one participant from most analyses because he indicated he had no knowledge of Java.
 Participants were gained via convenience sampling, that is, I asked fellow students, colleague developers from Axivion, and other acquaintances who had software engineering experience to participate.
-
-\fxwarning{In Appendix, give answer key.}
 
 \subsection{Demographics}\label{subsec:demographics}
 
@@ -595,10 +588,9 @@ In summary, the only significant differences between the two groups that could c
 We will investigate the effects of this in more detail in \cref{subsec:experience}.
 
 \subsection{Correctness}\label{subsec:correct}
-To evaluate the correctness of the various answers, I wrote a script which showed me each answer and prompted me to say whether this answer was correct or incorrect, while I used the previously created answer key (see {TODO}) as a base.
+To evaluate the correctness of the various answers, I wrote a script which showed me each answer and prompted me to say whether this answer was correct or incorrect, while I used the previously created answer key (see \cref{app:answer}) as a base.
 This allowed me to catch misspellings or unusual formats\footnote{For example, some participants also entered the \gls{nom} along with the class name for task $A$.} and still mark the answers as correct.
-The results of which answers I marked as correct are attached as {TODO}, while the script used to do so is part of the general analysis script in {TODO}.
-\fxwarning{Attach and link answer key, correctness answers, script in appendix}
+The results of which answers I marked as correct and the script used to do so are attached as part of \gls{analysis}.
 
 It does not make much sense to use \glspl{violin} here, as there are in most cases only two possible values here:
 The participants were either correct or incorrect in their answer to the task.
@@ -663,7 +655,7 @@ Still, it is interesting that this happened with both \gls{vscode} and \SEE{}.
 
 In conclusion, we cannot reject $H_{a_0}$ at all, and thus keep assuming that $C_S = C_V$.
 
-\subsection{$\bigstar$ Time}\label{subsec:time}
+\subsection[Time]{$\bigstar$ Time}\label{subsec:time}
 As mentioned before, we calculated the time it took to complete a task using the set of timestamps $T$ and the starting timestamp $t_0$ as $\hat{t} = \max T - t_0$.
 This ensures that the actual time is no higher than $\hat{t}$, but it does not catch the opposite:
 It is possible that participants were, for example, distracted and had to stop solving the task to attend some other matter, which could explain outliers like the twenty minute participation time for one participant in task $A_1$ (see \cref{fig:a1t}).
@@ -725,7 +717,7 @@ Some of the comments that we got in \cref{subsec:comments} seem to support this 
 
 While four out of the six tasks yielded no significant differences, two of them point to \gls{vscode} increasing the participants' speed, so we will reject $H_{b_0}$ and accept $H_{b_1}$ instead, specifically, $t_V < t_S$.
 
-\subsection{$\bigstar$ Usability}
+\subsection[Usability]{$\bigstar$ Usability}
 We have measured the usability in two ways:
 With the \gls{asq} after each task (six times total), which we will examine first, and with the \gls{sus} after each system (twice total), which we will examine afterwards.
 
@@ -894,7 +886,7 @@ Indeed, the only correlations that would even be normally classified as "moderat
 	      \end{itemize}
 \end{itemize}
 
-However, we cannot put too much stock in the speculation given above, since neither of the two \gls{fdr}-adjusted $p$-values are anywhere near below our significance level.
+However, we cannot put too much stock in the speculation given here, since neither of the two \gls{fdr}-adjusted $p$-values are anywhere near below our significance level.
 Thus, in total, we cannot make out any significant correlation between independent and dependent variables here, which has the upside that we need not worry as much about any of the differences in independent variables from \cref{subsec:experience} biasing our results.
 
 \subsection{Comments}\label{subsec:comments}
@@ -920,7 +912,6 @@ The number of times a type of comment has been left is indicated by a number in 
 My responses to comments are indicated by the "\follows{}" symbol, while simple agreement without any further elaboration is indicated by the "\agree" symbol\footnote{
 	A missing "\agree" symbol does not necessarily indicate disagreement on my part, some comments (\eg, "\gls{vscode} was great to use") are just of a form where agreement does not make much sense as a response.
 }.
-\fxnote{Should I move this into an appendix instead of listing the comments here?}
 
 \paragraph{\SEE{}}
 Since this is where most of the comments were left, I will group these comments into three categories.
@@ -946,7 +937,7 @@ Since this is where most of the comments were left, I will group these comments 
 		      \item A key combination to trigger edges for a given node would be useful to quickly navigate using edges.
 		            \answer{As I write this, we are working on a new keyboard shortcut system that would accommodate this.}
 		      \item A gradient may have been better on the nodes.
-		            The single color makes it harder to distinguish nodes whose \gls{nom} is similar. \agree \fxnote{Do we already support using a gradient? I can't remember.}
+		            The single color makes it harder to distinguish nodes whose \gls{nom} is similar. \agree
 		      \item A less three-dimensional view may have been useful to navigate this city more easily.
 		            \answer{This may be true here, since we have not used all three dimensions for metrics, but at its core, \SEE{} is a 3D \gls{city} visualization.}
 	      \end{itemize}

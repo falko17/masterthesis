@@ -7,7 +7,7 @@
 	chapterprefix=true,     % prefix for chapter marks
 	headings=normal,        % size of headings
 	bibliography=totocnumbered,     % include bib in toc
-	listof=totocnumbered,   % include listof entries in toc
+	%listof=totocnumbered,   % include listof entries in toc
 	titlepage=on,           % own page for each title page
 	captions=tableabove,    % display table captions above the float env
   %draft   % if neither is specified, "draft for review mode"
@@ -60,11 +60,12 @@
 \usepackage{tikzscale}
 \usepackage{cancel}
 \usepackage{siunitx}
+\usepackage{fontawesome}
 
 \tcbuselibrary{skins,minted,breakable}
 
 \usepgfplotslibrary{colorbrewer}
-\usetikzlibrary{shadows,external,arrows.meta}
+\usetikzlibrary{external,positioning,shapes,arrows.meta,calc,fit,shadows.blur}
 \tikzexternalize[mode=list and make]
 
 \PassOptionsToClass{listof=numbered}{scrreprt}
@@ -94,7 +95,7 @@
 \usepackage{bm}
 \usepackage{pifont}
 
-% Using my fork here until the PR regarding jitter is merged and released.
+% Using my fork here until the PR regarding jitter is released.
 \usepackage{stringstrings}
 \usepackage{../tikzviolinplots/tikzviolinplots}
 
@@ -117,7 +118,6 @@
 \newcommand{\SEE}{\gls*{see}}
 \newcommand{\eg}{e.\,g.\xspace}
 \newcommand{\ie}{i.\,e.\xspace}
-\newcommand{\code}[1]{\fxerror{Use lstinline here!}}
 \newcommand{\web}[2]{\url{#1} \textit{(last access: #2)}}
 \newcommand{\tt}[1]{\monott{#1}}
 
@@ -335,6 +335,22 @@
   }
 }
 
+\makeatletter
+\AtBeginDocument{%
+	\let\l@algorithm\l@figure%
+	\let\listofalgorithms\listoffigures% Copy \listoffigures
+	\let\@cftmakeloatitle\@cftmakeloftitle% Copy LoF title
+	% Update LoA-related macros
+	\patchcmd{\listofalgorithms}{\@cftmakeloftitle}{\@cftmakeloatitle}{}{}%
+	\patchcmd{\listofalgorithms}{\@starttoc{lof}}{\@starttoc{loa}}{}{}%
+	\patchcmd{\@cftmakeloatitle}{\listfigurename}{\listalgorithmname}{}{}%
+	% Add per-chapter LoA space (similar to LoF)
+	\patchcmd{\@chapter}{\addtocontents}{%
+		\addtocontents{loa}{\protect\addvspace{10\p@}}%
+		\addtocontents}{}{}%
+}
+\makeatother
+
 %%% OPTIONS %%%
 
 \subcaptionsetup{position=top, skip=1pt}
@@ -487,8 +503,6 @@
 
 
 \renewcommand{\listoflistings}{%
-  \cleardoublepage
-  \addcontentsline{toc}{chapter}{\listoflistingscaption}%
   \listof{listing}{\listoflistingscaption}%
 }
 
@@ -581,21 +595,38 @@ The reasons for this are not fully apparent from the data we collected and may b
 % Ich habe keine anderen als die angegebenen Quellen und Hilfsmittel benutzt.
 % Alle Stellen, die wörtlich oder sinngemäß aus Veröffentlichungen entnommen sind, sind als solche kenntlich gemacht.
 
-I hereby declare that I have completed this master's thesis independently and without any external assistance, unless explicitly stated otherwise.
-I have not used any sources or aids other than those specified.
-All passages that have been quoted verbatim or paraphrased from published sources are clearly identified as such.
+I hereby affirm that I have written the present work independently and have used no sources or aids other than
+those indicated. All parts of my work that have been taken from other works, either verbatim or in terms of
+meaning, have been marked as such, indicating the source. The same applies to drawings, sketches, pictorial
+representations and sources from the Internet, including AI-based applications or tools. The work has not yet
+been submitted in the same or a similar form as a final examination paper.
+
+Additionally:
+\begin{itemize}
+	\item I agree that my thesis may be viewed by third parties in the university archive for academic purposes.
+	\item I agree that my thesis may be viewed by third parties for academic purposes in the university archive after 30 years (in accordance with \S{}7 para.\ 2 BremArchivG).
+	\item I agree that the work I have submitted and written will be stored permanently on the external server
+	      of the plagiarism software currently used by the University of Bremen, in a library belonging to the
+	      institution (accessed only by the University of Bremen), for the above-mentioned purpose.
+\end{itemize}
+
+With my signature, I confirm that I have read and understood the above explanations and confirm the
+accuracy of the information provided.
 
 \bigskip
 
 \noindent\textit{Bremen, \today}
 \smallskip
+
+\fxerror{Maybe improve signature (fountain pen instead of ballpoint)}
 \begin{flushright}
 	\begin{tabular}{m{5cm}}
+		\includegraphics[height=2\baselineskip]{signature}
+		\vspace{-1cm}
 		\\ \hline
 		\centering\myName \\
 	\end{tabular}
 \end{flushright}
-
 \vfill
 
 %die Danksagung
@@ -604,7 +635,7 @@ All passages that have been quoted verbatim or paraphrased from published source
 
 First and foremost, I want to thank Rainer Koschke for his general help, quick answers to any questions that I had, and availability for detailed discussions on various aspects of both the implementation and user study of this thesis.
 Additionally, I am thankful for every participant who took part in my user study, with additional gratitude towards those who even shared the link to the evaluation in their own circles.
-Finally, I want to thank all \fxerror*{Add proofreader names here}{proofreaders} who, despite its length, read through this thesis to catch any mistakes.
+Finally, I want to thank all {proofreaders} (\fxerror[layout=inline]{Add proofreader names here}) who, despite its length, read through this thesis to catch any mistakes.
 If you're reading this right now, you must be a proofreader, so good luck, and thanks!
 
 \cleardoublepage
@@ -615,13 +646,11 @@ If you're reading this right now, you must be a proofreader, so good luck, and t
 	\hypersetup{hidelinks}
 	\tableofcontents
 }
-\fxerror{Listings appear twice in TOC}
-\fxerror{Lists of ... should be in single appendix}
 \cleardoublepage
 
 \mainmatter
 
-\fxwarning{Convert diagrams to TikZ}
+\fxwarning{Go through all \LaTeX{} warnings}
 
 \subfile{content/intro}
 
@@ -678,17 +707,43 @@ If you're reading this right now, you must be a proofreader, so good luck, and t
 
 \listoffixmes
 
-\printglossary[type=main,style={index}]
-\printglossary[type=\acronymtype,style={index}]
-\printunsrtglossary[type=file,style={long-name-desc}]
-
 \subfile{content/data}
 
-\listoffigures
+\renewcommand{\glslongextraNameDescTabularHeader}{
+	\toprule
+	\glslongextraHeaderFmt{Filename} &
+	\glslongextraHeaderFmt\descriptionname\tabularnewline
+	\midrule
+}
 
-\listoftables
+\printglossary[type=main,style={index}]
+\printglossary[type=\acronymtype,style={index}]
+\setlength{\LTleft}{0pt}
+\printunsrtglossary[type=file,style={long-booktabs}]
+\fxerror{Make sure all digital appendix items are actually attached (and that all are present in the table)!}
 
-\listoflistings
+\makeatletter
+\renewcommand{\listoffigures}{\section{\listfigurename}\@starttoc{lof}}
+\renewcommand{\listoftables}{\section{\listtablename}\@starttoc{lot}}
+\renewcommand{\listoflistings}{\section{\lstlistlistingname}\@starttoc{lol}}
+\renewcommand{\listofalgorithms}{\section{\listalgorithmname}\@starttoc{loa}}
+\makeatother
+
+{
+	\hypersetup{hidelinks}
+	\chapter{Lists}
+	\lettrine[lines=3]{\textcolor{Maroon}{H}}{ere} we have a collection of all lists of things from this thesis.
+	Specifically, we are enumerating all figures, all tables, all code listings, and finally, all algorithms.
+	Each of these is numbered by chapter and ordered by occurrence.
+
+	\listoffigures
+
+	\listoftables
+
+	\listoflistings
+
+	\listofalgorithms
+}
 
 \printbibliography[heading=bibnumbered]
 

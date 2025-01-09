@@ -127,7 +127,7 @@
 
 \newacronym[description={\fc{A} file format for graphs, used in \gls{see} for representing dependency and hierarchy graphs of software projects.}]{gxl}{GXL}{\itag{G}raph e\itag{X}change \itag{L}anguage}
 
-\newacronym[description={\fc{E}ditor for source code with features that are useful for development (\eg, highlighting errors). Examples are \emph{Eclipse} or \emph{\textsc{JetBrains} IntelliJ}}.]{ide}{IDE}{Integrated Development Environment}
+\newacronym[description={\fc{E}ditor for source code with features that are useful for development (\eg, highlighting errors). Examples are VSCode or IntelliJ}.]{ide}{IDE}{Integrated Development Environment}
 
 \newacronym[description={\fc{A} remote procedure call protocol that uses JSON as its encoding, supporting (among other features) asynchronous calls and notifications. It is used as the base for \gls{lsp} (even though \gls{lsp} is technically not a remote protocol).}]{jrpc}{JSON-RPC}{JavaScript Object Notation---Remote Procedure Call}
 
@@ -168,7 +168,7 @@
 	description={\fc{T}he base class of a class is its superordinate (\ie, above in the inheritance tree) class that itself has no further parent class within the project.},
 	plural=base classes}
 
-\newglossaryentry{city}{name={c}ode \fc{c}ity,
+\newglossaryentry{city}{name=\fc{c}ode \fc{c}ity,
 	description={\fc{I}n the code city metaphor, software components are visualized as buildings within a city, where various metrics of the software are represented visually (\eg, the height of a building could represent the lines of code of the component).},
 	plural=code cities}
 
@@ -250,5 +250,19 @@ description={\fc{A} source code viewer in \SEE{} which supports very basic \gls{
 			The forms can then be converted into the open ODK XForm format, which is compatible with a number of data collection tools~\cite{odkcommunity2019}.}}
 
 %%% DIGITAL HERE %%%
-\newglossaryentry{seezip}{name={\tt{SEE.zip}}, type=file,
-	description={\fc{T}he build of \SEE{} used for the evaluation.}}
+\newglossaryentry{benchmark}{name={\tt{benchmark.zip}}, type=file,
+	description={A ZIP archive containing both the script and all measured data of the technical evaluation. Refer to \cref{app:techdata} for more information.}}
+\newglossaryentry{extract}{name={\tt{extract-metrics.py}}, type=file,
+	description={A Python script which extracts metrics from a \gls{gxl} file and outputs them into a CSV file.}}
+\newglossaryentry{psi}{name={\tt{SEE-VSCode\_redacted.csv}}, type=file,
+	description={The pseudonymized participation data for group $\Psi$, collected from KoboToolbox during the user study.}}
+\newglossaryentry{omega}{name={\tt{VSCode-SEE\_redacted.csv}}, type=file,
+	description={The pseudonymized participation data for group $\Omega$, collected from KoboToolbox during the user study.}}
+\newglossaryentry{psitest}{name={\tt{Eval-See-Vscode.xlsx}}, type=file,
+	description={The \gls{xlsform} questionnaire for the $\Psi$ version of the user study.}}
+\newglossaryentry{omegatest}{name={\tt{Eval-Vscode-See.xlsx}}, type=file,
+	description={The \gls{xlsform} questionnaire for the $\Omega$ version of the user study.}}
+\newglossaryentry{analysis}{name={\tt{analysis.zip}}, type=file,
+	description={A ZIP archive containing all scripts for the analysis of the user study. Refer to \cref{app:scripts} for more information.}}
+\newglossaryentry{redirect}{name={\tt{redirect-evaluation.py}}, type=file,
+	description={A Python script which acts as a web server that redirects users to either the $\Psi$ or $\Omega$ version of the study, as described by \cref{alg:redirect}.}}

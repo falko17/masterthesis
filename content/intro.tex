@@ -3,9 +3,10 @@
 \begin{document}
 \chapter{Introduction}
 
-%\lettrine[lines=3]{\textcolor{Maroon}{T}}{his} master's thesis is about the integration of the Language Server Protocol into code cities (specifically, into SEE).
-\lettrine[lines=3]{\textcolor{Maroon}{L}}{inking} the Language Server Protocol with code cities, specifically SEE, is the core focus of this master's thesis.
-\fxnote{Maybe rewrite. Could start by going over languages in general, giving spell check as example.}
+\lettrine[lines=3]{\textcolor{Maroon}{L}}{anguage} Servers have become an increasingly popular way to offer "code smarts," such as code autocomplete or the highlighting of errors.
+However, even though the Language Server Protocol has been written to be broadly compatible with any development tool, in practice, it has only been used for traditional IDEs and editors instead of more modern and unconventional approaches like code cities.
+I am of the opinion that code cities can benefit from making use of this protocol, so the core focus of this master's thesis is going to be combining it with code cities, specifically SEE.
+
 The main novel contribution will be a way of creating code cities using only information provided by the \glsentrylong{lsp}, while additional contributions consist of the integration of \glsentrylong{lsp}-based functionality into code cities as well as their integration into SEE's code windows.
 Finally, the penultimate \cref{ch:evaluation} describes a controlled experiment (with $n=\participants$ participants) in which code cities are compared to traditional IDEs via a user study---this serves as an evaluation for this thesis and for code cities as IDE replacements in general.
 
@@ -17,6 +18,7 @@ This document uses many technical terms that not every reader may know.
 To remedy this, starting from the next section, whenever a technical term or acronym appears for the first time, it will be printed in \emph{\textcolor{Maroon}{this color}}, and an explanation of that term will appear in a footnote of the same color.
 Terms that are already explained in the text itself will not receive such a footnote.
 These terms and acronyms are collected within the glossaries in \cref{main,abbreviations}---all mentions of such terms also link (in the digital version of this thesis, at least) to the corresponding part of the glossary.
+Hence, if you come across a technical term or abbreviation you are not familiar with, simply try clicking on it.
 In total, the following colors are used to convey specific meanings:
 \begin{itemize}
 	\item \textbf{\textcolor{Maroon}{Maroon}} for the introduction of a glossary term or acronym,
@@ -54,8 +56,7 @@ The exception to this are part-of relations, that is, relations that describe wh
 These are instead visualized in \SEE{} by buildings being nested within their corresponding "parent" building.
 In this way, the data model of \SEE{} can be represented as a graph in which the software components are the nodes and the relationships are the edges.
 
-\fxnote{Consistent textsc usage}
-For example, in \cref{fig:city}, we can see the source code of the \textsc{SpotBugs} project\footnote{\web{https://github.com/spotbugs/spotbugs}{2024-09-11}} rendered as a \gls{city}.
+For example, in \cref{fig:city}, we can see the source code of the SpotBugs project~\cite{spotbugs} rendered as a \gls{city}.
 A few very tall buildings---indicating that the respective component is very big and that a refactoring into smaller pieces may be in order---immediately jump out.
 Additionally, this visualization also makes the number of methods readily apparent:
 the redder a node, the higher its method count.
@@ -64,9 +65,9 @@ Here, we can also see yellow edges between the components, in this case represen
 
 \begin{figure}[hbtp]
 	\begin{center}
-		\includegraphics[width=0.8\textwidth,trim={35cm 0 0 20cm},clip]{SEE_readme}
+		\includegraphics[width=0.7\textwidth]{SEEEdges}
 	\end{center}
-	\caption{An example of what edges can look like in \SEE{}. \fxwarning[layout=inline]{Use higher quality image.}}\label{fig:edges}
+	\caption{An example of what edges can look like in \SEE{}.}\label{fig:edges}
 \end{figure}
 
 \subsection{Language Server Protocol}\label{subsec:lsp}
@@ -99,22 +100,20 @@ A partial overview of available implementations is listed at \web{https://micros
 
 The protocol introduces the concept of so-called \glspl*{capability}, which define a specific set of features a given \gls{ls} (and \gls{lc}) support.
 These include navigational features, like the ability to jump to a variable's declaration, and editing-related features, such as autocomplete.
-To give a specific example of what an \gls{lsp} \gls{capability} might look like in practice, the \tt{texlab}\footnote{
-	\web{https://github.com/latex-lsp/texlab}{2024-09-12}
-} \gls{ls} for \LaTeX{}---which I am using while writing this document---provides a list of available packages when one starts typing text after "\mintinline{LaTeX}+\usepackage{+".
+To give a specific example of what an \gls{lsp} \gls{capability} might look like in practice, the \tt{texlab}~\cite{forster2025} \gls{ls} for \LaTeX{}---which I am using while writing this document---provides a list of available packages when one starts typing text after "\mintinline{LaTeX}+\usepackage{+".
 Additionally, for the currently hovered package, a short description of it is displayed.
-A screenshot of this behavior within the \textsc{Neovim} editor is provided in \cref{fig:mwe}.
+A screenshot of this behavior within the Neovim editor is provided in \cref{fig:mwe}.
 
 \begin{figure}
 	\begin{center}
 		\includegraphics[width=0.95\textwidth]{../figures/mwe}
 	\end{center}
-	\caption[An example of the \texttt{texlab} language server running in \textsc{Neovim}.]{An example of the \tt{texlab} \gls{ls} running in \textsc{Neovim}.}\label{fig:mwe}
+	\caption[An example of the \texttt{texlab} language server running in Neovim.]{An example of the \tt{texlab} \gls{ls} running in Neovim.}\label{fig:mwe}
 \end{figure}
 
 The counterparts to \glspl{ls} are the \glspl{lc}:
 These are the IDEs and editors that incorporate the \gls{ls} into themselves.
-Examples for IDEs that support acting as a \gls{lc} in the \gls{lsp} context include \emph{Eclipse, Emacs, \emph{\textsc{JetBrains} IntelliJ}} \textsc{(Neo)vim}, and \emph{Visual Studio Code}.
+Examples for IDEs that support acting as a \gls{lc} in the \gls{lsp} context include \emph{Eclipse, Emacs, IntelliJ, Vim}, and \emph{\gls{vscode}}.
 
 \subsection{Integration}\label{subsec:integration}
 Currently, \glspl{city} in \SEE{} are rendered by reading in pre-made \gls{gxl} files, which can be created by the proprietary Axivion Suite.
@@ -147,6 +146,8 @@ This is where the Language Server Protocol can help.
 	\caption{A simplified illustration of how \SEE{} currently gains and uses information about software projects, and how the integration of \gls{lsp} would change that.}\label{fig:seeplan}
 \end{figure}
 
+\fxwarning{Convert sketches here into proper TikZ diagrams}
+
 \section{Goals \& Research Questions}\label{sec:goals}
 The goal of this master's thesis---as outlined in \cref{subsec:integration}---is to integrate the \glsentrylong{lsp} into \SEE{} by making it a \gls{lc}, then evaluate this implementation by comparing it with traditional \glspl{ide} in a user study.
 To this end, the main contribution is a way of generating \glspl{city} using the \gls{ls}, where all the information obtainable by relevant \gls{lsp} \glspl{capability} should be manifested\footnote{
@@ -164,17 +165,14 @@ Apart from the \glspl{city}, \SEE{} also provides the so-called \glspl*{window},
 This can be seen in \cref{fig:window}.
 An additional goal of this master's thesis is to enhance the functionality of the \glspl{window} by implementing more \gls{ide}-like behavior into it (\eg, allowing users to go to a variable's declaration, or displaying diagnostics inline) using the \gls{ls}.
 
-\fxwarning{Maybe remove the next part if already mentioned before.}
-\fxwarning{In general, reword some stuff from "planning to do" $\Rightarrow$ "done"}
 It should be noted that any \gls{lsp} capabilities which involve modifying the underlying software project is out of scope for this master's thesis.
 Rewriting the \glspl{window} to be editable (in a way that distributes the edits over the network) is complex enough to warrant its own thesis~\cite[see also][]{moritz}, not even taking into account that this would also more than double the number of \glspl{capability} that would then become useful to implement.
-As such, only \glspl{capability} that are "read-only" (\ie, that do not modify the source code or project structure in any way) will be considered when planning which features to implement as part of the thesis.
-Consult \cref{subsec:capabilities} for a full list of \gls{lsp} capabilities which I plan to implement.
+As such, only \glspl{capability} that are "read-only" (\ie, that do not modify the source code or project structure in any way) will be implemented as part of the thesis.
+Consult \cref{subsec:capabilities} for a full list of \gls{lsp} capabilities implemented as part of this thesis.
 
 Additionally, I will not implement the C\# interface to the \gls{lsp} (\ie, translating between C\# method calls and \glspl{jrpc}).
 There already exist well-made interfaces for this purpose\footnote{
-	Such as OmniSharp's implementation of \gls{lsp} in C\#, which I plan to use:
-	\web{https://github.com/OmniSharp/csharp-language-server-protocol}{2024-28-01}
+	Such as OmniSharp's implementation of \gls{lsp} in C\#~\cite{csharplanguageserverprotocol2025}, which I will use.
 }, and the focus of the thesis will be on the integration of the protocol's \emph{data} into \SEE{}'s \glspl{city} and \glspl{window}, not the integration of the protocol itself.
 
 Hence, the goals for this thesis can be summarized as follows:
@@ -192,7 +190,7 @@ Hence, the goals for this thesis can be summarized as follows:
 The main research questions that I want to answer in this thesis are as follows:
 \vspace{-1.5em}
 \paragraph{RQ1}
-\fxwarning*{This is rather vague. Is that alright or do I need to operationalize here?}{Is it feasible (\ie, realistically doable with usable results) to generate \mbox{\glspl{city}} using the \mbox{\glsentrylong{lsp}}?}
+Is it feasible (\ie, realistically doable with usable results) to generate \mbox{\glspl{city}} using the \mbox{\glsentrylong{lsp}}?
 \vspace{-1.5em}
 \paragraph{RQ2}
 Are \glspl{city} a suitable means to present \gls{lsp} information to developers as compared to \glspl{ide} + tables (on the dimensions of speed, accuracy, and usability)?

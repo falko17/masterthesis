@@ -11,7 +11,7 @@ Then, we will spend the majority of this chapter specifying and explaining the a
 Finally, we will conduct a brief technical evaluation, with a more thorough user study following in the next chapter.
 
 Before continuing with this chapter, I highly recommend watching the six-minute showcase video at \url{https://www.youtube.com/watch?v=yAzyv2_q2ng}.
-It goes over all important user-facing features and does a better job of presenting them than can be done in text alone.
+It goes over all important user-facing features implemented in this chapter and does a better job of presenting them than can be done in text alone.
 
 \section{Preliminary Changes}
 As promised in the preceding paragraph, we will first quickly list some preparations.
@@ -48,9 +48,7 @@ After addressing the resulting code review, it has been merged, and the changes 
 \subsection{Preparing SEE}
 There was not much I had to do in terms of getting \SEE{} ready, so this section will be very short:
 \begin{itemize}
-	\item I have integrated the OmniSharp \gls{lsp} C\# library\footnote{
-		      Available at \web{https://github.com/OmniSharp/csharp-language-server-protocol}{2024-10-11}
-	      } into \SEE{}, which we will leverage in the subsequent sections so that we can use \gls{lsp} without needing to worry about \gls{jrpc} encoding, data models, and so on.
+	\item I have integrated the OmniSharp \gls{lsp} C\# library~\cite{csharplanguageserverprotocol2025} into \SEE{}, which we will leverage in the subsequent sections so that we can use \gls{lsp} without needing to worry about \gls{jrpc} encoding, data models, and so on.
 	\item \Glspl{window} have previously been made editable by \textcite{moritz} in his bachelor thesis, also enabling collaborative editing over the internet.
 	      I unfortunately had to remove these changes because they did not work anymore in the current version of \SEE{}, and additionally caused a lot of complexity overhead in the \gls{window} implementation that would have made the \gls{lsp} integration much harder to accomplish.
 	\item Finally, the attribute space $\mathcal{A}$ in \SEE{} did not allow for \glspl{range} of the form \gls{lsp} needs, so I had to replace the existing attributes (which track the line and column, but not a full range) with a proper set of \gls{range} attributes.
@@ -73,14 +71,16 @@ We will take a look at the algorithm in a generalized and programming language i
 In this form, the algorithm takes as input a set of source code documents, as well as a family of \gls{lsp} functions belonging to a specific instantiation of a \gls{ls}.
 These functions will be used to analyze the documents and extract the required information from them.
 The output of the algorithm, then, is a graph representing the given software project.
+\fxnote{Improve coloring of inner boxes.}
 
 \begin{figure}
 	\begin{center}
-		\includegraphics[width=0.95\textwidth]{overview_algorithm}
+		\includegraphics{tikz/algorithm.tikz}
 	\end{center}
-	\caption{A high-level overview of the basic steps of the algorithm.}\label{fig:alg_overview}
+	\caption{A high-level overview of the basic steps of the algorithm.\\
+		"\textcolor{red}{\textbf{!}}" represent diagnostics, while "\textcolor{red!30}{\textbf{!}}" represent aggregated diagnostics.
+	}\label{fig:alg_overview}
 \end{figure}
-\fxnote{Replace diagram sketch with TikZ picture.}
 
 \paragraph{Overview}
 Before diving into the specifics of \emph{how} the algorithm works, it may help to take a look at the diagram in \cref{fig:alg_overview}, which gives us a high-level overview of \emph{what} it does.
@@ -147,14 +147,11 @@ Some noteworthy omissions are:
 	\item \textbf{Asynchronicity.}
 	      Specifically, this refers to the way the algorithm is executed in Unity.
 	      If we were to implement it as a normal synchronous function, the \gls{ui} would become irresponsive to input and freeze until the whole algorithm is done.
-	      Instead, we make use of C\#'s task-based \texttt{async} capabilities~\cite{wagner2023} in combination with the \texttt{UniTask}\footnote{
-		      \web{https://github.com/Cysharp/UniTask}{2024-10-25}
-	      } framework:
+	      Instead, we make use of C\#'s task-based \texttt{async} capabilities~\cite{wagner2023} in combination with the \texttt{UniTask} framework~\cite{kawai2024}:
 	      We yield control to the Unity event loop when progress is suspended (\eg{}, while we wait for an answer from the \gls{ls}), allowing frames to be rendered while the algorithm is running in the background.
 	      This also allows us to implement cancellation support, making it possible for the user to cancel the algorithm at any time\footnote{
 		      Internally, we do this by checking every so often if a so-called \emph{cancellation token} has been revoked by the user. If it has, we halt execution.
 	      }.
-	      \fxnote{Convert all software mentions to biblatex @software type.}
 \end{itemize}
 
 The full C\# implementation in \SEE{} is available at \web{https://github.com/uni-bremen-agst/SEE/blob/c4e3de908a022d65723bf82d3b350dade8b5f01a/Assets/SEE/DataModel/DG/IO/LSPImporter.cs}{2024-10-25}.
@@ -180,11 +177,11 @@ This function is called once per added edge, and also once per diagnostics (beca
 Hence, the runtime for \cref{alg:generate} as a whole lies in $\Theta(|V| + |E| \cdot |V| + n_d \cdot |V| + |V|)$.
 In practice for \gls{lsp}-built \glspl{city}, assuming the default configuration, $n_d < |V|$, but $|E| \gg |V|$ (see, for example, \cref{tab:benchmark}).
 Hence, part II with $\Theta(|E| \cdot |V|)$ easily dwarfs the rest of the algorithm's runtime due to the high cost of \textsc{FindNodesByLocation}, which searches through every node for every added edge.
+\Cref{sec:techeval} confirms this suspicion.
 For this reason, it would be nice to optimize that function somehow.
-\fxwarning{Do actual comparison between two ways of finding target nodes. Also mention example times from eval section at end.}
 
 \subsection{Augmented Interval Trees}\label{subsec:kd}
-To restate the problem outlined in the performance considerations \fxwarning*{Rewrite "the above" to something else, may not be above in printed version}{above:}
+To restate the problem outlined in the performance considerations from the previous section:
 The locations returned by \gls{lsp} functions such as "show references" or "go to location" need to be matched to the nodes in our constructed project graph.
 We cannot simply create a lookup table from locations to nodes, as the locations are not necessarily equal to the location of the nodes, even when they describe the same logical element.
 Instead, we need to match the location to the node with the "tightest fitting range",
@@ -195,7 +192,7 @@ There are a few possible ways to solve this problem (which is in essence a varia
 
 A detailed explanation of augmented \glspl{intervaltree} can be found in \textcite[section~17.3]{cormen2022}, while \glspl{kdtree} are described in a paper by \textcite{bentley1975}.
 In our case, we can create the tree by constructing a 2d-tree\footnote{
-	Note that, in the actual implementation, the construction of the \gls{kdtree} (excluding its augmentation to an \gls{intervaltree}) is handled by the external \tt{Supercluster.KDTree} library (\web{https://github.com/ericreg/Supercluster.KDTree}{2024-10-31}).
+	Note that, in the actual implementation, the construction of the \gls{kdtree} (excluding its augmentation to an \gls{intervaltree}) is handled by the external \tt{Supercluster.KDTree} library~\cite{regina2024}.
 } out of all elements (as explained in the previous sources), where the key is the starting position of the \gls{range}.
 Afterwards, we save in each node the maximum line number and maximum character offset, respectively, for the subtree rooted by that node, thereby turning this \gls{kdtree} into an \gls{intervaltree}.
 
@@ -254,7 +251,6 @@ An updated \textsc{FindNodesByLocationEfficient} is given in \cref{alg:interval}
 	\end{algorithmic}
 	\tikzexternalenable
 \end{algorithm}
-\fxwarning{So how much does it help in practice? Reference tech eval here}
 
 \begin{codebox}[minted options={linenos,escapeinside=++,firstnumber=0}]{csharp}{lst:interval}{Example C\# source code with demarcated symbol ranges.}
 +\textcolor{red}{|}+public class Example {
@@ -276,6 +272,13 @@ Here, we have the following elements:
 	\item The \tt{num} parameter with range \textcolor{OliveGreen}{$(3,25,3,32)$}.
 	\item The \tt{result} variable with range \textcolor{Brown}{$(4,4,4,27)$}.
 \end{itemize}
+
+\begin{figure}
+	\begin{center}
+		\includegraphics{tikz/kd.tikz}
+	\end{center}
+	\caption{An augmented \gls{intervaltree} using a \gls{kdtree}, representing the elements in \cref{lst:interval}.}\label{fig:example_kd}
+\end{figure}
 
 Now, if we were to convert this into an augmented 2-d \gls{intervaltree}, it might look like \cref{fig:example_kd}.
 Here, the key refers to the starting position of each element and the max value refers to the maximum line and maximum character offset in the subtree rooted by each node.
@@ -299,14 +302,6 @@ We will start by checking the root node \tt{pow}:
 	\item $e^q_l \ngeq \textcolor{Peach}{b^r_l}$ because $1 < \textcolor{Peach}{3}$, so there is no need to check the right subtree.
 	\item Our final result is $R = \{\textcolor{Emerald}{v_{\tt{someValue}}}\}$, which is intuitively the right answer.
 \end{enumerate}
-
-\begin{figure}
-	\begin{center}
-		\includegraphics[width=0.95\textwidth]{example_kd}
-	\end{center}
-	\caption{An augmented \gls{intervaltree} using a \gls{kdtree}, representing the elements in \cref{lst:interval}.}\label{fig:example_kd}
-\end{figure}
-\fxwarning{Convert to TikZ diagram and use colors from listing!}
 
 This new and improved \textsc{FindNodesByLocation} implementation in \cref{alg:interval} has a runtime that is in both $\Omega(1)$ and $\mathcal{O}(k + \log |V|)$, where $k$ is the number of \glspl{range} that a node is contained in---however, its worst-case runtime is still in $\mathcal{O}(|V|)$, because in the worst case, the queried range is contained in every element in the tree, meaning $k = |V|$.
 Still, this case is almost impossible in real-world generated graphs.
@@ -379,6 +374,7 @@ Finally, there is an option to enable the \gls{lsp} functions for \glspl{window}
 With all of these options configured, the graph can be loaded and drawn (and optionally exported to a \gls{gxl} file), where a bar displays the approximate progress of the process.
 At this point, we will once again refer back to the explanatory video\footnote{\url{https://www.youtube.com/watch?v=yAzyv2_q2ng}},
 which goes over the implemented functionality in a bit more detail and may be easier to follow along than this textual description.
+Some examples of \glspl{city} rendered using this algorithm are given in \cref{fig:gencities} in \cref{fig:techeval}.
 
 \section{Integrating LSP Functionality into Code Cities}\label{sec:intocity}
 After having examined how \glspl{city} are generated through the use of \gls{lsp}, we are now going to take a quick look at how some \gls{lsp} \glspl{capability} are integrated into \SEE{}.
@@ -406,7 +402,7 @@ Some \glspl{ls} return the hover info as Markdown-formatted text instead of just
 While Markdown by itself is still readable, we can leverage the XML-like rich text tags in Unity's TextMeshPro package\footnote{
 	\web{http://digitalnativestudios.com/textmeshpro/docs/rich-text/}{2024-12-15}
 } to display the Markdown text (partially, at least) in its proper formatting.
-For this, I used the Markdig\footnote{\web{https://github.com/xoofx/markdig}{2024-15-12}} parser and implemented a custom renderer to output the corresponding TextMeshPro tags.
+For this, I used the Markdig parser~\cite{mutel2024} and implemented a custom renderer to output the corresponding TextMeshPro tags.
 An example for a "rich" hover info tooltip like this can be seen in \cref{fig:hoverinfo}.
 
 \subsection{Context Menu Navigation}\label{subsec:citycontext}
@@ -453,7 +449,14 @@ There were only minimal changes, like the integration of new icons for the diffe
 Now we will go over how the functionalities of \glspl{ls} have been integrated into \glspl{window} to make them more \gls{ide}-like.
 Some of these functionalities will seem quite similar to the way the corresponding \gls{city} \gls{lsp} features were implemented in the previous section.
 However, a crucial difference here is that, for \glspl{city}, the pre-computed \gls{lsp} attributes from \cref{alg:generate} are used (\ie, no actual requests are made to the \gls{ls}, it does not even have to be running), while for \glspl{window}, all \gls{lsp} functionality does actually go through the \gls{ls} as a proper \gls{jrpc} request.
-\fxerror{Insert screenshot of code window here, showcasing all features (and reference from individual sections)}
+\Cref{fig:lspwindow} showcases what a \gls{window} with the newly added \gls{lsp} features looks like.
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[width=0.95\textwidth]{CodeWindow}
+	\end{center}
+	\caption{A \gls{window} with enabled \gls{lsp} integration.}\label{fig:lspwindow}
+\end{figure}
 
 \subsection{Syntax Highlighting}
 \SEE{} already has support for syntax highlighting using Antlr-generated lexers, which works by converting the token stream returned by the lexer into a string of TextMeshPro rich text, as for the hover info in \cref{subsec:hover}.
@@ -473,7 +476,7 @@ I decided on the following mapping from modifiers\footnote{
 	\item Variables that are modified are rendered in \underline{underlined text}.
 \end{itemize}
 
-Due to all of the above making it quite a bit more complicated to support semantic tokens than I first thought, this is where most of the effort and changed lines referenced in the row for the corresponding pull request in \cref{tab:code} went,
+Due to all of this making it quite a bit more complicated to support semantic tokens than I first thought, this is where most of the effort and changed lines referenced in the row for the corresponding pull request in \cref{tab:code} went,
 so subsequent subsections shall seem shorter and substantially simpler.
 
 \subsection{Hover information}
@@ -488,20 +491,35 @@ Diagnostics show up in two ways in the \glspl{window}:
 By highlighting the corresponding code range in a color corresponding to the type of diagnostic, and by providing the diagnostic's content when hovering over that code range (both of these were already implemented for my bachelor's thesis~\cite{galperin2021}).
 I modified the hover text to indicate the source of the diagnostic and added special handling for the "element unused" diagnostic to render the text in grey, as is done in many \glspl{ide}.
 The rest just involved mapping the \gls{lsp} diagnostics' offset to the global offset in order to insert the rich text tags that highlight the code range at the correct position.
+We can see three example diagnostics in \cref{fig:lspwindow} in lines 23, 31, and 32, respectively.
 
 \subsection{Navigation}
-Similar to \cref{subsec:citycontext}, I added the ability to right-click code elements and open a context menu with various navigation options (\eg, "go to definition", "show references").
-Taking "show references" as an example, if there are multiple targets, a dialog is shown in which the references are shown as a list of files along with their ranges.
+
+\begin{figure}
+	\centering
+	\begin{subfigure}{0.47\textwidth}
+		\includegraphics[width=\textwidth]{CodeWindowContext}
+		\caption{The context-menu that is shown when right-clicking an element.}\label{fig:windowcontext}
+	\end{subfigure}
+	\begin{subfigure}{0.47\textwidth}
+		\includegraphics[width=\textwidth]{CodeWindowReferences}
+		\caption{Menu from which the user can select an \gls{lsp} reference to navigate to.}\label{fig:windowmenu}
+	\end{subfigure}
+	\caption{Navigation features in an \gls{lsp}-enabled \gls{window}.}\label{fig:windownav}
+\end{figure}
+
+
+Similar to \cref{subsec:citycontext}, I added the ability to right-click code elements and open a context menu with various navigation options, such as "go to definition," or "show references" (see \cref{fig:windowcontext}).
+Taking "show references" as an example, if there are multiple targets, a dialog is shown in which the references are shown as a list of files along with their ranges, as in \cref{fig:windowmenu}.
 The user can then select one of these ranges.
 This step is skipped if there is only a single target.
 After selecting a reference, if it belongs to the current file, the range is simply scrolled into view and the corresponding line is highlighted, otherwise a new \gls{window} (or an existing one, if the file is already open elsewhere) is opened first.
-While implementing this, I also noticed a bug in the OmniSharp \gls{lsp} library that causes the call hierarchy request not to work correctly, so I implemented a workaround and submitted an issue.\footnote{
+While implementing this, I also noticed a bug in the OmniSharp \gls{lsp} library that causes the call hierarchy request to fail, so I implemented a workaround and submitted an issue.\footnote{
 	\web{https://github.com/OmniSharp/csharp-language-server-protocol/issues/1303}{2024-12-27}
 }
 
 As an additional feature copied from popular \glspl{ide}, it is possible to hold down \keystroke{Ctrl} and then click on an element in the \gls{window}, which has the same effect as right-clicking that word first and then selecting "Go to definition".
 This is useful because it allows the user to quickly jump to the definition of, for example, a function (which is a very common operation) to find out its content.
-\fxwarning{Screenshot for navigation menus}
 
 \section{Technical Evaluation}\label{sec:techeval}
 Before ending this chapter, we want to briefly evaluate the implementation on a technical level.
@@ -542,8 +560,6 @@ For the generation, we enabled every edge type, node type, and diagnostic, excep
 	\end{tabular}
 \end{table*}
 
-\fxwarning{Go through thesis and find units}
-
 The first thing that is worth mentioning here is that generations by different \glspl{ls} are not really comparable to one another.
 For example, we can see that the generation run for this thesis took on average nine seconds---faster than any other project---even though there were more edges than in almost every other project.
 This difference cannot be explained by the idea that edges may not play a big role in generation time after all, since a closer look at the data for JabRef and SpotBugs reveals a much longer generation time for SpotBugs, even though SpotBugs has less nodes (but a lot more edges) than JabRef.
@@ -582,8 +598,7 @@ There, the optimized version (suffix $O$) is compared against the brute-force ve
 						name=bars,
 						set layers,
 						ymin=0, ymax=370,
-						axis x line*=bottom,
-						axis y line*=left,
+						axis line style={draw=none},
 						enlarge x limits={0.5},
 						ymajorgrids,
 						bar width=0.6cm,
@@ -614,8 +629,7 @@ There, the optimized version (suffix $O$) is compared against the brute-force ve
 						name=bars,
 						set layers,
 						ymin=0, ymax=155,
-						axis x line*=bottom,
-						axis y line*=left,
+						axis line style={draw=none},
 						enlarge x limits={0.5},
 						ymajorgrids,
 						bar width=0.6cm,
@@ -650,8 +664,7 @@ There, the optimized version (suffix $O$) is compared against the brute-force ve
 						set layers,
 						ymin=0, ymax=280,
 						xmin=0, xmax=1,
-						axis x line*=bottom,
-						axis y line*=left,
+						axis line style={draw=none},
 						enlarge x limits={1},
 						ymajorgrids,
 						bar width=0.6cm,
@@ -682,7 +695,7 @@ There, the optimized version (suffix $O$) is compared against the brute-force ve
 						name=bars,
 						set layers,
 						ymin=0, ymax=2700,
-						axis x line*=bottom,
+						axis line style={draw=none},
 						axis y line*=left,
 						xmin=3, xmax=4,
 						enlarge x limits={1},
@@ -721,7 +734,10 @@ Another thing to note is that the only components big enough to even make out on
 
 \begin{figure}
 	\begin{center}
-		\begin{tikzpicture}
+		\tikzexternaldisable
+		\begin{tikzpicture}[
+				labelnode/.style={font=\footnotesize,Maroon}
+			]
 			\begin{semilogxaxis}[
 					height=9cm,
 					name=line,
@@ -730,8 +746,7 @@ Another thing to note is that the only components big enough to even make out on
 					xmin=10^(2.7), xmax=55000,
 					xtick distance=10^(0.5),
 					xtick distance=10^(0.5),
-					axis x line*=bottom,
-					axis y line*=left,
+					axis line style={draw=none},
 					grid=major,
 					xlabel={Number of edges},
 					ylabel={Relative time improvement},
@@ -741,25 +756,35 @@ Another thing to note is that the only components big enough to even make out on
 				\addplot+[draw=black,
 					mark=*,
 					mark options={fill=Maroon,draw=Maroon},
-					nodes near coords,
-					nodes near coords align={above left},
-					every node near coord/.append style={font=\footnotesize,Maroon},
+					% nodes near coords,
+					% nodes near coords align={above left},
+					% every node near coord/.append style={font=\footnotesize,Maroon},
 					point meta=explicit symbolic,
 					ultra thick,
 					error bars/.cd,
 					y dir=both,y explicit,
 				] table [meta=project,x=edges,y=adv_mean,y error minus=adv_min,y error plus=adv_max,col sep=tab] {benchmark/advantage.dat};
+
+
+				\node[labelnode] at (axis cs: 10^2.87,0.08) {JabRef};
+				\node[labelnode] at (axis cs: 10^2.97,0.29) {\proptt{aaoffline}};
+				\node[labelnode] at (axis cs: 10^3.9,0.29) {\proptt{dcaf-rs}};
+				\node[labelnode] at (axis cs: 10^4.1,0.82) {SpotBugs};
+				\node[labelnode] at (axis cs: 10^4.4,0.69) {Master's thesis};
+				\node[labelnode] at (axis cs: 10^4.45,0.95) {Bachelor's thesis};
 			\end{semilogxaxis}
 			\plotornaments{line}
 		\end{tikzpicture}
+		\tikzexternalenable
 	\end{center}
 	\caption{The relative improvement of the optimized algorithm by number of edges (\ie, the percentage by which the time is reduced when using \cref{alg:interval} instead of the base \cref{alg:generate}).
 		Error bars are shown when their extent exceeds the diameter of the point.
+		\emph{Note the logarithmic x-axis.}
 	}\label{fig:relimprov}
 \end{figure}
 
 The optimized version of the algorithm is also always quicker than the brute-force version, and we can hypothesize based on these bar graphs that the relative improvement of the optimized version (\ie, the percentage by which time decreases when switching to the optimized version) over the number of edges is strictly monotonic, that is, the more edges there are, the more the optimized algorithm will shorten the total runtime in relation to the brute-force version.
-We can check this hypothesis by plotting the relative time improvement as defined above against the number of edges in each project.
+We can check this hypothesis by plotting the relative time improvement as defined here against the number of edges in each project.
 
 \Cref{fig:relimprov} shows exactly that plot, but it disproves this hypothesis:
 While almost every datapoint does seem to follow this rule, the relative time improvement for the master's thesis source code is actually lower than for SpotBugs, even though SpotBugs has fewer edges.
@@ -800,9 +825,6 @@ The final thing to note from this plot is that, across all our samples, the brut
 	\caption{Sample \glspl{city} generated using the \gls{lsp} algorithm introduced in this chapter.}\label{fig:gencities}
 \end{figure}
 
-\fxwarning{Fix label in edge vs adv plot that overlaps with edge}
-\fxwarning{Bar plot corners overlap with ornaments (probably due to axis x line*)}
-
 Finally, we can take a look at the generated \glspl{city} shown in \cref{fig:gencities}.
 No edges are shown in those diagrams---they would clutter up the images too much due to their high number.
 While I am not as familiar with the source code of JabRef and SpotBugs, the ones for the first four projects seem correct to me on first glance:
@@ -818,8 +840,6 @@ Still, this should not be a big problem, as the structure of the \gls{city} stil
 \section{Interim Conclusion}\label{sec:implconclusion}
 In this chapter, we covered how we implemented the various aspects of the \gls{lsp} integration, placing a special focus on the generation algorithm for \glspl{city}.
 We closed out the chapter by evaluating the implementation and benchmarking its performance.
-
-\fxwarning{Find all LOC, replace with units}
 
 The technical evaluation revealed that the implementation does work well for the tested projects and that the implemented optimizations make sense, but the total runtime still is not really at the level where this system can be used productively for larger projects.
 For example, generating a city for SpotBugs, a project with around \qty{200000}{\loc}, took almost ten minutes---and this was with almost all node and edge types being disabled!
