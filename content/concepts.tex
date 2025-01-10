@@ -8,7 +8,7 @@
 %\lettrine[lines=3]{\textcolor{Maroon}{B}}{efore} tackling the implementation, we need to take a closer look at the concepts central to this thesis, so that we can form a concrete idea of which parts of \gls{lsp} are well-suited to being integrated into \glspl{city}.
 \lettrine[lines=3]{\textcolor{Maroon}{O}}{utlining} the central concepts behind this thesis is a crucial first step before tackling the implementation, so that we can form a concrete idea of which parts of \gls{lsp} are well-suited to being integrated into \glspl{city}.
 Thus, we will examine the concept of \glspl{city}, where we will use \SEE{} as a concrete implementation (which we do in \cref{sec:see}), as well as the \glsentrylong{lsp} (which we do in \cref{sec:lsp}).
-For the former, we will go over some of the existing literature regarding \glspl{city} (as this is more of an academic topic than \gls{lsp}) and describe the essentials that we need to work with in the implementation, such as the project graph.
+For the former, we will go over the essential features that we need to work with in the implementation, with a special focus on the project graph.
 As for the latter, we will go over the available \glspl{capability} and take a look at both existing \glspl{ls} and \glspl{lc} to get an idea of what the \glsentrylong{lsp} offers and how it is most commonly used.
 For both topics, we will focus on the parts relevant to the implementation and evaluation---for example, we will only explore those \glspl{capability} in detail that actually end up being used in this thesis.
 
@@ -17,23 +17,23 @@ For both topics, we will focus on the parts relevant to the implementation and e
 As explained in \cref{subsec:see}, \SEE{} is an interactive software visualization tool using the \gls{city} metaphor in 3D, with the aim to make it easier to work with large software projects on an architectural level.
 To name a few example scenarios in which using code cities could be useful, compared to using traditional \glspl{ide}:
 \begin{itemize}
-	\item Senior developers may use it in its "multiplayer" mode to explain the structure of their software to newcomers
-	\item Project planners could visualize \glspl{smell} to find candidates for refactoring~\cite{galperin2021}
-	\item Software architects can find violations of the planned architecture using \SEE{}'s \gls{reflexion}
+	\item Senior developers may use it in its "multiplayer" mode to explain the structure of their software to newcomers.
+	\item Project planners could visualize \glspl{smell} to find candidates for refactoring~\cite{galperin2021}.
+	\item Software architects can find violations of the planned architecture using \SEE{}'s \gls{reflexion}.
 \end{itemize}
 
-\SEE{} is an open-source project, currently hosted at GitHub\footnote{\web{https://github.com/uni-bremen-agst/SEE}{2024-09-18} (but note that, to clone this repository, you additionally need access to the Git LFS counterpart hosted at the University of Bremen's GitLab, as this is where paid plugins for \SEE{} are hosted.)}.
+\SEE{} is an open-source project, currently hosted on GitHub\footnote{\web{https://github.com/uni-bremen-agst/SEE}{2024-09-18} (but note that, to clone this repository, you additionally need access to the Git LFS counterpart hosted at the University of Bremen's GitLab, as this is where paid plugins for \SEE{} are hosted.)}.
 It is a research project at the University of Bremen, where it has been in development since 2017~\cite{ganser2017}, and where it is frequently offered as a bachelor or master project for the students.
 While it was at first a project for the \emph{Unreal Engine}, the game engine has been switched to \emph{Unity} relatively early, mainly because its editor eased development due to the ability to reload the \gls*{ui} without having to restart the whole engine.
 
-After going over the basics of how \SEE{} works, I will give an explanation and formalization of the project graph---as this is the central component in the \gls{lsp}-based \gls{city}-generation algorithm---followed by a brief overview over other features that are relevant for this thesis.
+After going over the basics of how \SEE{} works, I will give an explanation and formalization of the project graph---as this is the central component in the \gls{lsp}-based \gls{city}-generation algorithm---followed by a brief overview over other relevant features for this thesis.
 
 \subsection{Basics}
 As mentioned before, when analyzing a software project in \SEE{}, its source code structure is reflected in the rendered buildings, where connections between the components, such as references, are displayed using edges rendered as splines (this will be elaborated in \cref{subsec:graph}), as can be seen in \cref{fig:edges}, for example.
 Metrics of the project, such as the McCabe complexity~\cite{mccabe}, can then be mapped onto visual properties of this rendering, such as its color, width, or height.
 
 So far, the kind of visualization described here would still be possible in two dimensions, but adding a third dimension gives us the benefit of having another axis to map metrics onto, as well as making it a more natural environment for humans to interact with.
-By giving users the ability to walk, move the camera around, and so on, as is possible in many video games, the code city can be navigated in a richer and more intuitive manner than if it were just a simple 2D image.
+By giving users the ability to walk, move the camera around, and so on, the code city can be navigated in a richer and more intuitive manner than if it were just a simple 2D image.
 This also makes it possible to offer \SEE{} as a virtual reality application.
 Virtual reality gives users an even more immersive and natural way of interacting with the environment, leading to improved spatial memory of the city~\cite[\eg,][]{tavanti2001}.
 It also makes it a more fitting environment for multiple people.
@@ -108,14 +108,14 @@ We will expand this menu with \gls{lsp}-specific actions in the course of \cref{
 	\begin{center}
 		\includegraphics[width=\textwidth]{UnityEditor}
 	\end{center}
-	\caption{The \gls*{editor} with a scene in \SEE{} opened.}\label{fig:editor}
+	\caption{The \glsentrytext{editor} with a scene in \SEE{} opened.}\label{fig:editor}
 \end{figure}
 
 To actually generate a \gls{city}---assuming one has a \gls{gxl} file for this purpose---a customized \gls{ui} component within the \gls{editor} exists in \SEE{}.
 Here, a variety of options can be configured, such as the layout of the city, the mapping of metrics to visual attributes, or the \glspl*{provider}, which create a project graph based on optional input parameters (such as the aforementioned \gls{gxl} file).
 
 \Cref{fig:editor} shows what the \gls{editor} looks like in \SEE{}:
-On the left are the objects of the scene, the middle shows a preview, the bottom left displays log messages, and finally, the components (including the city editor component) can be seen on the bottom right.
+On the left are the objects of the scene, the middle shows a preview, the bottom left displays log messages, and finally, the components (including the city editor component) can be seen on the right.
 After implementing the city-generation algorithm for \gls{lsp}, a new \gls{provider} with its own \gls{editor} \gls{ui} shall be implemented as well.
 
 \paragraph{Code Windows}
@@ -150,7 +150,7 @@ The current (as of \today{}) version of the protocol is 3.17, with version 3.18 
 \subsection{Basics}\label{subsec:lspbasics}
 Messages in the Language Server Protocol are built using \gls{jrpc}, which uses JSON to encode both requests (consisting of a method name and parameters) and responses (consisting of either a result object or an error object) for procedure calls.
 Requests include an ID that a response by the server can then reference to match it up with the request it is a reply to.
-There also so-called \emph{notifications}, which are in essence requests without an ID, intended to send a message server that does not warrant a response~\cite{jsonrpc,json}.
+There also so-called \emph{notifications}, which are in essence requests without an ID, intended to send a message that does not warrant a response~\cite{jsonrpc,json}.
 In \gls{lsp}, any message sent between the \gls{lc} and \gls{ls} consist of a header---describing the length and type of the content---followed by the content, which is always a \gls{jrpc} payload.
 While the specification does not mandate it, it lists some recommended communication channels on which the protocol messages can be sent, those being \tt{stdio} (using standard input/output), \tt{pipe} (using Windows's pipes), \tt{socket} (using a socket), and \tt{node-ipc} (IPC communication over Node.js\footnote{\web{https://nodejs.org}{2024-10-05}}).
 
@@ -206,7 +206,7 @@ Once a single result has been selected:
 If the request originates from a \gls{window}, the result should be opened and highlighted in that window.
 If the request instead originates from a \gls{city}, the node belonging to that result should be highlighted (\eg, by glowing and having a line pointed to it).
 
-The other important part in \SEE{} where this should be used is when building a city (\ie, when creating the project graph), as these \glspl{capability} provides us with the information we need to create (non-hierarchic) edges.
+The other important part in \SEE{} where this should be used is when building a city (\ie, when creating the project graph), as these \glspl{capability} provide us with the information we need to create (non-hierarchic) edges.
 Thus, we can create an edge $e$ for each available navigation relation between two nodes, where $\ell(e)$ becomes the type of \gls{capability} that was used.
 This is not as trivial as it sounds, since the \glspl{range} these \glspl{capability} return do not necessarily exactly match the actual \glspl{range} of the referenced nodes, so we need to implement some kind of matching algorithm (which we will do in \cref{subsec:kd}).
 
@@ -238,32 +238,32 @@ I have grouped the following \glspl{capability} into this category:
 		      \item In \glspl{window}, the corresponding parts of the source code should be highlighted, while hovering over the highlighted parts should reveal the diagnostic's message and details.
 	      \end{itemize}
 	      Note that, instead of this being a proper request followed by a server response, this is only the case for the \emph{pull diagnostics} \gls{capability}, which has only been added in the most recent version 3.17.
-	      The far more commonly used version is the \emph{push diagnostics} \gls{capability}, where the \gls{ls} sends out diagnostics for the currently opened files at its own discretion, as notifications (see \cref{subsec:lspbasics})---this makes it difficult to collect this information during city construction, a topic we will explore in \cref{sec:generate}.
+	      The far more commonly used version is the \emph{push diagnostics} \gls{capability}, where the \gls{ls} sends out diagnostics for the currently opened files at its own discretion as notifications (see \cref{subsec:lspbasics})---this makes it difficult to collect this information during city construction, a topic we will explore in \cref{sec:generate}.
 	\item \textbf{Hover}: Returns hover information for a given location.
-	      The specification does not specify what exactly this "hover text" should be~\cite{lsp}, but most implementations of \glspl{ls} display the documentation of the hovered element, or the signature if it's a method, or other helpful associated details.
+	      The specification does not specify what exactly this "hover text" should be~\cite{lsp}, but most implementations of \glspl{ls} display the documentation of the hovered element, or the signature if it is a method, or other helpful associated details.
 	      We can simply implement this part of the specification as intended:
-	      If the user hovers above an element in a \gls{window}, or a node in a \gls{city}, we should reveal the hover information in some kind of box near the mouse cursor, hiding it again once the cursor is moved away.
+	      If the user hovers above an element in a \gls{window}, or a node in a \gls{city}, we should reveal the hover information in some kind of box near the mouse cursor, hiding it again once the cursor is moved.
 	\item \textbf{\Glspl*{token}}: Returns \glspl*{token} for the given file, which are intended for syntax highlighting.
 	      Similar to normal (\eg, lexer-based) syntax highlighting, requesting \glspl{token} for a document yields a list of tokens containing their positions and a type, where the type can be one that is specified in the protocol (\eg, \tt{enum}) or one that was previously announced as supported in the client \glspl{capability}.
 	      \glspl{ide} can then render each token type in a different color.
 	      An interesting addition to usual syntax highlighting is that each token can also be affected by any number of \emph{token modifiers}, where each modifier may add an additional rendering effect on top of the type-based color.
 	      For example, tokens with the \tt{static} modifier might be rendered in \textit{italics}, while ones with the \tt{deprecated} modifier could be rendered in \st{strikethrough}.
 
-	      \SEE{} currently uses \textsc{Antlr}\footnote{\web{https://www.antlr.org}{2024-06-10}}-based syntax highlighting, where we need to manually group each parser's token into some categories to determine colors.
+	      \SEE{} currently uses Antlr\footnote{\web{https://www.antlr.org}{2024-06-10}}-based syntax highlighting, where we need to manually group each parser's token into some categories to determine colors.
 	      The added value of the \glspl{token} \gls{capability} here would be ease of use (\ie, no need to manually configure each \gls{ls}) on the one hand, and support for token modifiers (\ie, "extended" syntax highlighting) on the other hand.
 \end{itemize}
 
 
 \paragraph{Structure}
 This category actually only comprises a single \gls{capability}---one that we can use to build the hierarchy of the \gls{city}'s project graph (outlined in \cref{subsec:graph}), because it gives us information about the structure of the project.
-The \gls{capability} I am talking about here is the \emph{document symbols} \gls{capability}.
+The \gls{capability} I am talking about here is the \textbf{document symbols} \gls{capability}.
 Given a document, it will return all symbols present within that file, along with some additional information for each symbol, such as its type or \gls{range}.
 
 There are actually two different possible kinds of symbols that this \gls{capability} may return:
 \begin{enumerate}
 	\item an array of \tt{SymbolInformation}, which is \textquote[\cite{lsp}]{a flat list of all symbols} that should not be used to infer a hierarchy.
 	      Because of this limitation, if a \gls{ls} is only able to return symbols of this data type, we cannot use it to build \glspl{city}.
-	      This is an older data type, and instead modern \glspl{ls} should rather return
+	      This is an older data type, and modern \glspl{ls} should rather return
 	\item an array of \tt{DocumentSymbol}.
 	      This contains a field \tt{children}, which stores \proptt{DocumentSymbol}s that are contained in this one.
 	      Using this property, we can establish a hierarchy and build a \gls{city} by recursively enumerating all \tt{DocumentSymbol}s and their children for each file, then querying for all relevant information by using the other \glspl{capability} outlined before.
@@ -276,7 +276,6 @@ The first concerns those \glspl{capability} that relate to editing only and prov
 The second concerns the complex \glspl{capability}, that is, ones whose implementation would take a lot of time and effort and thus go beyond the scope of this master's thesis.
 The third concerns the niche \glspl{capability} that provide only a very marginal benefit, or do so only in rare situations.
 For these, I also have not deemed the effort worth it to implement them, at least not as part of this thesis.
-
 I will quickly list the contents of all these groups here.
 
 \paragraph{Editing \glspl{capability}}

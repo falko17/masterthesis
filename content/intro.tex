@@ -15,7 +15,7 @@ In this chapter, apart from explaining some formatting semantics, we will examin
 \section{Format}
 
 This document uses many technical terms that not every reader may know.
-To remedy this, starting from the next section, whenever a technical term or acronym appears for the first time, it will be printed in \emph{\textcolor{Maroon}{this color}}, and an explanation of that term will appear in a footnote of the same color.
+To remedy this, starting from the next section, whenever a technical term or acronym appears for the first time, it will be printed in {\textcolor{Maroon}{this color}}, and an explanation of that term will appear in a footnote of the same color.
 Terms that are already explained in the text itself will not receive such a footnote.
 These terms and acronyms are collected within the glossaries in \cref{main,abbreviations}---all mentions of such terms also link (in the digital version of this thesis, at least) to the corresponding part of the glossary.
 Hence, if you come across a technical term or abbreviation you are not familiar with, simply try clicking on it.
@@ -36,7 +36,7 @@ Note that these will get more thorough explanations in \cref{ch:concepts}.
 \subsection{Code Cities \& SEE}\label{subsec:see}
 Visualization in general often helps facilitate the understanding of complex systems by representing them with a simplified visual model.
 This can be especially useful in the area of software engineering, where it is often hard to get an intuitive overview of large software systems when only equipped with standard tools, like \glspl{ide}.
-One such software visualization---called \SEE{}---is being developed at the University of Bremen and will be introduced in the next section.
+One such software visualization---called \SEE{}---is being developed at the University of Bremen and will be a focal point of this thesis.
 
 \SEE{} is an interactive software visualization tool using the \gls*{city} metaphor in 3D, developed in the {Unity} game engine.
 It features collaborative "multiplayer" functionality across multiple platforms\footnote{
@@ -55,6 +55,7 @@ Relationships between software components, such as where components are referenc
 The exception to this are part-of relations, that is, relations that describe which component belongs to which other component.
 These are instead visualized in \SEE{} by buildings being nested within their corresponding "parent" building.
 In this way, the data model of \SEE{} can be represented as a graph in which the software components are the nodes and the relationships are the edges.
+We will go into detail on this view of \SEE{}'s data model in \cref{subsec:graph}.
 
 For example, in \cref{fig:city}, we can see the source code of the SpotBugs project~\cite{spotbugs} rendered as a \gls{city}.
 A few very tall buildings---indicating that the respective component is very big and that a refactoring into smaller pieces may be in order---immediately jump out.
@@ -65,7 +66,7 @@ Here, we can also see yellow edges between the components, in this case represen
 
 \begin{figure}[hbtp]
 	\begin{center}
-		\includegraphics[width=0.7\textwidth]{SEEEdges}
+		\includegraphics[width=0.9\textwidth]{SEEEdges}
 	\end{center}
 	\caption{An example of what edges can look like in \SEE{}.}\label{fig:edges}
 \end{figure}
@@ -113,10 +114,10 @@ A screenshot of this behavior within the Neovim editor is provided in \cref{fig:
 
 The counterparts to \glspl{ls} are the \glspl{lc}:
 These are the IDEs and editors that incorporate the \gls{ls} into themselves.
-Examples for IDEs that support acting as a \gls{lc} in the \gls{lsp} context include \emph{Eclipse, Emacs, IntelliJ, Vim}, and \emph{\gls{vscode}}.
+Examples for IDEs that support acting as a \gls{lc} in the \gls{lsp} context include \emph{Eclipse, Emacs, IntelliJ, Vim}, and \emph{\gls{vscode}}, the latter of which becomes relevant in \cref{ch:evaluation}.
 
 \subsection{Integration}\label{subsec:integration}
-Currently, \glspl{city} in \SEE{} are rendered by reading in pre-made \gls{gxl} files, which can be created by the proprietary Axivion Suite.
+Currently, \glspl{city} in \SEE{} are rendered by reading pre-made \gls{gxl} files, which can be created by the proprietary Axivion Suite.
 This approach has the disadvantage of only supporting languages supported by the Axivion Suite, as well as making regenerating cities (\eg, if the source code changed) fairly cumbersome.
 Another current shortcoming of \SEE{} is that information about the source code available to the user is limited when compared to an \gls{ide}---for example, quickly displaying documentation for a given component by hovering over it is not supported.
 This is where the Language Server Protocol can help.
@@ -199,7 +200,7 @@ Are \glspl{city} a suitable means to present \gls{lsp} information to developers
 \section{Thesis Structure}
 
 We begin by examining the \glsentrylong{lsp} and the concept of \glspl{city} along with \SEE{} more closely in \cref{ch:concepts}.
-Next, in \cref{ch:implementation} we take a look at my implementation of the \gls{lsp}-based \gls{city} generation algorithm, alongside additional contributions to visualize this information in the cities and \glspl{window} of \SEE{}.
+Next, in \cref{ch:implementation}, we take a look at my implementation of the \gls{lsp}-based \gls{city} generation algorithm, alongside additional contributions to visualize this information in the cities and \glspl{window} of \SEE{}.
 In the course of this, we will answer \textsf{RQ1}.
 To answer \textsf{RQ2}, I will carry out a user study comparing an \gls{lsp}-enabled \gls{ide} (specifically, \gls{vscode}) with an \gls{lsp}-enabled \gls{city} visualization (specifically, \gls{see}) and report on its results in \cref{ch:evaluation}.
 Finally, we wrap up in \cref{ch:conclusion} by summarizing the thesis's results and providing an outlook on additional ideas for the implementation, while also listing some possible avenues of further research.

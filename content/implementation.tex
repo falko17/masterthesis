@@ -7,7 +7,7 @@
 \lettrine[lines=3]{\textcolor{Maroon}{R}}{elying} on the foundations of \SEE{} and the \glsentrylong{lsp} established in the previous chapter, we can now turn to the core part of this thesis:
 The integration of \gls{lsp} into \SEE{}, with a special focus on how to build \glspl{city} using \gls{lsp}'s \glspl{capability}.
 We will start by briefly going over some preliminary changes to both \SEE{} and the \gls{lsp} specification.
-Then, we will spend the majority of this chapter specifying and explaining the algorithm which "converts" \gls{lsp} information into \glspl{city}, before looking into how additional \glspl{capability} can be integrated into \SEE{}'s \glspl{city} and \glspl{window} specifically.
+Then, we will spend the majority of this chapter specifying and explaining the algorithm which "converts" \gls{lsp} information into \glspl{city}, before looking into how additional \glspl{capability} can be integrated into \SEE{}'s \glspl{city} and \glspl{window}.
 Finally, we will conduct a brief technical evaluation, with a more thorough user study following in the next chapter.
 
 Before continuing with this chapter, I highly recommend watching the six-minute showcase video at \url{https://www.youtube.com/watch?v=yAzyv2_q2ng}.
@@ -21,7 +21,7 @@ While familiarizing myself with the \gls{lsp} specification, I noticed and fixed
 Most of these were of a formal nature (\eg, spelling, grammar, formatting, consistent usage of terms), some were fixing incorrect TypeScript syntax in the definition of \gls{lsp}'s data models.
 The rest of the changes were related to the so-called snippet grammar.
 
-In the context of \gls{lsp}, snippets are in essence string templates that are inserted on certain completions (see \cref{subsec:unplanned}), with some designed parts being filled in by the programmer on insertion.
+In the context of \gls{lsp}, snippets are string templates that are inserted on certain completions (see \cref{subsec:unplanned}), with some designed parts being filled in by the programmer on insertion.
 There are also parts that can be filled in by certain values (\eg, the file name), which can themselves be transformed using regular expressions.\footnote{
 	I am skipping over some additional features and details here because this is not that relevant a \gls{capability} for us---to get the full picture, see \web{https://microsoft.github.io/language-server-protocol/specifications/lsp/3.18/specification/\#snippet\_syntax}{2024-10-10}.
 }
@@ -46,11 +46,11 @@ I have submitted these fixes as a pull request\footnote{\web{https://github.com/
 After addressing the resulting code review, it has been merged, and the changes will be incorporated in the upcoming 3.18 release of the specification.
 
 \subsection{Preparing SEE}
-There was not much I had to do in terms of getting \SEE{} ready, so this section will be very short:
+There was not much I had to do in terms of getting \SEE{} ready, so this section will be short:
 \begin{itemize}
 	\item I have integrated the OmniSharp \gls{lsp} C\# library~\cite{csharplanguageserverprotocol2023} into \SEE{}, which we will leverage in the subsequent sections so that we can use \gls{lsp} without needing to worry about \gls{jrpc} encoding, data models, and so on.
-	\item \Glspl{window} have previously been made editable by \textcite{moritz} in his bachelor thesis, also enabling collaborative editing over the internet.
-	      I unfortunately had to remove these changes because they did not work anymore in the current version of \SEE{}, and additionally caused a lot of complexity overhead in the \gls{window} implementation that would have made the \gls{lsp} integration much harder to accomplish.
+	\item \Glspl{window} have previously been made editable by \textcite{moritz} in his bachelor's thesis, also enabling collaborative editing over the internet.
+	      I unfortunately had to remove these changes because they did not work anymore in the current version of \SEE{}, and additionally caused a lot of complexity overhead in the \gls{window} implementation that would have made the \gls{lsp} integration much harder.
 	\item Finally, the attribute space $\mathcal{A}$ in \SEE{} did not allow for \glspl{range} of the form \gls{lsp} needs, so I had to replace the existing attributes (which track the line and column, but not a full range) with a proper set of \gls{range} attributes.
 	      In \cref{subsec:graph}, we have introduced this as a single \tt{Source.Range} attribute, but in reality, there are four \gls{range} attributes---one per member of the decomposed form.
 	      We will ignore this reality for the rest of this thesis and act like the \gls{range} is a single attribute, that is, for all project graphs with nodes $V$ and attributes $a$, it holds that $\{a(v, \tt{Source.Range}) \mid v \in V \land (v, \tt{Source.Range}) \in \mathrm{dom}(a) \} \subseteq \mathcal{R}$.
@@ -63,14 +63,14 @@ All of these changes have been made across two pull requests to \SEE{}.\footnote
 \section{Generating Code Cities using LSP}\label{sec:generate}
 In this section, we will examine the centerpiece of this thesis:
 The algorithm with which \glspl{city} can be generated using the \glsentrylong{lsp}.
-While going over how the algorithm works, we will take a quick look at \glspl{intervaltree} and how they relate to the algorithm, before finally taking a look at what the import process looks like in practice in \SEE{}.
+While going over how the algorithm works, we will investigate \glspl{intervaltree} and how they relate to the algorithm, before finally taking a look at what the import process looks like in practice in \SEE{}.
 
 \subsection{Algorithm}
 
-We will take a look at the algorithm in a generalized and programming language independent form here.
+We will examine the algorithm in a generalized and programming language independent form here.
 In this form, the algorithm takes as input a set of source code documents, as well as a family of \gls{lsp} functions belonging to a specific instantiation of a \gls{ls}.
 These functions will be used to analyze the documents and extract the required information from them.
-The output of the algorithm, then, is a graph representing the given software project.
+The output of the algorithm, is a graph representing the given software project.
 \fxnote{Improve coloring of inner boxes and reduce height of boxes.}
 
 \begin{figure}
@@ -86,7 +86,7 @@ The output of the algorithm, then, is a graph representing the given software pr
 Before diving into the specifics of \emph{how} the algorithm works, it may help to take a look at the diagram in \cref{fig:alg_overview}, which gives us a high-level overview of \emph{what} it does.
 To summarize, the steps can be broken down into three major parts:
 \begin{enumerate}[label=\bfseries\Roman*]
-	\item \textbf{Node synthesis:} Here, we create the graph's nodes and combine them together into a hierarchy.
+	\item \textbf{Node Synthesis:} Here, we create the graph's nodes and combine them together into a hierarchy.
 	      \begin{enumerate}[label=\arabic*.]
 		      \item We recreate the parts of the filesystem hierarchy that are relevant to the given documents (\ie, directories the documents are contained in and their relation to each other).
 		      \item For each code symbol within that document, a node will be created as a child to the document.
@@ -96,7 +96,7 @@ To summarize, the steps can be broken down into three major parts:
 			            Instead, we will collect pushed diagnostics in the background and handle them all at once at the very end.
 		            } and attach their counts to the nodes they correspond to.
 	      \end{enumerate}
-	\item \textbf{Edge synthesis:} Here, we connect the nodes by creating edges between them.
+	\item \textbf{Edge Synthesis:} Here, we connect the nodes by creating edges between them.
 	      To do this, we go over each node, using \gls{lsp} functions to check for definition locations, references, and so on, and then determine which of our existing nodes best corresponds to that location.
 	      This turns out to be the most difficult and complex part of the algorithm to implement efficiently, as we will later see.
 	\item \textbf{Aggregation:} Finally, we want to aggregate \gls{loc} and diagnostic count metrics upwards in the hierarchy.
@@ -112,7 +112,7 @@ The specification is given in \cref{alg:generate} and follows a few special form
 	\item Sentences in \textit{\textcolor{gray}{gray italics}} are comments.
 	\item \textbf{Bold} text represents keywords.
 	\item A normal font represents strings (\ie, text that represents itself).
-	\item Finally, parts in a \texttt{typewriter font} have two purposes:
+	\item Finally, parts in a \texttt{typewriter font} serve two purposes:
 	      They represent attribute keys ($\in \mathcal{A}_K$) as well as properties of \gls{lsp}-returned objects, the latter of which are prefixed by a dot.
 \end{itemize}
 
@@ -159,7 +159,7 @@ The full C\# implementation in \SEE{} is available at \web{https://github.com/un
 \paragraph{Performance Considerations}\label{subsec:performance}
 When we analyze this algorithm in terms of complexity, we can quickly see that the most relevant portions are in matching locations to nodes, that is, \textsc{FindNodesByLocation}\footnote{
 	At least, this is the case when we assume the runtime complexity of externally supplied \textsc{Lsp} functions is constant.
-	This is an oversimplification, but the claim that this function is the most expensive part of the algorithm holds up to analyses of real-world test runs of the C\# algorithm.
+	This is an oversimplification, but the claim that this function is the most expensive part of the algorithm holds up to analyses of real-world test runs of the C\# algorithm, as seen in \cref{sec:techeval}.
 }.
 This is only meant to give a quick motivation on why we need the optimization described in \cref{subsec:kd}---a full complexity analysis of the algorithm is outside the scope of this thesis.
 Part I as a whole (ignoring diagnostics, where \textsc{FindNodesByLocation} is called) can be considered to fall in $\Theta(|V|)$, since there is a constant amount of work per added node.
@@ -188,7 +188,7 @@ Instead, we need to match the location to the node with the "tightest fitting ra
 that is: from the nodes whose \gls{range} completely contains the given location, we pick the one whose \gls{range} is the smallest (to find the most specific fitting element).
 The naive solution used in \cref{alg:generate}---simply going over all nodes each time to find the best fit---leads to an unacceptable runtime.
 
-There are a few possible ways to solve this problem (which is in essence a variant of the stabbing problem) more efficiently, such as segment trees or range trees, but we will use augmented \glspl{intervaltree} with \glspl{kdtree} as a base, as this configuration best fits our circumstances—there is no need to update/re-balance the tree (so the high cost associated with that is fine), the membership query should not be in $\Omega(n)$, we need to represent two dimensions (which is possible with a 2d-tree), and so on.
+There are a few possible ways to solve this problem (which is in essence a variant of the stabbing problem) more efficiently, such as segment trees or range trees, but we will use augmented \glspl{intervaltree} with \glspl{kdtree} as a base, as this configuration best fits our circumstances—there is no need to update/re-balance the tree (so the high cost associated with that is fine), the membership query should not be in $\Omega(n)$ (or worse), we need to represent two dimensions (which is possible with a 2d-tree), and so on.
 
 A detailed explanation of augmented \glspl{intervaltree} can be found in \textcite[section~17.3]{cormen2022}, while \glspl{kdtree} are described in a paper by \textcite{bentley1975}.
 In our case, we can create the tree by constructing a 2d-tree\footnote{
@@ -366,15 +366,15 @@ A \gls{city} of a markup language like \LaTeX{}, for example, would have nodes f
 
 Next down the list in \cref{fig:unity_lsp_provider}, we have the import settings, which can be used to further refine the \gls{lsp}-generated data that is used for the project graph.
 Specifically, we can select what kinds of nodes and edges we want to import, and which diagnostics we want to include.
-Additionally, for the edges, there is the option to exclude loops and edges (excluding \tt{partOf}) to a node's direct parent.
+Additionally, for the edges, there is the option to exclude loops and edges (not taking \tt{partOf} into account) to a node's direct parent.
 The purpose behind this option is that otherwise, there are going to be a lot of definition/declaration edges from elements to their immediate parents, which happens because the locations returned by these \gls{lsp} functions often extend slightly outside the node's actual locations.
-For example, a quirk of many \glspl{ls} is that a returned location may begin at \tt{\textcolor{red}{i}nt value;}, while the actual node for this variable starts at \tt{int \textcolor{red}{v}alue;}---in that case, the returned location would instead resolve to the outer container, such as the function it is contained in.
+For example, a quirk of some \glspl{ls} is that a returned location may begin at \tt{\textcolor{red}{i}nt value}, while the actual node for this variable starts at \tt{int \textcolor{red}{v}alue}---in that case, the returned location would instead resolve to the outer container, such as the function it is contained in.
 
 Finally, there is an option to enable the \gls{lsp} functions for \glspl{window} that are detailed in \cref{sec:intowindow}, a setting to generate log files for the transferred \gls{jrpc} messages, and a slider to adjust the maximum time we should wait for a \gls{ls}'s response to a request.
 With all of these options configured, the graph can be loaded and drawn (and optionally exported to a \gls{gxl} file), where a bar displays the approximate progress of the process.
 At this point, we will once again refer back to the explanatory video\footnote{\url{https://www.youtube.com/watch?v=yAzyv2_q2ng}},
 which goes over the implemented functionality in a bit more detail and may be easier to follow along than this textual description.
-Some examples of \glspl{city} rendered using this algorithm are given in \cref{fig:gencities} in \cref{fig:techeval}.
+Some examples of \glspl{city} rendered using this algorithm are given in \cref{fig:gencities} in \cref{sec:techeval}.
 
 \section{Integrating LSP Functionality into Code Cities}\label{sec:intocity}
 After having examined how \glspl{city} are generated through the use of \gls{lsp}, we are now going to take a quick look at how some \gls{lsp} \glspl{capability} are integrated into \SEE{}.
@@ -388,13 +388,13 @@ We already had an implementation for a tooltip that shows arbitrary text when ho
 	\item The tooltip now disappears when the user moves their mouse, and re-appears when the mouse is kept in place for a certain amount of time.
 \end{enumerate}
 
+\fxnote{Crop hover info image better}
 \begin{figure}
 	\begin{center}
 		\includegraphics[width=0.95\textwidth]{HoverInfo}
 	\end{center}
 	\caption{A hover info tooltip with Markdown text converted to TextMeshPro rich text tags.}\label{fig:hoverinfo}
 \end{figure}
-
 
 Displaying the hover info is then relatively straightforward, as \cref{alg:generate} already saved it in the nodes of the city, so we need not even make any actual \gls{lsp} requests.
 However, there is one more feature here that would be nice to support:
@@ -422,11 +422,11 @@ Another problem with edges is that, as the evaluation will show (see \cref{subse
 	\captionof{figure}{Context menu options for a node in an \gls{lsp}-enabled \gls{city}.}\label{fig:contextcity}
 \end{minipage}
 
-For cases like that, users could open the tree view for the city, which is a hierarchical 2D representation of the project graph, which also shows the outgoing and incoming edges for each node (see \cref{fig:treeview}).
+For cases like that, users could open the tree view for the city, which is a hierarchical 2D representation of the project graph that also shows the outgoing and incoming edges for each node (see \cref{fig:treeview}).
 However, although it is useful, it is still cumbersome to look around in the city and to then have to open this tree view and navigate around in it to find out what a certain node is connected to.
 The context menu seems like a fitting place to remedy this:
 Right-clicking a node opens a menu that is shown in \cref{fig:contextcity} with several actions, such as opening the tree view for this node or opening its \gls{window}.
-As part of the implementation here, the context menu will now also display \gls{lsp} navigation entries such as "Show outgoing calls," given that corresponding edges exists.
+As part of the implementation here, the context menu will now also display \gls{lsp} navigation entries such as "Show outgoing calls," given that corresponding edges exist.
 Clicking on this entry leads to one of two things happening:
 \begin{itemize}
 	\item If there is only one target, it will be immediately highlighted with a spear and glow to make it easily identifiable in the scene.\footnote{
@@ -480,12 +480,12 @@ Due to all of this making it quite a bit more complicated to support semantic to
 so subsequent subsections shall seem shorter and substantially simpler.
 
 \subsection{Hover information}
-Implementing the hover functionality was fairly straightforward, as the hovering functionality has already been implemented for \glspl{city}.
-The only thing I had to work around was that, within Unity, I could only get the offset of the clicked character within the text as a whole, while the \gls{lsp} hover information can only be queried for a two-dimensional \gls{range}.
+Implementing the hover functionality was fairly straightforward, as it has already been implemented for \glspl{city}.
+The only thing I had to work around was that, within Unity, I could only get the byte offset of the clicked character within the text as a whole, while the \gls{lsp} hover information can only be queried for a two-dimensional \gls{range}.
 To fix this without sacrificing too much performance, we have to maintain a mapping from line numbers to the "global" offset of the newline character, which we can then use to convert from a global offset to a \gls{range}.
 
 \subsection{Diagnostic Highlighting}
-Highlighting diagnostics in the \glspl{window} were already implemented with the Axivion Dashboard as a source, so
+Highlighting diagnostics in the \glspl{window} was already implemented with the Axivion Dashboard as a source, so
 similar to the semantic tokens, I had to implement an abstraction over diagnostics' sources, although this was much easier than abstracting over token sources.
 Diagnostics show up in two ways in the \glspl{window}:
 By highlighting the corresponding code range in a color corresponding to the type of diagnostic, and by providing the diagnostic's content when hovering over that code range (both of these were already implemented for my bachelor's thesis~\cite{galperin2021}).
@@ -519,7 +519,7 @@ While implementing this, I also noticed a bug in the OmniSharp \gls{lsp} library
 }
 
 As an additional feature copied from popular \glspl{ide}, it is possible to hold down \keystroke{Ctrl} and then click on an element in the \gls{window}, which has the same effect as right-clicking that word first and then selecting "Go to definition".
-This is useful because it allows the user to quickly jump to the definition of, for example, a function (which is a very common operation) to find out its content.
+This is useful because it allows the user to quickly jump to the definition of, for example, a function to find out its content, which is a very common operation.
 
 \section{Technical Evaluation}\label{sec:techeval}
 Before ending this chapter, we want to briefly evaluate the implementation on a technical level.
@@ -561,7 +561,7 @@ For the generation, we enabled every edge type, node type, and diagnostic, excep
 \end{table*}
 
 The first thing that is worth mentioning here is that generations by different \glspl{ls} are not really comparable to one another.
-For example, we can see that the generation run for this thesis took on average nine seconds---faster than any other project---even though there were more edges than in almost every other project.
+For example, we can see that the generation run for this thesis took on average ten seconds---faster than any other project---even though there were more edges than in almost every other project.
 This difference cannot be explained by the idea that edges may not play a big role in generation time after all, since a closer look at the data for JabRef and SpotBugs reveals a much longer generation time for SpotBugs, even though SpotBugs has less nodes (but a lot more edges) than JabRef.
 Hence, the difference there has to come from the different \glspl{ls}.
 This is also why we have chosen to analyze two projects per \gls{ls}.
@@ -732,6 +732,9 @@ This can be explained by the respective counts of the graph elements:
 Because we only selected "Extend" edges for JabRef, it has the fewest edges out of all the projects ($919$) while having the most nodes out of all the projects ($5575$).
 Another thing to note is that the only components big enough to even make out on the diagram are the node synthesis, the edge synthesis, and the collection of diagnostics (but not the aggregation), with the latter probably taking some time because it also makes use of the \textsc{FindNodesByLocation} function.
 
+The optimized version of the algorithm is also always quicker than the brute-force version, and we can hypothesize based on these bar graphs that the relative improvement of the optimized version (\ie, the percentage by which time decreases when switching to the optimized version) over the number of edges is strictly monotonic, that is, the more edges there are, the more the optimized algorithm will shorten the total runtime in relation to the brute-force version.
+We can check this hypothesis by plotting the relative time improvement as defined here against the number of edges in each project.
+
 \begin{figure}
 	\begin{center}
 		\tikzexternaldisable
@@ -783,13 +786,10 @@ Another thing to note is that the only components big enough to even make out on
 	}\label{fig:relimprov}
 \end{figure}
 
-The optimized version of the algorithm is also always quicker than the brute-force version, and we can hypothesize based on these bar graphs that the relative improvement of the optimized version (\ie, the percentage by which time decreases when switching to the optimized version) over the number of edges is strictly monotonic, that is, the more edges there are, the more the optimized algorithm will shorten the total runtime in relation to the brute-force version.
-We can check this hypothesis by plotting the relative time improvement as defined here against the number of edges in each project.
-
 \Cref{fig:relimprov} shows exactly that plot, but it disproves this hypothesis:
 While almost every datapoint does seem to follow this rule, the relative time improvement for the master's thesis source code is actually lower than for SpotBugs, even though SpotBugs has fewer edges.
 I suspect that the hypothesis is still directionally correct (the more edges there are, the more the optimization helps), but that it does not hold when making comparisons across multiple \glspl{ls}, since the performance differences between their implementation makes too big a dent.
-The final thing to note from this plot is that, across all our samples, the brute-force version is never better than the optimized version of the algorithm, whcih we can tell by the fact that the error bars (denoting the minimum and maximum relative time improvement across all samples) never extend into the negatives.
+The final thing to note from this plot is that, across all our samples, the brute-force version is never better than the optimized version of the algorithm, which we can tell by the fact that the error bars (denoting the minimum and maximum relative time improvement across all samples) never extend into the negatives.
 
 \begin{figure}
 	\begin{subfigure}{0.5\textwidth}
@@ -851,18 +851,18 @@ While it is feasible to generate \glspl{city} using the \glsentrylong{lsp}, more
 
 \Cref{tab:code} contains a summary of all pull requests created for this thesis, along with the number of added and deleted lines.
 There is one more pull request here that I have not mentioned yet, since it only contains disparate fixes and small additions that were done for the user study that we will talk about in the next chapter.
+The fixes for this pull request were a mix of things I noticed myself while designing the user study and bugs noticed while conducting the pilot study (see \cref{subsec:procedure}).
 There are two relevant features here that we should quickly go over:
 \begin{itemize}
 	\item Edges of a certain type can be hidden, causing them to only be shown when hovering over nodes they are connected to.
 	      This mitigates the problem of too many edges obscuring and cluttering the \gls{city}.
-	\item Transitive edge animations:
+	\item \emph{Transitive edge animations:}
 	      When an edge is revealed by hovering above it, the "next" connected edge is repeatedly revealed as well.
 	      For example, when this is enabled for "extend" edges, hovering over a class node will gradually reveal the path to the \gls{base}.
 	      I recommend watching the explanatory video for the user study to get an intuitive understanding about this\footnote{
 		      See \web{https://www.youtube.com/watch?v=WE21naXp\_YM}{2024-12-28}.
 	      }.
 \end{itemize}
-The fixes for this pull request were a mix of things I noticed myself while designing the user study and bugs noticed while conducting the pilot study (see \cref{subsec:procedure}).
 
 \begin{table*}[htbp]
 	\newcommand{\githubpr}[2]{\href{https://github.com/#1/pull/#2}{\proptt{#1\##2}}}
