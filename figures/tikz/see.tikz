@@ -1,0 +1,109 @@
+\begin{tikzpicture}[
+	stick/.style={thick},
+	box/.style={draw,rounded corners=3pt,minimum width=2.5cm,minimum height=1cm,align=center,fill,text=white, node font=\small\sffamily,blur shadow={shadow xshift=0.3ex,shadow yshift=-0.3ex,shadow opacity=30}},
+	arr/.style={thick,-{Latex[length=3mm]}},
+	rarr/.style={thick,{Latex[length=2mm]}-},
+	darr/.style={thick,{Latex[length=2mm]}-{Latex[length=2mm]}},
+	arrlabel/.style={font=\footnotesize,above,align=center}
+	]
+	\begin{scope}
+		\begin{scope}
+			\coordinate (programmer) at (0,0);
+			\coordinate (programmerend) at (0.5,-0.5);
+			\stickfigure;
+			\node[font=\small\bfseries,below=1.5cm of programmer] {Programmer};
+		\end{scope}
+
+		\node[BrickRed,right=3cm of programmerend,box] (see) {\gls{see}};
+
+		\node[below=1cm of see] (cc) {\includegraphics[width=4cm]{SEE\_screenshot\_cut}};
+		\node[font=\footnotesize\sffamily,above left=0.35cm and 0cm of cc,anchor=north west] {\Gls{city}};
+
+		\node[draw,above=1cm of see,align=left,fill=BlueGreen!10,blur shadow] (cw) {\begin{minipage}{5cm}
+				\begin{minted}{text}
+for x in range(1,101):
+  print(f"{x}: ", end='')
+  if x % 3 == 0:
+    print("fizz", end='')
+  if x % 5 == 0:
+    print("buzz", end='')
+  print()
+      \end{minted}
+			\end{minipage}};
+		\node[font=\small\sffamily,above left=0.45cm and 0cm of cw,anchor=north west] {Text-only code};
+
+		\node[circle,right=2cm of see,gray,box,minimum width=2cm] (gxl) {\gls{gxl} file};
+
+		\matrix[right=2cm of gxl,matrix anchor=west,anchor=center,row sep=0.3cm] {
+			\node {\includegraphics[width=2cm,clip,trim={0 1cm 0 0}]{axivion}};                                                                                                              \\
+			\node[font=\small,gray,box] (p1) {C analyzer};                                                                                               \\
+			\node[font=\small,gray,box] (p2) {C\# analyzer};                                                                                             \\
+			\node[font=\small,gray,box] (p3) {Java analyzer};                                                                                            \\
+			\node[font=\small,dashed,gray,box,fill=none,text=gray,opacity=0.7,blur shadow={shadow opacity=0}] (px) {Many other\\languages missing\dots}; \\
+		};
+
+
+		\draw[arr] (programmerend) -- node[arrlabel] {uses} (see);
+		\draw[arr,BrickRed] (see.east) -- node[arrlabel] {reads} (gxl);
+		\draw[arr,BrickRed] (see) -- node[arrlabel,right] {Generates \gls{city}\\from \gls{gxl} information} (cc);
+		\draw[arr,BrickRed] (see) -- node[arrlabel,left] {Displays source code\\as plain text} (cw);
+		\draw[rarr,gray] ($(gxl.east) + (0,0.2)$) -- (p1.west) node[arrlabel,above left=0.5cm and -0.5cm,midway] {Generates \gls{gxl} file\\from source code} ;
+		\draw[rarr,gray] (gxl.east) -- (p2.west);
+		\draw[rarr,gray] ($(gxl.east) + (0,-0.2)$) -- (p3.west);
+
+		\node[below=-0.2cm of current bounding box.south] {\pgfornament[color=black,width=0.95\textwidth]{88}};
+		\path (current bounding box.south) ++(0,-0.8cm) coordinate;
+	\end{scope}
+
+	\begin{scope}[shift={(0, -10.7)}]
+		\begin{scope}
+			\coordinate (programmer) at (0,0);
+			\coordinate (programmerend) at (0.5,-0.5);
+			\stickfigure;
+			\node[font=\small\bfseries,below=1.5cm of programmer] {Programmer};
+		\end{scope}
+
+		\node[BrickRed,right=3cm of programmerend,box] (see) {\gls{see}};
+
+		\node[below=1cm of see] (cc) {\includegraphics[width=4cm]{SEE\_screenshot\_cut}};
+		\node[font=\footnotesize\sffamily,above left=0.35cm and 0cm of cc,anchor=north west] {\Gls{city}};
+
+		\node[draw,above=1cm of see,align=left,fill=BlueGreen!10,blur shadow] (cw) {\begin{minipage}{5cm}
+				\begin{minted}{python}
+for x in range(1,101):
+  print(f"{x}: ", end='')
+  if x % 3 == 0:
+    print("fizz", end='')
+  if x % 5 == 0:
+    print("buzz", end='')
+  print()
+      \end{minted}
+			\end{minipage}};
+		\node[font=\small\sffamily,above left=0.45cm and 0cm of cw,anchor=north west] {Interactive code};
+
+		\node[right=2cm of see,Blue,box] (lsp) {\gls{lsp} library};
+
+		\matrix[right=2cm of lsp,matrix anchor=west,anchor=center,row sep=0.3cm] {
+			\node[ForestGreen,box] (p1) {C\\\gls{ls}};   \\
+			\node[Fuchsia,box] (p2) {C\#\\\gls{ls}};     \\
+			\node[Orange,box] (p3) {Java\\\gls{ls}};     \\
+			\node[NavyBlue,box] (p4) {Python\\\gls{ls}}; \\
+			\node[Sepia,box] (p5) {Rust\\\gls{ls}};      \\
+			\node[Maroon,box] (p6) {Many more\dots};                   \\
+		};
+		\node[font=\huge,Blue,below left=-0.5cm and 2cm of p1] (lspc) {\faUsers};
+		\node[font=\small\bfseries,Blue,below=-0.2cm of lspc] {\gls{lsp} community};
+
+
+		\draw[arr] (programmerend) -- node[arrlabel] {uses} (see);
+		\draw[arr,BrickRed] (see) -- node[arrlabel,right] {Generates \gls{city}\\from \gls{lsp} information} (cc);
+		\draw[arr,BrickRed] (see) -- node[arrlabel,left] {Displays source code\\with \gls{ide}-like features} (cw);
+		\draw[arr,BrickRed] (see.east) -- node[arrlabel] {uses} (lsp);
+		\draw[darr,Blue] ($(lsp.east) + (0,0.5)$) -- (p1.west);
+		\draw[darr,Blue] ($(lsp.east) + (0,0.3)$) -- (p2.west);
+		\draw[darr,Blue] ($(lsp.east) + (0,0.1)$) -- (p3.west);
+		\draw[darr,Blue] ($(lsp.east) + (0,-0.1)$) -- (p4.west);
+		\draw[darr,Blue] ($(lsp.east) + (0,-0.3)$) -- (p5.west);
+		\draw[darr,Blue] ($(lsp.east) + (0,-0.5)$) -- (p6.west);
+	\end{scope}
+\end{tikzpicture}
