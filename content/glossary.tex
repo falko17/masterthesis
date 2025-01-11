@@ -76,7 +76,7 @@
 
 % Only color for the first time
 \newcommand{\firstuseformat}[1]{\textcolor{Maroon}{{#1}}}
-\newcommand{\seconduseformat}[1]{\textcolor{black}{{#1}}}
+\newcommand{\seconduseformat}[1]{{#1}}
 \newcommand{\mainformat}[1]{%
 	\ifglsused{#1}{}{\glslinkvar{%
 			\let\fc\uppercase%
@@ -87,6 +87,17 @@
 			\let\fc\lowercase}{}{}%
 	}%
 }
+
+% Disable hyperlink highlighting for glossary entries.
+\makeatletter
+\newcommand*{\glsplainhyperlink}[2]{%
+	\begingroup%
+	\hypersetup{hidelinks}%
+	\hyperlink{#1}{#2}%
+	\endgroup%
+}
+\let\@glslink\glsplainhyperlink
+\makeatother
 
 
 \defglsentryfmt[main]{\glsgenentryfmt\mainformat{\glslabel}}

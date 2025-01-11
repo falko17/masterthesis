@@ -146,6 +146,40 @@
   \tikzexternalenable
 }
 
+\newcommand{\stickfigure}{
+		% Head
+		\draw[stick] (0,0.4) circle (0.4);
+
+		% Body
+		\draw[stick] (0,0) -- (0,-0.8);
+
+		% Arms
+		\draw[stick] (0,-0.2) -- (240:0.8cm);
+		\draw[stick] (0,-0.2) -- (-60:0.8cm);
+
+		% Legs
+		\draw[stick] (0,-0.8) -- (260:1.5cm);
+		\draw[stick] (0,-0.8) -- (-80:1.5cm);
+}
+
+\newcommand{\stickfigurehappy}{
+    \stickfigure;
+		% Face
+		\draw[draw=none,fill] (0.15,0.5) circle (0.05cm);
+		\draw[draw=none,fill] (-0.1,0.5) circle (0.05cm);
+
+		\draw[draw,stick] (0.2,0.3) arc (-30:-130:2mm);
+}
+
+\newcommand{\stickfiguresad}{
+    \stickfigure;
+		% Face
+		\draw[draw=none,fill] (0.15,0.5) circle (0.05cm);
+		\draw[draw=none,fill] (-0.1,0.5) circle (0.05cm);
+
+		\draw[draw,stick] (0.2,0.25) arc (60:140:2mm);
+}
+
 \newcommand{\ifempty}[3]{%
   \if\relax\detokenize{#1}\relax
     #2%

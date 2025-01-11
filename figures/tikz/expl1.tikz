@@ -1,0 +1,45 @@
+\begin{tikzpicture}[
+	stick/.style={thick},
+	box/.style={draw,BrickRed,rounded corners=3pt,minimum width=2.5cm,minimum height=1cm,align=center,fill, text=white,node font=\small\sffamily,blur shadow={shadow xshift=0.3ex,shadow yshift=-0.3ex,shadow opacity=30}},
+	arr/.style={thick,-{Latex[length=3mm]}},
+	darr/.style={thick,{Latex[length=2mm]}-{Latex[length=2mm]}},
+	arrlabel/.style={font=\footnotesize,above}
+	]
+
+	\begin{scope}
+		\coordinate (programmer) at (0,0);
+		\coordinate (programmerend) at (0.5,-0.5);
+		\stickfigure;
+		\node[font=\small\bfseries,below=1.5cm of programmer] {Programmer};
+	\end{scope}
+
+	\node[font=\normalsize,box,right=3cm of programmerend] (ide) {\gls{ide}};
+
+	\begin{scope}[shift={($(ide) - (0,1.5)$)},scale=0.7,BrickRed]
+		\coordinate (idev) at (0,0);
+		\stickfiguresad;
+		\node[font=\small\bfseries,below=1cm of idev] (idevl) {\gls{ide} developer};
+		\node[font=\scriptsize,below=0cm of idevl,align=center]
+		{Has to develop and maintain\\
+			plugins for each language and\\
+			integrate them with the \gls{ide}.};
+	\end{scope}
+
+	\matrix[right=2.5cm of ide,matrix anchor=west,anchor=center,row sep=0.3cm] {
+		\node[box] (p1) {C plugin};       \\
+		\node[box] (p2) {C\# plugin};     \\
+		\node[box] (p3) {Java plugin};    \\
+		\node[box] (p4) {Python plugin};  \\
+		\node[box] (p5) {Rust plugin};    \\
+		\node[box] (p6) {Many more\dots}; \\
+	};
+
+	\draw[arr] (programmerend) -- node[arrlabel] {uses} (ide);
+	\draw[darr,BrickRed] ($(ide.east) + (0,0.4)$) -- (p1.west);
+	\draw[darr,BrickRed] ($(ide.east) + (0,0.3)$) -- (p2.west);
+	\draw[darr,BrickRed] ($(ide.east) + (0,0.1)$) -- (p3.west);
+	\draw[darr,BrickRed] ($(ide.east) + (0,-0.1)$) -- (p4.west);
+	\draw[darr,BrickRed] ($(ide.east) + (0,-0.3)$) -- (p5.west);
+	\draw[darr,BrickRed] ($(ide.east) + (0,-0.4)$) -- (p6.west);
+
+\end{tikzpicture}
