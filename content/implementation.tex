@@ -10,7 +10,7 @@ We will start by briefly going over some preliminary changes to both \SEE{} and 
 Then, we will spend the majority of this chapter specifying and explaining the algorithm which "converts" \gls{lsp} information into \glspl{city}, before looking into how additional \glspl{capability} can be integrated into \SEE{}'s \glspl{city} and \glspl{window}.
 Finally, we will conduct a brief technical evaluation, with a more thorough user study following in the next chapter.
 
-\fxwarning{Add retrieval dates to youtube URLs}
+\fxwarning{Add retrieval dates for YouTube links}
 
 Before continuing with this chapter, I highly recommend watching the six-minute showcase video at \url{https://www.youtube.com/watch?v=yAzyv2_q2ng}.
 It goes over all important user-facing features implemented in this chapter and does a better job of presenting them than can be done in text alone.
@@ -528,7 +528,7 @@ Before ending this chapter, we want to briefly evaluate the implementation on a 
 While there are some unit tests for parts of the algorithm, taking real-world projects and trying to generate \glspl{city} out of them using our implementation is important to verify that it is working correctly too.
 Apart from a quick qualitative glance at each generated city, we are also interested in an analysis of performance here---we made quite a few theoretical statements and analyses in \cref{sec:generate}, so we can also use this section to make sure the \gls{intervaltree}-based \cref{alg:interval} actually does work more efficiently than the original "brute-force" approach of \cref{alg:generate}.
 
-We have run the city generation algorithm on the following projects:
+I ran the city generation algorithm on the following projects:
 \begin{itemize}
 	\item \textbf{JabRef}~\cite{jabref}: A bibliography manager written in Java.
 	\item \textbf{SpotBugs}~\cite{spotbugs}: A bug-detector using static analysis for Java code.
@@ -890,3 +890,4 @@ There are two relevant features here that we should quickly go over:
 
 \end{table*}
 
+\chapterendornament{77}{0.2}

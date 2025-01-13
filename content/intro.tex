@@ -2,7 +2,6 @@
 \graphicspath{{\subfix{../figures/}}}
 \begin{document}
 \chapter{Introduction}
-
 \lettrine[lines=3]{\textcolor{Maroon}{L}}{anguage} Servers have become an increasingly popular way to offer "code smarts," such as code autocomplete or the highlighting of errors.
 However, even though the Language Server Protocol has been written to be broadly compatible with any development tool, in practice, it has only been used for traditional IDEs and editors instead of more modern and unconventional approaches like code cities.
 I am of the opinion that code cities can benefit from making use of this protocol, so the core focus of this master's thesis is going to be combining it with code cities, specifically SEE.
@@ -125,12 +124,9 @@ This is where the Language Server Protocol can help.
 \Cref{fig:seeplan} visually explains what the integration done in this thesis entails.
 
 \begin{figure}
-	\tikzexternaldisable
-
 	\centering
 	\includegraphics{tikz/see}
 	\caption{A simplified illustration of how \SEE{} usually gains and uses information about software projects (top half), and how the integration of \gls{lsp} changes that (bottom half).}\label{fig:seeplan}
-	\tikzexternalenable
 \end{figure}
 
 
@@ -206,4 +202,5 @@ In the course of this, we will answer \textsf{RQ1}.
 To answer \textsf{RQ2}, I will carry out a user study comparing an \gls{lsp}-enabled \gls{ide} (specifically, \gls{vscode}) with an \gls{lsp}-enabled \gls{city} visualization (specifically, \gls{see}) and report on its results in \cref{ch:evaluation}.
 Finally, we wrap up in \cref{ch:conclusion} by summarizing the thesis's results and providing an outlook on additional ideas for the implementation, while also listing some possible avenues of further research.
 
+\chapterendornament{9}{0.1}
 \end{document}
