@@ -3,7 +3,7 @@
 	box/.style={draw,BrickRed,rounded corners=3pt,minimum width=2.5cm,minimum height=1cm,align=center,fill, text=white,node font=\small\sffamily,blur shadow={shadow xshift=0.3ex,shadow yshift=-0.3ex,shadow opacity=30}},
 	arr/.style={thick,-{Latex[length=3mm]}},
 	darr/.style={thick,{Latex[length=2mm]}-{Latex[length=2mm]}},
-	arrlabel/.style={font=\footnotesize,above}
+	arrlabel/.style={font=\small,above}
 	]
 
 	\begin{scope}
@@ -19,7 +19,7 @@
 		\coordinate (idev) at (0,0);
 		\stickfiguresad;
 		\node[font=\small\bfseries,below=1cm of idev] (idevl) {\gls{ide} developer};
-		\node[font=\scriptsize,below=0cm of idevl,align=center]
+		\node[font=\footnotesize,below=0cm of idevl,align=center]
 		{Has to develop and maintain\\
 			plugins for each language and\\
 			integrate them with the \gls{ide}.};

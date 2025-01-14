@@ -3,7 +3,7 @@
 	box/.style={draw,rounded corners=3pt,minimum width=2.5cm,minimum height=1cm,align=center,fill,text=white, node font=\small\sffamily,blur shadow={shadow xshift=0.3ex,shadow yshift=-0.3ex,shadow opacity=30}},
 	arr/.style={thick,-{Latex[length=3mm]}},
 	darr/.style={thick,{Latex[length=2mm]}-{Latex[length=2mm]}},
-	arrlabel/.style={font=\footnotesize,above}
+	arrlabel/.style={font=\small,above}
 	]
 
 	\begin{scope}
@@ -13,32 +13,32 @@
 		\node[font=\small\bfseries,below=1.5cm of programmer] {Programmer};
 	\end{scope}
 
-	\node[BrickRed,font=\normalsize,box,right=2cm of programmerend] (ide) {\gls{ide}};
+	\node[BrickRed,font=\normalsize,box,right=1.5cm of programmerend] (ide) {\gls{ide}};
 
 	\begin{scope}[shift={($(ide) - (0,1.5)$)},scale=0.7,BrickRed]
 		\coordinate (idev) at (0,0);
 		\stickfigurehappy;
 		\node[font=\small\bfseries,below=1cm of idev] (idevl) {\gls{ide} developer};
-		\node[font=\scriptsize,below=0cm of idevl,align=center]
+		\node[font=\footnotesize,below=0cm of idevl,align=center]
 		{Only has to integrate \gls{lsp} into\\
-			the \gls{ide} once, after which\\
-			all languages (with \gls{ls}\\
+			the \gls{ide} once, after which all\\
+			languages (with \gls{ls}\\
 			implementations) are supported.};
 	\end{scope}
 
-	\node[right=2.4cm of ide,Blue,font=\normalsize,box] (lsp) {\gls{lsp} interface};
+	\node[right=2.5cm of ide,Blue,font=\normalsize,box] (lsp) {\gls{lsp} interface};
 
 	\begin{scope}[Blue]
 		\node[below=0.6cm of lsp,font=\Huge] (lspc) {\faUsers};
 		\node[font=\small\bfseries,below=0.3cm of lspc] (lspcl) {\gls{lsp} community};
-		\node[font=\scriptsize,below=0cm of lspcl,align=center]
+		\node[font=\footnotesize,below=0cm of lspcl,align=center]
 		{\gls{lsp} libraries, clients, and especially\\
 			\glspl{ls} are developed by the\\
 			open-source community and often\\
 			made freely available.};
 	\end{scope}
 
-	\matrix[right=1.7cm of lsp,matrix anchor=west,anchor=center,row sep=0.3cm] {
+	\matrix[right=1.5cm of lsp,matrix anchor=west,anchor=center,row sep=0.3cm] {
 		\node[ForestGreen,box] (p1) {C\\\gls{ls}};   \\
 		\node[Fuchsia,box] (p2) {C\#\\\gls{ls}};     \\
 		\node[Orange,box] (p3) {Java\\\gls{ls}};     \\

@@ -38,9 +38,9 @@ An example of this is that the Jedi Python \gls{ls} outputs different \glspl{cit
 Finally, only very few \glspl{ls} support the \emph{pull diagnostics} \gls{capability}.
 For all other ones, we need to collect the pushed diagnostics in the background, meaning we could easily miss some if the import algorithm is done before all diagnostics have been pushed.
 
-\subsection{Evaluation}
+\subsection{User Study}
 We already went over some important threats to validity in \cref{sec:threats}.
-Apart from those, another major limitation may be that we have not actually evaluated most of the implementation---as explained in \cref{sec:plan}, we basically only evaluated the changes from \cref{sec:generate}, leaving out almost all features implemented in \cref{sec:intocity,sec:intowindow}.
+Apart from those, another major limitation may be that we have not actually evaluated most of the implementation: as explained in \cref{sec:plan}, we basically only evaluated the changes from \cref{sec:generate}, leaving out almost all features implemented in \cref{sec:intocity,sec:intowindow}.
 Even under those constraints, what we really evaluated in \cref{ch:evaluation} was \emph{generated} \gls{city} rather than the \emph{generation of the} \gls{city}, although we did at least evaluate the latter in the technical evaluation in \cref{sec:techeval}.
 \Cref{sec:intocity,sec:intowindow}, however, remain very under-evaluated---a further user study could make sure that \gls{lsp}-enabled \glspl{city} and \glspl{window} are a usable combination, maybe again by comparing those to \gls{vscode}.
 
@@ -70,6 +70,19 @@ Since there is no real unifying thread here, I will just list these ideas for fu
 \end{itemize}
 
 \section{Closing Remarks}
-\fxfatal{}
+We started this thesis by motivating the use of \gls{lsp}, \glspl{city}, and the integration of the former into the latter in \cref{ch:intro}.
+There, we also pinned down our main two research questions, which are about:
+\begin{enumerate}
+	\item whether using \gls{lsp} to generate \glspl{city} is a feasible approach (\textsf{RQ1}), and
+	\item whether \glspl{city} are a suitable means to present \gls{lsp} information as compared to \glspl{ide} + tables (\textsf{RQ2}).
+\end{enumerate}
+After introducing these concepts in more detail in \cref{ch:concepts}, we answered the first research question in \cref{ch:implementation}: the approach is feasible, with the caveat that our implementation does not perform well on larger projects (roughly above \num{100000} \gls{loc}).
+We continued with a controlled experiment in the form of a user study in \cref{ch:evaluation}, which gave us an answer to our second research question:
+\glspl{city} seem like a suitable representation for \gls{lsp} information, but developers work faster and report higher usability when using the traditional \gls{ide} \gls{vscode}.
+
+What has been implemented in this thesis seems promising.
+It is now possible to generate \glspl{city} without needing to setup and configure a separate tool to generate the \gls{gxl} files first, instead using \glspl{ls} that are easy to install and often already installed due to their use in other \glspl{ide}.
+Additionally, many more languages are now supported by \SEE{} than before.
+However, as discussed in the current \cref{ch:conclusion} and as apparent from the aforementioned results, there are still limitations and further possibilities to extend this work in the future, be it performance improvements to the generation algorithm, support for more \glspl{capability}, or further user studies.
 
 \chapterendornament{79}{0.2}
