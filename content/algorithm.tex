@@ -1,222 +1,222 @@
 \tikzexternaldisable
+\begin{talgorithm}{How \gls{city} graphs can be generated from \gls{lsp} information.}{alg:generate}
+	\begin{algorithm}[H]
 
-\begin{algorithm}
-	\small
+		\small
 
-	\floatname{algorithm}{Algorithm}
-	\caption{How \gls{city} graphs can be generated from \gls{lsp} information.}\label{alg:generate}
-	\begin{algorithmic}[1]
-		\Require  {Family of \textsc{Lsp} functions provided by the \gls{ls}}, {set of documents $D$}
-		\Ensure {Graph $G$ representing the underlying software project}
-		\Statex
-		\State $V, E, a, s, t, \ell, C \gets \varnothing$ \Comment{Initialize empty graph components.}
-		\label{alg:generate:begin}
-		\ForAll{$d \in D$}
-		\State \Call{LspOpenDocument}{$d$} \Comment{Document needs to be opened for all capabilities to work.}
-		\State $v_d \gets$ \Call{AddDocumentNode}{$d$} \Comment{Each document becomes a node\dots}
-		\ForAll{$x \in \textsc{LspDocumentSymbols}(d)$}
-		\State \Call{MakeChild}{\Call{AddSymbolNode}{$x$}, $v_d$} \Comment{\dots with its symbols as children.}
-		\EndFor
-		\If{\Call{LspLanguageServerSupportsPullDiagnostics}{\null}}
-		\State \Call{HandleDiagnostics}{\Call{LspPullDocumentDiagnostics}{$d$}}
-		\Else
-		\LComment{We will save any incoming diagnostics in the background and handle them at the end.}
-		\State \Call{LspRegisterPushDiagnosticsCallback}{$d$, $(c) \mapsto (C \gets C \cup \{c\})$}
-		\EndIf{}
-		\State \Call{LspCloseDocument}{$d$}
-		\EndFor
-		\label{alg:generate:end1}
+		\begin{algorithmic}[1]
+			\Require  {Family of \textsc{Lsp} functions provided by the \gls{ls}}, {set of documents $D$}
+			\Ensure {Graph $G$ representing the underlying software project}
+			\Statex
+			\State $V, E, a, s, t, \ell, C \gets \varnothing$ \Comment{Initialize empty graph components.}
+			\label{alg:generate:begin}
+			\ForAll{$d \in D$}
+			\State \Call{LspOpenDocument}{$d$} \Comment{Document needs to be opened for all capabilities to work.}
+			\State $v_d \gets$ \Call{AddDocumentNode}{$d$} \Comment{Each document becomes a node\dots}
+			\ForAll{$x \in \textsc{LspDocumentSymbols}(d)$}
+			\State \Call{MakeChild}{\Call{AddSymbolNode}{$x$}, $v_d$} \Comment{\dots with its symbols as children.}
+			\EndFor
+			\If{\Call{LspLanguageServerSupportsPullDiagnostics}{\null}}
+			\State \Call{HandleDiagnostics}{\Call{LspPullDocumentDiagnostics}{$d$}}
+			\Else
+			\LComment{We will save any incoming diagnostics in the background and handle them at the end.}
+			\State \Call{LspRegisterPushDiagnosticsCallback}{$d$, $(c) \mapsto (C \gets C \cup \{c\})$}
+			\EndIf{}
+			\State \Call{LspCloseDocument}{$d$}
+			\EndFor
+			\label{alg:generate:end1}
 
-		\Statex
-		\ForAll{$v \in V : (v, \tt{Source.Range}) \in \text{dom}(a)$}
-		\LComment{First, connect nodes to each other based on LSP relations.}
-		\State \Call{ConnectNodeVia}{\textsc{LspGoToDefinition}, {Definition}, $v$}
-		\State \Call{ConnectNodeVia}{\textsc{LspGoToDeclaration}, {Declaration}, $v$}
-		\State \Call{ConnectNodeVia}{\textsc{LspGoToTypeDefinition}, {TypeDefinition}, $v$}
-		\State \Call{ConnectNodeVia}{\textsc{LspGoToImplementation}, {Implementation}, $v$}
-		\State \Call{ConnectNodeVia}{\textsc{LspReferences}, {Reference}, $v$}
+			\Statex
+			\ForAll{$v \in V : (v, \tt{Source.Range}) \in \text{dom}(a)$}
+			\LComment{First, connect nodes to each other based on LSP relations.}
+			\State \Call{ConnectNodeVia}{\textsc{LspGoToDefinition}, {Definition}, $v$}
+			\State \Call{ConnectNodeVia}{\textsc{LspGoToDeclaration}, {Declaration}, $v$}
+			\State \Call{ConnectNodeVia}{\textsc{LspGoToTypeDefinition}, {TypeDefinition}, $v$}
+			\State \Call{ConnectNodeVia}{\textsc{LspGoToImplementation}, {Implementation}, $v$}
+			\State \Call{ConnectNodeVia}{\textsc{LspReferences}, {Reference}, $v$}
 
-		\Statex
-		\If{$a(v, \tt{Type}) = \text{Method}$}
-		\Comment{We need to integrate the call hierarchy into the graph.}
-		\State $I \gets \Call{LspPrepareCallHierarchy}{a(v, \tt{Source.Path}), a(v, \tt{Source.Range})}$
-		\LComment{
-			\textsc{GetMatchingItem} returns the item in $I$ with the same name and location as $v$.
-		}
-		\State $i \gets \Call{GetMatchingItem}{I, v}$
-		\State $R \gets \Call{LspCallHierarchyOutgoingCalls}{i}$
-		\State $V' \gets \bigcup\limits_{r \in R} \Call{FindNodesByLocation}{r\tt{.path}, r\tt{.range}}$
-		\ForAll{$v' \in V'$}
-		\State $\Call{AddEdge}{v, v', \text{Call}}$
-		\EndFor
-		\ElsIf{$a(v, \tt{Type}) = \text{Type}$}
-		\Comment{We need to integrate the type hierarchy into the graph.}
-		\State $I \gets \Call{LspPrepareTypeHierarchy}{a(v, \tt{Source.Path}), a(v, \tt{Source.Range})}$
-		\State $i \gets \Call{GetMatchingItem}{I, v}$
-		\State $R \gets \Call{LspTypeHierarchySupertypes}{i}$
-		\State $V' \gets \bigcup\limits_{r \in R} \Call{FindNodesByLocation}{r\tt{.path}, r\tt{.range}}$
-		\ForAll{$v' \in V'$}
-		\State $\Call{AddEdge}{v, v', \text{Extend}}$
-		\EndFor
-		\EndIf{}
-		\EndFor
-		\label{alg:generate:end2}
+			\Statex
+			\If{$a(v, \tt{Type}) = \text{Method}$}
+			\Comment{We need to integrate the call hierarchy into the graph.}
+			\State $I \gets \Call{LspPrepareCallHierarchy}{a(v, \tt{Source.Path}), a(v, \tt{Source.Range})}$
+			\LComment{
+				\textsc{GetMatchingItem} returns the item in $I$ with the same name and location as $v$.
+			}
+			\State $i \gets \Call{GetMatchingItem}{I, v}$
+			\State $R \gets \Call{LspCallHierarchyOutgoingCalls}{i}$
+			\State $V' \gets \bigcup\limits_{r \in R} \Call{FindNodesByLocation}{r\tt{.path}, r\tt{.range}}$
+			\ForAll{$v' \in V'$}
+			\State $\Call{AddEdge}{v, v', \text{Call}}$
+			\EndFor
+			\ElsIf{$a(v, \tt{Type}) = \text{Type}$}
+			\Comment{We need to integrate the type hierarchy into the graph.}
+			\State $I \gets \Call{LspPrepareTypeHierarchy}{a(v, \tt{Source.Path}), a(v, \tt{Source.Range})}$
+			\State $i \gets \Call{GetMatchingItem}{I, v}$
+			\State $R \gets \Call{LspTypeHierarchySupertypes}{i}$
+			\State $V' \gets \bigcup\limits_{r \in R} \Call{FindNodesByLocation}{r\tt{.path}, r\tt{.range}}$
+			\ForAll{$v' \in V'$}
+			\State $\Call{AddEdge}{v, v', \text{Extend}}$
+			\EndFor
+			\EndIf{}
+			\EndFor
+			\label{alg:generate:end2}
 
-		\Statex
-		\State \Call{HandleDiagnostics}{$C$} \Comment{Handle diagnostics that were collected in the background.}\label{alg:generate:diag}
-		\State \Call{AggregateMetrics}{\{\tt{Metric.LOC}\}}\label{alg:generate:agg}
-		\State \Call{AggregateMetrics}{\{\tt{ErrorCount, WarningCount, InformationCount, HintCount}\}}
-		\State \Return $(V, E, a, s, t, \ell)$
-		\label{alg:generate:end3}
+			\Statex
+			\State \Call{HandleDiagnostics}{$C$} \Comment{Handle diagnostics that were collected in the background.}\label{alg:generate:diag}
+			\State \Call{AggregateMetrics}{\{\tt{Metric.LOC}\}}\label{alg:generate:agg}
+			\State \Call{AggregateMetrics}{\{\tt{ErrorCount, WarningCount, InformationCount, HintCount}\}}
+			\State \Return $(V, E, a, s, t, \ell)$
+			\label{alg:generate:end3}
 
-		\Statex
-		\algstore{lspcity}
-	\end{algorithmic}
-\end{algorithm}
+			\Statex
+			\algstore{lspcity}
+		\end{algorithmic}
+	\end{algorithm}
 
-\begin{algorithm}
-	\small
-	\begin{algorithmic}[1]
-		\algrestore{lspcity}
-		\label{alg:generate:funcstart}
-		\Function{AddDocumentNode}{$d \in D$}
-		\State $v_d \gets$ \Call{NewNode}{\null}
-		\State $a' \gets \varnothing$
-		\State $a'(v_d, \tt{Type}) \gets$ File
-		\State $a'(v_d, \tt{Source.Path}) \gets d$
-		\State $a'(v_d, \tt{Metric.LOC}) \gets |\Call{ReadLines}{d}|$ \Comment{\textsc{ReadLines} returns the set of lines in the file.}
-		\State $V \gets V \cup \{v_d\}$
-		\State $a \gets a \cup a'$
-		\State \Call{MakeChild}{$v_d$, \Call{AddDirectoryNode}{$d$\tt{.directory}}}
-		\State \Return $v_d$
-		\EndFunction
+	\begin{algorithm}[H]
+		\small
+		\begin{algorithmic}[1]
+			\algrestore{lspcity}
+			\label{alg:generate:funcstart}
+			\Function{AddDocumentNode}{$d \in D$}
+			\State $v_d \gets$ \Call{NewNode}{\null}
+			\State $a' \gets \varnothing$
+			\State $a'(v_d, \tt{Type}) \gets$ File
+			\State $a'(v_d, \tt{Source.Path}) \gets d$
+			\State $a'(v_d, \tt{Metric.LOC}) \gets |\Call{ReadLines}{d}|$ \Comment{\textsc{ReadLines} returns the set of lines in the file.}
+			\State $V \gets V \cup \{v_d\}$
+			\State $a \gets a \cup a'$
+			\State \Call{MakeChild}{$v_d$, \Call{AddDirectoryNode}{$d$\tt{.directory}}}
+			\State \Return $v_d$
+			\EndFunction
 
-		\Statex
-		\Function{AddSymbolNode}{$x \in \mathcal{S}$}
-		\State $v \gets \Call{NewNode}{\null}$
-		\State $a' \gets \varnothing$
-		\State $a'(v, \tt{Source.Name}) \gets x\tt{.name}$
-		\State $a'(v, \tt{Source.Path}) \gets d$
-		\State $a'(v, \tt{Type}) \gets x\tt{.kind}$
-		\State $a'(v, \tt{Deprecated}) \gets (\text{deprecated} \in x\tt{.tags})$
-		\State $a'(v, \tt{Source.Range}) \gets x\tt{.range}$
-		\State $a'(v, \tt{Metric.LOC}) \gets e_l^{x\tt{.range}} - b_l^{x\tt{.range}}$
-		\LComment{Several other similar attributes omitted here...}
-		\State $a'(v, \tt{HoverInfo}) \gets \Call{LspHover}{d, x\tt{.range}}$
-		\If{$a' \nsubseteq a$} \Comment{If an isomorphic node does not already exist...}
-		\State $V \gets V \cup \{v\}$
-		\Comment{...add it and handle its children.}
-		\State $a \gets a \cup a'$
-		\ForAll{$x' \in x$\tt{.children}}
-		\State \Call{MakeChild}{\Call{AddSymbolNode}{$x'$}, $v$}
-		\Comment{Recurse.}
-		\EndFor
-		\EndIf
-		\State \Return{$v$}
-		\EndFunction
+			\Statex
+			\Function{AddSymbolNode}{$x \in \mathcal{S}$}
+			\State $v \gets \Call{NewNode}{\null}$
+			\State $a' \gets \varnothing$
+			\State $a'(v, \tt{Source.Name}) \gets x\tt{.name}$
+			\State $a'(v, \tt{Source.Path}) \gets d$
+			\State $a'(v, \tt{Type}) \gets x\tt{.kind}$
+			\State $a'(v, \tt{Deprecated}) \gets (\text{deprecated} \in x\tt{.tags})$
+			\State $a'(v, \tt{Source.Range}) \gets x\tt{.range}$
+			\State $a'(v, \tt{Metric.LOC}) \gets e_l^{x\tt{.range}} - b_l^{x\tt{.range}}$
+			\LComment{Several other similar attributes omitted here...}
+			\State $a'(v, \tt{HoverInfo}) \gets \Call{LspHover}{d, x\tt{.range}}$
+			\If{$a' \nsubseteq a$} \Comment{If an isomorphic node does not already exist...}
+			\State $V \gets V \cup \{v\}$
+			\Comment{...add it and handle its children.}
+			\State $a \gets a \cup a'$
+			\ForAll{$x' \in x$\tt{.children}}
+			\State \Call{MakeChild}{\Call{AddSymbolNode}{$x'$}, $v$}
+			\Comment{Recurse.}
+			\EndFor
+			\EndIf
+			\State \Return{$v$}
+			\EndFunction
 
-		\Statex
-		\Function{MakeChild}{$v_c \in V, v_p \in V$}
-		\LComment{The {partOf} edges must induce a tree structure.
-			Hence, if a node already is a part of another node, we must not add another {partOf} edge.}
-		\If{$\exists e \in E: \ell(e) = \text{partOf} \land s(e) = v_c$}
-		\State \Output{Warning: Hierarchy is cyclic. Some children will be omitted.}
-		\Else
-		\State $\Call{AddEdge}{v_c, v_p, \text{partOf}}$
-		\EndIf
-		\EndFunction
+			\Statex
+			\Function{MakeChild}{$v_c \in V, v_p \in V$}
+			\LComment{The {partOf} edges must induce a tree structure.
+				Hence, if a node already is a part of another node, we must not add another {partOf} edge.}
+			\If{$\exists e \in E: \ell(e) = \text{partOf} \land s(e) = v_c$}
+			\State \Output{Warning: Hierarchy is cyclic. Some children will be omitted.}
+			\Else
+			\State $\Call{AddEdge}{v_c, v_p, \text{partOf}}$
+			\EndIf
+			\EndFunction
 
-		\Statex
-		\Function{ConnectNodeVia}{$\textsc{LspFun} \in (D \times \mathcal{R})^{D \times \mathcal{R}}, l \in \Sigma, v \in V$}
-		\LComment{Function $\textsc{LspFun}$ only returns locations, so we need to find the relevant nodes first.}
-		\ForAll{$(d, r) \in \Call{LspFun}{a(v, \tt{Source.Path}), a(v, \tt{Source.Range})}$}
-		\ForAll{$v' \in \Call{FindNodesByLocation}{d, r}$}
-		\State $\Call{AddEdge}{v, v', l}$
-		\EndFor
-		\EndFor
-		\EndFunction
+			\Statex
+			\Function{ConnectNodeVia}{$\textsc{LspFun} \in (D \times \mathcal{R})^{D \times \mathcal{R}}, l \in \Sigma, v \in V$}
+			\LComment{Function $\textsc{LspFun}$ only returns locations, so we need to find the relevant nodes first.}
+			\ForAll{$(d, r) \in \Call{LspFun}{a(v, \tt{Source.Path}), a(v, \tt{Source.Range})}$}
+			\ForAll{$v' \in \Call{FindNodesByLocation}{d, r}$}
+			\State $\Call{AddEdge}{v, v', l}$
+			\EndFor
+			\EndFor
+			\EndFunction
 
-		\Statex
-		\Function{AddEdge}{$v_s \in V, v_t \in V, l \in \Sigma$}
-		\State $e' \gets \Call{NewEdge}{\null}$
-		\State $E \gets E \cup \{e'\}$
-		\State $s(e') \gets v_s$
-		\State $t(e') \gets v_t$
-		\State $\ell(e') \gets l$
-		\EndFunction
-	\end{algorithmic}
-\end{algorithm}
+			\Statex
+			\Function{AddEdge}{$v_s \in V, v_t \in V, l \in \Sigma$}
+			\State $e' \gets \Call{NewEdge}{\null}$
+			\State $E \gets E \cup \{e'\}$
+			\State $s(e') \gets v_s$
+			\State $t(e') \gets v_t$
+			\State $\ell(e') \gets l$
+			\EndFunction
+		\end{algorithmic}
+	\end{algorithm}
 
-\begin{algorithm}
-	\small
-	\begin{algorithmic}[1]
-		\Function{FindNodesByLocation}{$d \in D, r \in \mathcal{R}$}
-		\LComment{We pick the nodes with the most specific range containing the given location.}
-		\State $\text{getR}(v) = a(v, \tt{Source.Range})$
-		\State $N \gets \{ v \in V \mid a(v, \tt{Source.Path}) = d \land b_l^r, e_l^r \in \left[b_l^{\text{getR}(v)}, e_l^{\text{getR}(v)}\right]$
-		\Statex $\hphantom{N \gets \{ v \in V \mid a(v, \tt{Source.Path}) = d} \land\ b_c^r \geq b_c^{\text{getR}(v)} \land
-			e_c^r \leq e_c^{\text{getR}(v)}
-			\Big\}$
-		\State {$N \gets \argmin\limits_{v \in N} e_l^{\text{getR}(v)} - b_l^{\text{getR}(v)}$}
-		\State \Return{$\argmin\limits_{v \in N} e_c^{\text{getR}(v)} - b_c^{\text{getR}(v)}$}
-		\EndFunction
+	\begin{algorithm}[H]
+		\small
+		\begin{algorithmic}[1]
+			\Function{FindNodesByLocation}{$d \in D, r \in \mathcal{R}$}
+			\LComment{We pick the nodes with the most specific range containing the given location.}
+			\State $\text{getR}(v) = a(v, \tt{Source.Range})$
+			\State $N \gets \{ v \in V \mid a(v, \tt{Source.Path}) = d \land b_l^r, e_l^r \in \left[b_l^{\text{getR}(v)}, e_l^{\text{getR}(v)}\right]$
+			\Statex $\hphantom{N \gets \{ v \in V \mid a(v, \tt{Source.Path}) = d} \land\ b_c^r \geq b_c^{\text{getR}(v)} \land
+				e_c^r \leq e_c^{\text{getR}(v)}
+				\Big\}$
+			\State {$N \gets \argmin\limits_{v \in N} e_l^{\text{getR}(v)} - b_l^{\text{getR}(v)}$}
+			\State \Return{$\argmin\limits_{v \in N} e_c^{\text{getR}(v)} - b_c^{\text{getR}(v)}$}
+			\EndFunction
 
-		\Statex
-		\Function{AddDirectoryNode}{$p \in \mathcal{A}_V$}
-		\If{$\exists! v \in V: a(v, \tt{Source.Path}) = p$} \Comment{Check if node exists already.}
-		\State \Return $v$ \Comment{If so, just pick that one.}
-		\EndIf
-		\State $v_p \gets$ \Call{NewNode}{\null}
-		\State $a' \gets \varnothing$
-		\State $a'(v_p, \tt{Type}) \gets$ Directory
-		\State $a'(v_p, \tt{Source.Path}) \gets p$
-		\State $V \gets V \cup \{v_p\}$
-		\State $a \gets a \cup a'$
-		\State $v_p^* \gets$ \Call{AddDirectoryNode}{\Call{GetParentDirectory}{$p$}}
-		\Comment{Recurse to add parent directories.}
-		\If{$v_p \neq v_p^*$}
-		\State \Call{MakeChild}{$v_p$, $v_p^*$}
-		\EndIf
-		\State \Return $v_p$
-		\EndFunction
+			\Statex
+			\Function{AddDirectoryNode}{$p \in \mathcal{A}_V$}
+			\If{$\exists! v \in V: a(v, \tt{Source.Path}) = p$} \Comment{Check if node exists already.}
+			\State \Return $v$ \Comment{If so, just pick that one.}
+			\EndIf
+			\State $v_p \gets$ \Call{NewNode}{\null}
+			\State $a' \gets \varnothing$
+			\State $a'(v_p, \tt{Type}) \gets$ Directory
+			\State $a'(v_p, \tt{Source.Path}) \gets p$
+			\State $V \gets V \cup \{v_p\}$
+			\State $a \gets a \cup a'$
+			\State $v_p^* \gets$ \Call{AddDirectoryNode}{\Call{GetParentDirectory}{$p$}}
+			\Comment{Recurse to add parent directories.}
+			\If{$v_p \neq v_p^*$}
+			\State \Call{MakeChild}{$v_p$, $v_p^*$}
+			\EndIf
+			\State \Return $v_p$
+			\EndFunction
 
-		\Statex
-		\Function{HandleDiagnostics}{$d \subset \mathcal{D}$}
-		\ForAll{$c \in d$}
-		\State $V_c \gets \Call{FindNodesByLocation}{c\tt{.path}, c\tt{.range}}$
-		\ForAll{$v \in V_c$} \Comment{Save diagnostics count (grouped by severity) in all affected nodes.}
-		\State $n \gets c\tt{.severity} + \text{Count}$  \Comment{Concatenate \emph{Count} to attribute name.}
-		\If{$(v, n) \in \text{dom}(a)$}
-		\State $a(v, n) \gets a(v, n) + 1$
-		\Else
-		\State $a(v, n) \gets 1$
-		\EndIf
-		\EndFor
-		\EndFor
-		\EndFunction
+			\Statex
+			\Function{HandleDiagnostics}{$d \subset \mathcal{D}$}
+			\ForAll{$c \in d$}
+			\State $V_c \gets \Call{FindNodesByLocation}{c\tt{.path}, c\tt{.range}}$
+			\ForAll{$v \in V_c$} \Comment{Save diagnostics count (grouped by severity) in all affected nodes.}
+			\State $n \gets c\tt{.severity} + \text{Count}$  \Comment{Concatenate \emph{Count} to attribute name.}
+			\If{$(v, n) \in \text{dom}(a)$}
+			\State $a(v, n) \gets a(v, n) + 1$
+			\Else
+			\State $a(v, n) \gets 1$
+			\EndIf
+			\EndFor
+			\EndFor
+			\EndFunction
 
-		\Statex
-		\Function{AggregateMetrics}{$M \subset \mathcal{A}_K$}
-		\ForAll{$v \in V: \nexists e \in E: t(e) = v \land \ell(e) = \text{partOf}$} \Comment{Aggregate from each root node.}
-		\ForAll{$m \in M$}
-		\State \Call{AggregateMetricFromRoot}{$m, v$}
-		\EndFor
-		\EndFor
-		\EndFunction
+			\Statex
+			\Function{AggregateMetrics}{$M \subset \mathcal{A}_K$}
+			\ForAll{$v \in V: \nexists e \in E: t(e) = v \land \ell(e) = \text{partOf}$} \Comment{Aggregate from each root node.}
+			\ForAll{$m \in M$}
+			\State \Call{AggregateMetricFromRoot}{$m, v$}
+			\EndFor
+			\EndFor
+			\EndFunction
 
-		\Statex
-		\Function{AggregateMetricFromRoot}{$m \in \mathcal{A}_K, v_r \in V$}
-		\State $V_c \gets \{v \in V \mid \exists e \in E: t(e) = v_r \land s(e) = v \land \ell(e) = \text{partOf}\}$ \Comment{Immediate children.}
-		\ForAll{$v \in V_c$}
-		\State \Call{AggregateMetricFromRoot}{$m, v$}
-		\EndFor
-		\LComment{After the recursion above, immediate children now definitely have attribute $m$.}
-		\If{$(v_r, m) \notin \text{dom}(a)$} \Comment{We don't want to overwrite existing metrics.}
-		\State $a(v_r, m) \gets \sum\limits_{v \in V_c} a(v, m)$
-		\EndIf
-		\EndFunction
-		\label{alg:generate:funcend}
-	\end{algorithmic}
-\end{algorithm}
+			\Statex
+			\Function{AggregateMetricFromRoot}{$m \in \mathcal{A}_K, v_r \in V$}
+			\State $V_c \gets \{v \in V \mid \exists e \in E: t(e) = v_r \land s(e) = v \land \ell(e) = \text{partOf}\}$ \Comment{Immediate children.}
+			\ForAll{$v \in V_c$}
+			\State \Call{AggregateMetricFromRoot}{$m, v$}
+			\EndFor
+			\LComment{After the recursion above, immediate children now definitely have attribute $m$.}
+			\If{$(v_r, m) \notin \text{dom}(a)$} \Comment{We don't want to overwrite existing metrics.}
+			\State $a(v_r, m) \gets \sum\limits_{v \in V_c} a(v, m)$
+			\EndIf
+			\EndFunction
+			\label{alg:generate:funcend}
+		\end{algorithmic}
+	\end{algorithm}
+\end{talgorithm}
 
 \tikzexternalenable

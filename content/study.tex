@@ -131,7 +131,7 @@ The results of their experiments, and all others cited here, are listed in the c
 
 \subsection{VSCode}\label{subsec:vscode}
 
-\begin{figure}[htbp]
+\begin{figure}
 	\begin{center}
 		\includegraphics[width=0.95\textwidth]{VSCode}
 	\end{center}
@@ -143,7 +143,7 @@ A screenshot of \gls{vscode} is provided in \cref{fig:vscode}.
 On the left side, we can see the filesystem hierarchy of the open project, in the middle is the code itself, and on the right is a minimap as a quick overview of the current file's code.
 \gls{vscode} also has an extension system in place with which \glspl{ls} and other enhancements to the editor can be easily installed---for example, we can see a notification in the bottom right prompting the user to install the C\# extension.
 
-\begin{figure}[htbp]
+\begin{figure}
 	\begin{center}
 		\includegraphics[width=0.5\textwidth]{VSCode-menu}
 	\end{center}
@@ -361,37 +361,39 @@ Inviting others to participate then becomes as simple as passing the link to the
 	\url{https://falko.de/master-evaluation}, but this link may not stay up forever.
 }.
 
-\begin{algorithm}
-	\tikzexternaldisable
-	\caption{How participants are redirected to the two versions of the survey.}\label{alg:redirect}
-	\begin{algorithmic}[1]
-		\small
-		\Require{Participant ID $p$ retrieved from cookie in request, or $\varnothing$ if it does not exist.}
-		\Ensure{Tuple consisting of the participation ID to be set as a cookie and a survey link.}
-		\LComment{Global state: $P$ is an initially empty mapping from IDs to links, $i$ is initially zero.}
-		\If{$p \notin P$}
-		\If{$p = \varnothing$}
-		\State $p = \Call{NewRandomID}{\null}$
-		\EndIf
-		\State $n_{\Psi}, n_{\Omega} \gets \Call{GetKoboParticipations}{\null}$
-		\If{$n_{\Psi} = \varnothing \lor n_{\Omega} = \varnothing$}
-		\Comment{API request failed, so just alternate using index $i$.}
-		\If{$i = 0$}
-		\State $P(p) \gets \Psi$
-		\Else
-		\State $P(p) \gets \Omega$
-		\EndIf
-		\State $i \gets (i + 1) \bmod 2$
-		\ElsIf{$n_{\Psi} \leq n_{\Omega}$}
-		\State $P(p) \gets \Psi$
-		\Else
-		\State $P(p) \gets \Omega$
-		\EndIf
-		\EndIf
-		\State \Return $(p, P(p))$
-	\end{algorithmic}
-	\tikzexternalenable
-\end{algorithm}
+\begin{talgorithm}{How participants are redirected to the two versions of the survey.}{alg:redirect}
+	\begin{algorithm}[H]
+		\tikzexternaldisable
+		\begin{algorithmic}[1]
+			\small
+			\Require{Participant ID $p$ retrieved from cookie in request, or $\varnothing$ if it does not exist.}
+			\Ensure{Tuple consisting of the participation ID to be set as a cookie and a survey link.}
+			\Statex
+			\LComment{Global state: $P$ is an initially empty mapping from IDs to links, $i$ is initially zero.}
+			\If{$p \notin P$}
+			\If{$p = \varnothing$}
+			\State $p = \Call{NewRandomID}{\null}$
+			\EndIf
+			\State $n_{\Psi}, n_{\Omega} \gets \Call{GetKoboParticipations}{\null}$
+			\If{$n_{\Psi} = \varnothing \lor n_{\Omega} = \varnothing$}
+			\Comment{API request failed, so just alternate using index $i$.}
+			\If{$i = 0$}
+			\State $P(p) \gets \Psi$
+			\Else
+			\State $P(p) \gets \Omega$
+			\EndIf
+			\State $i \gets (i + 1) \bmod 2$
+			\ElsIf{$n_{\Psi} \leq n_{\Omega}$}
+			\State $P(p) \gets \Psi$
+			\Else
+			\State $P(p) \gets \Omega$
+			\EndIf
+			\EndIf
+			\State \Return $(p, P(p))$
+		\end{algorithmic}
+		\tikzexternalenable
+	\end{algorithm}
+\end{talgorithm}
 
 \subsection{Tasks}\label{subsec:tasks}
 As explained in \cref{sec:plan}, we cannot feasibly evaluate most implemented \gls{lsp} \glspl{capability} except for the generation of the \gls{city} itself.

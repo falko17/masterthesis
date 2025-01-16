@@ -32,8 +32,8 @@
 \usepackage{float}
 \usepackage{booktabs}
 \usepackage{tabularx}
-\usepackage{algorithm}
-\usepackage{algpseudocodex}
+\usepackage[plain]{algorithm}
+\usepackage[indLines=false]{algpseudocodex}
 \usepackage{wrapfig2}
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -62,6 +62,7 @@
 \usepackage{cancel}
 \usepackage{siunitx}
 \usepackage{fontawesome}
+\usepackage{rotating}
 
 \tcbuselibrary{skins,minted,breakable}
 
@@ -370,6 +371,8 @@
 \newcommand*{\currentname}{\@currentlabelname{} (\@currentlabel{})}
 \makeatother
 
+%\setlength\algotitleheightrule{0pt}
+
 \AtBeginDocument{
   \newtcblisting[blend into=listings]{codebox}[4][]{%
     colback=Blue!15!white,colframe=Blue!75!black,
@@ -386,6 +389,23 @@
     adjusted title=#4,
     #1
   }
+
+  \newtcolorbox[use counter=algorithm]{talgorithm}[3][]{%
+    colback=blue!15,colframe=blue!75!black,
+    width=1.05\textwidth, arc=0mm,
+    left=2mm, right=2mm, top=2mm, bottom=2mm,
+    boxrule=0.2mm, boxsep=0.3mm,
+    toptitle=0.5mm, bottomtitle=0.2mm,
+    fonttitle=\sffamily\small,
+    enhanced standard, drop fuzzy shadow,
+    breakable,
+    label type=algorithm,
+    adjusted title=\Cref*{#3}: #2,
+    label=#3,
+    float,
+    floatplacement=btp,
+    #1
+    }
 }
 
 \makeatletter
@@ -437,6 +457,11 @@
 \renewcommand{\FXLayoutContentsLine}[3]{\oldFxLox{#1}{\ifempty{#2}{Unfinished section\ifempty{\currentname}{}{: \currentname}}{#2}}{#3}}
 
 %\definecolor{fxnote}{rgb}{0.9000,0.0000,0.0000}
+
+% Place figures at top by default.
+\makeatletter
+\renewcommand*{\fps@figure}{tp}
+\makeatother
 
 \counterwithout{footnote}{chapter}
 
@@ -688,7 +713,7 @@ accuracy of the information provided.
 
 First and foremost, I want to thank Rainer Koschke for his general help, quick answers to any questions that I had, and availability for detailed discussions on various aspects of both the implementation and user study of this thesis.
 Additionally, I am thankful for every participant who took part in my user study, with additional gratitude towards those who even shared the link to the evaluation in their own circles.
-Finally, I want to thank all {proofreaders} (\fxerror[layout=inline]{Add proofreader names here}) who, despite its length, read through this thesis to catch any mistakes.
+Finally, I want to thank all proofreaders (namely, Sven Hager, Hugo Hakim Damer, \fxerror[layout=inline]{Add other proofreader names here}) who, despite its length, read through this thesis to catch any mistakes.
 If you're reading this right now, you must be a proofreader, so good luck, and thanks!
 
 \cleardoublepage

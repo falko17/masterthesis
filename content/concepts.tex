@@ -5,7 +5,6 @@
 \begin{document}
 \chapter{Concepts}\label{ch:concepts}
 
-%\lettrine[lines=3]{\textcolor{Maroon}{B}}{efore} tackling the implementation, we need to take a closer look at the concepts central to this thesis, so that we can form a concrete idea of which parts of \gls{lsp} are well-suited to being integrated into \glspl{city}.
 \lettrine[lines=3]{\textcolor{Maroon}{O}}{utlining} the central concepts behind this thesis is a crucial first step before tackling the implementation, so that we can form a concrete idea of which parts of \gls{lsp} are well-suited to being integrated into \glspl{city}.
 Thus, we will examine the concept of \glspl{city}, where we will use \SEE{} as a concrete implementation (which we do in \cref{sec:see}), as well as the \glsentrylong{lsp} (which we do in \cref{sec:lsp}).
 For the former, we will go over the essential features that we need to work with in the implementation, with a special focus on the project graph.
@@ -91,7 +90,7 @@ Apart from the project graph, there are a few other features of \SEE{} we need t
 % Which are:
 \paragraph{Context Menu}
 
-\begin{figure}[htbp]
+\begin{figure}
 	\begin{center}
 		\includegraphics[width=0.3\textwidth]{OldContextMenu}
 	\end{center}
@@ -104,12 +103,12 @@ We will expand this menu with \gls{lsp}-specific actions in the course of \cref{
 
 \paragraph{City Editor}
 
-\begin{figure}[htbp]
+\begin{sidewaysfigure}
 	\begin{center}
 		\includegraphics[width=\textwidth]{UnityEditor}
 	\end{center}
 	\caption{The \glsentrytext{editor} with a scene in \SEE{} opened.}\label{fig:editor}
-\end{figure}
+\end{sidewaysfigure}
 
 To actually generate a \gls{city}---assuming one has a \gls{gxl} file for this purpose---a customized \gls{ui} component within the \gls{editor} exists in \SEE{}.
 Here, a variety of options can be configured, such as the layout of the city, the mapping of metrics to visual attributes, or the \glspl*{provider}, which create a project graph based on optional input parameters (such as the aforementioned \gls{gxl} file).
@@ -124,7 +123,7 @@ Currently, these windows do little more than lexer-based syntax highlighting, so
 
 \paragraph{Erosion icons}
 
-\begin{figure}[htbp]
+\begin{figure}
 	\begin{center}
 		\includegraphics[width=0.9\textwidth]{ErosionIcons}
 	\end{center}

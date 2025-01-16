@@ -32,9 +32,9 @@ for x in range(1,101):
 			\end{minipage}};
 		\node[font=\small\sffamily,above left=0.45cm and 0cm of cw,anchor=north west] {Text-only code};
 
-		\node[circle,right=2cm of see,gray,box,minimum width=2cm] (gxl) {\gls{gxl} file};
+		\node[circle,right=2cm of see,gray,box,minimum width=2cm] (gxl) {\glstext[textformat=text]{gxl} file};
 
-		\matrix[right=2cm of gxl,matrix anchor=west,anchor=center,row sep=0.3cm] {
+		\matrix[right=1cm of gxl,matrix anchor=west,anchor=center,row sep=0.3cm] {
 			\node {\includegraphics[width=2cm,clip,trim={0 1cm 0 0}]{axivion}};                                                                                                              \\
 			\node[font=\small,gray,box] (p1) {C analyzer};                                                                                               \\
 			\node[font=\small,gray,box] (p2) {C\# analyzer};                                                                                             \\
@@ -45,9 +45,9 @@ for x in range(1,101):
 
 		\draw[arr] (programmerend) -- node[arrlabel] {uses} (see);
 		\draw[arr,BrickRed] (see.east) -- node[arrlabel] {reads} (gxl);
-		\draw[arr,BrickRed] (see) -- node[arrlabel,right] {Generates \gls{city}\\from \gls{gxl} information} (cc);
+		\draw[arr,BrickRed] (see) -- node[arrlabel,right] {Generates \gls{city}\\from \glstext[textformat=text]{gxl} information} (cc);
 		\draw[arr,BrickRed] (see) -- node[arrlabel,left] {Displays source code\\as plain text} (cw);
-		\draw[rarr,gray] ($(gxl.east) + (0,0.2)$) -- (p1.west) node[arrlabel,above left=0.5cm and -0.5cm,midway] {Generates \gls{gxl} file\\from source code} ;
+		\draw[rarr,gray] ($(gxl.east) + (0,0.2)$) -- (p1.west) node[arrlabel,above left=0.5cm and -0.5cm,midway] {Generates \glstext[textformat=text]{gxl} file\\from source code} ;
 		\draw[rarr,gray] (gxl.east) -- (p2.west);
 		\draw[rarr,gray] ($(gxl.east) + (0,-0.2)$) -- (p3.west);
 
@@ -81,9 +81,9 @@ for x in range(1,101):
 			\end{minipage}};
 		\node[font=\small\sffamily,above left=0.45cm and 0cm of cw,anchor=north west] {Interactive code};
 
-		\node[right=2cm of see,Blue,box] (lsp) {\gls{lsp} library};
+		\node[right=1.7cm of see,Blue,box] (lsp) {\gls{lsp} library};
 
-		\matrix[right=2cm of lsp,matrix anchor=west,anchor=center,row sep=0.3cm] {
+		\matrix[right=1.2cm of lsp,matrix anchor=west,anchor=center,row sep=0.3cm] {
 			\node[ForestGreen,box] (p1) {C\\\gls{ls}};   \\
 			\node[Fuchsia,box] (p2) {C\#\\\gls{ls}};     \\
 			\node[Orange,box] (p3) {Java\\\gls{ls}};     \\
@@ -91,7 +91,7 @@ for x in range(1,101):
 			\node[Sepia,box] (p5) {Rust\\\gls{ls}};      \\
 			\node[Maroon,box] (p6) {Many more\dots};                   \\
 		};
-		\node[font=\huge,Blue,below left=-0.5cm and 2cm of p1] (lspc) {\faUsers};
+		\node[font=\huge,Blue,below left=-0.7cm and 1.7cm of p1] (lspc) {\faUsers};
 		\node[font=\small\bfseries,Blue,below=-0.2cm of lspc] {\gls{lsp} community};
 
 

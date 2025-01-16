@@ -10,9 +10,7 @@ We will start by briefly going over some preliminary changes to both \SEE{} and 
 Then, we will spend the majority of this chapter specifying and explaining the algorithm which "converts" \gls{lsp} information into \glspl{city}, before looking into how additional \glspl{capability} can be integrated into \SEE{}'s \glspl{city} and \glspl{window}.
 Finally, we will conduct a brief technical evaluation, with a more thorough user study following in the next chapter.
 
-\fxwarning{Add retrieval dates for YouTube links}
-
-Before continuing with this chapter, I highly recommend watching the six-minute showcase video at \url{https://www.youtube.com/watch?v=yAzyv2_q2ng}.
+Before continuing with this chapter, I highly recommend watching the six-minute showcase video at \web{https://www.youtube.com/watch?v=yAzyv2\_q2ng}{2025-01-15}.
 It goes over all important user-facing features implemented in this chapter and does a better job of presenting them than can be done in text alone.
 
 \section{Preliminary Changes}
@@ -216,43 +214,43 @@ An updated \textsc{FindNodesByLocationEfficient} is given in \cref{alg:interval}
 	      }
 \end{itemize}
 
-\begin{algorithm}
-	\small
-	\tikzexternaldisable
+\begin{talgorithm}{Efficiently associating \gls{lsp}-returned \glspl{range} to existing elements using an already constructed augmented \gls{intervaltree}.}{alg:interval}
+	\begin{algorithm}[H]
+		\small
+		\tikzexternaldisable
+		\begin{algorithmic}[1]
+			\Function{FindNodesByLocationEfficientEfficient}{$d \in D, r \in \mathcal{R}$}
+			\State \Return \Call{QueryTree}{$H(d), r, \varnothing$}
+			\EndFunction
 
-	\caption{Efficiently associating \gls{lsp}-returned \glspl{range} to existing elements using an already constructed augmented \gls{intervaltree}.}\label{alg:interval}
-	\begin{algorithmic}[1]
-		\Function{FindNodesByLocationEfficientEfficient}{$d \in D, r \in \mathcal{R}$}
-		\State \Return \Call{QueryTree}{$H(d), r, \varnothing$}
-		\EndFunction
+			\Statex
+			\Function{QueryTree}{$T \in \mathcal{T}, q \in \mathcal{R}, R \subseteq V$}
+			\State $r \gets a(v_T, \tt{Source.Range})$
+			\If{$b^q_l > l_T \lor (b^q_l = l_T \land b^q_c \geq c_T)$}
+			\Comment{Range is to the right of all nodes in this subtree.}
+			\State \Return $R$
+			\EndIf
+			\If{$q \subseteq r$}
+			\Comment{Range is contained in this node, but we want only minimal fits.}
+			\State $m \gets \{v \in R \mid r \lesssim a(v, \tt{Source.Range}) \}$
+			\If{$|m| > 0$} \Comment{This range is smaller than other results.}
+			\State $R \gets (R \setminus m) \cup \{v_T\}$
+			\ElsIf{$\forall v \in R: a(v, \tt{Source.Range}) \simeq r$} \Comment{Other ranges are equally minimal.}
+			\State $R \gets R \cup \{v_T\}$
+			\EndIf
+			\LComment{Otherwise, $r$ is not minimal, so we don't add the node.}
+			\EndIf
 
-		\Statex
-		\Function{QueryTree}{$T \in \mathcal{T}, q \in \mathcal{R}, R \subseteq V$}
-		\State $r \gets a(v_T, \tt{Source.Range})$
-		\If{$b^q_l > l_T \lor (b^q_l = l_T \land b^q_c \geq c_T)$}
-		\Comment{Range is to the right of all nodes in this subtree.}
-		\State \Return $R$
-		\EndIf
-		\If{$q \subseteq r$}
-		\Comment{Range is contained in this node, but we want only minimal fits.}
-		\State $m \gets \{v \in R \mid r \lesssim a(v, \tt{Source.Range}) \}$
-		\If{$|m| > 0$} \Comment{This range is smaller than other results.}
-		\State $R \gets (R \setminus m) \cup \{v_T\}$
-		\ElsIf{$\forall v \in R: a(v, \tt{Source.Range}) \simeq r$} \Comment{Other ranges are equally minimal.}
-		\State $R \gets R \cup \{v_T\}$
-		\EndIf
-		\LComment{Otherwise, $r$ is not minimal, so we don't add the node.}
-		\EndIf
-
-		\State $R \gets \Call{QueryTree}{\lambda_T, q, R}$
-		\If{$e^q_l \geq b^r_l \land (e^q_l \neq b^r_l \lor e^q_c > b^r_c))$} \Comment{Range could be contained in right subtree.}
-		\State $R \gets \Call{QueryTree}{\rho_T, q, R}$
-		\EndIf
-		\State \Return $R$
-		\EndFunction
-	\end{algorithmic}
-	\tikzexternalenable
-\end{algorithm}
+			\State $R \gets \Call{QueryTree}{\lambda_T, q, R}$
+			\If{$e^q_l \geq b^r_l \land (e^q_l \neq b^r_l \lor e^q_c > b^r_c))$} \Comment{Range could be contained in right subtree.}
+			\State $R \gets \Call{QueryTree}{\rho_T, q, R}$
+			\EndIf
+			\State \Return $R$
+			\EndFunction
+		\end{algorithmic}
+		\tikzexternalenable
+	\end{algorithm}
+\end{talgorithm}
 
 \begin{codebox}[minted options={linenos,escapeinside=++,firstnumber=0}]{csharp}{lst:interval}{Example C\# source code with demarcated symbol ranges.}
 +\textcolor{red}{|}+public class Example {
@@ -374,7 +372,7 @@ For example, a quirk of some \glspl{ls} is that a returned location may begin at
 
 Finally, there is an option to enable the \gls{lsp} functions for \glspl{window} that are detailed in \cref{sec:intowindow}, a setting to generate log files for the transferred \gls{jrpc} messages, and a slider to adjust the maximum time we should wait for a \gls{ls}'s response to a request.
 With all of these options configured, the graph can be loaded and drawn (and optionally exported to a \gls{gxl} file), where a bar displays the approximate progress of the process.
-At this point, we will once again refer back to the explanatory video\footnote{\url{https://www.youtube.com/watch?v=yAzyv2_q2ng}},
+At this point, we will once again refer back to the explanatory video\footnote{\web{https://www.youtube.com/watch?v=yAzyv2\_q2ng}{2025-01-15}},
 which goes over the implemented functionality in a bit more detail and may be easier to follow along than this textual description.
 Some examples of \glspl{city} rendered using this algorithm are given in \cref{fig:gencities} in \cref{sec:techeval}.
 
@@ -390,10 +388,10 @@ We already had an implementation for a tooltip that shows arbitrary text when ho
 	\item The tooltip now disappears when the user moves their mouse, and re-appears when the mouse is kept in place for a certain amount of time.
 \end{enumerate}
 
-\fxnote{Crop hover info image better}
 \begin{figure}
 	\begin{center}
-		\includegraphics[width=0.95\textwidth]{HoverInfo}
+		% l b r t
+		\includegraphics[trim={0.3cm 0.8cm 2.7cm 0.3cm},clip,width=0.95\textwidth]{HoverInfo}
 	\end{center}
 	\caption{A hover info tooltip with Markdown text converted to TextMeshPro rich text tags.}\label{fig:hoverinfo}
 \end{figure}
@@ -783,7 +781,7 @@ We can check this hypothesis by plotting the relative time improvement as define
 		\tikzexternalenable
 	\end{center}
 	\caption{The relative improvement of the optimized algorithm by number of edges (\ie, the percentage by which the time is reduced when using \cref{alg:interval} instead of the base \cref{alg:generate}).
-		Error bars are shown when their extent exceeds the diameter of the point.
+		Error bars are only shown when their extent exceeds the diameter of the point, and describe the full range of datapoints (\ie, from minimum to maximum).
 		\emph{Note the logarithmic x-axis.}
 	}\label{fig:relimprov}
 \end{figure}
