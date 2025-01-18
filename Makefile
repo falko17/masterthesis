@@ -6,7 +6,9 @@ pdf: thesis clean
 
 thesis:
 	pdflatex -shell-escape -draftmode $(FILENAME).tex
+	$(MAKE) -f thesis.makefile
 	biber $(FILENAME)
+	makeglossaries $(FILENAME)
 	pdflatex -shell-escape -draftmode $(FILENAME).tex
 	pdflatex -shell-escape $(FILENAME).tex
 	
