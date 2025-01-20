@@ -67,7 +67,7 @@
 \tcbuselibrary{skins,minted,breakable}
 
 \usepgfplotslibrary{colorbrewer}
-\usetikzlibrary{external,positioning,shapes,arrows.meta,calc,fit,shadows.blur}
+\usetikzlibrary{external,positioning,shapes,arrows.meta,calc,fit,shadows.blur,backgrounds}
 \tikzexternalize[mode=list and make]
 
 \PassOptionsToClass{listof=numbered}{scrreprt}
@@ -391,7 +391,7 @@
   }
 
   \newtcolorbox[use counter=algorithm]{talgorithm}[3][]{%
-    colback=blue!15,colframe=blue!75!black,
+    colback=blue!10,colframe=blue!75!black,
     width=1.05\textwidth, arc=0mm,
     left=2mm, right=2mm, top=2mm, bottom=2mm,
     boxrule=0.2mm, boxsep=0.3mm,

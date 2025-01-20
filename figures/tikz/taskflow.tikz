@@ -1,6 +1,7 @@
 \begin{tikzpicture}[
-	box/.style={draw, rounded corners, text width=6cm, align=center, minimum height=2cm},
-	scalebox/.style={draw, rounded corners, text width=4.5cm, align=center, minimum height=1cm},
+	box/.style={draw, rounded corners, text width=6cm, align=center, minimum height=2cm,fill=Maroon!10},
+	scalebox/.style={draw, rounded corners, text width=4.5cm, align=center, minimum height=1cm,fill=Maroon!10},
+	outerbox/.style={draw, thick, minimum width=7cm, minimum height=14.5cm,fill=Maroon!5,blur shadow},
 	heading/.style={font=\Large\bfseries\boldmath},
 	nextarrow/.style={draw=Maroon, line width=0.5mm,-{Latex[length=3mm]}}
 	]
@@ -8,7 +9,7 @@
 	\newcommand{\taskbox}[5][]{\node[box,#1] (#2) at (#3) {{\large\bfseries\boldmath \underline{#4}}\\\vspace{1.5mm}\small#5}}
 
 	% Left title box.
-	\node[draw, thick, minimum width=7cm, minimum height=14.5cm] (left) at (0,0) {};
+	\node[outerbox] (left) at (0,0) {};
 	\node[heading,align=center] at (0,6.4) {\textsf{Group $\Psi$: SEE}\\\textsf{Group $\Omega$: VSCode}};
 
 	% Boxes for tasks to the left.
@@ -19,7 +20,7 @@
 	\node[scalebox] (S1) at ($(C1) + (0,-2.3)$) {\itshape\large\glsentrylong{sus}};
 
 	% Right title box.
-	\node[draw, thick, minimum width=7cm, minimum height=14.5cm] (right) at (8,0) {};
+	\node[outerbox] (right) at (8,0) {};
 	\node[heading,align=center] at (8,6.4) {\textsf{Group $\Psi$: VSCode}\\\textsf{Group $\Omega$: SEE}};
 
 	% Boxes for tasks to the right.
@@ -43,4 +44,7 @@
 	\draw[nextarrow] (C2) -- (S2);
 	\draw[nextarrow] (S2) -- (C);
 	\draw[nextarrow] (S1.east) to[out=0,in=180] (A2.west);
+
+	% Required to keep shadows in the bounds of the picture.
+	\node[opacity=0] at (right.south -| right.east) {.};
 \end{tikzpicture}
