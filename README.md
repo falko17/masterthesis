@@ -4,6 +4,12 @@ This is the $\LaTeX$ code for my master's thesis. Its style is based mainly on [
 
 ## Building
 
+> [!NOTE]
+> There are (at least) two reasons why following the instructions below wouldn't work:
+>
+> 1. The full results from the user study aren't publicly available.[^1]
+> 2. My fork of tikzviolinplots isn't locally available.[^2]
+
 To build it, you'll first need to run the analysis script, which needs the results from the user study[^1] to exist in the same directory:
 
 ```sh
@@ -27,6 +33,8 @@ make -j $(nproc)
 ```
 
 [^1]: These results have not been included here for privacy reasons. Anonymized results are available at `digital/Eval-*.xlsx`, but those won't immediately work due to the redacted fields, so you'd need to fill in some dummy data first (or modify the scripts).
+
+[^2]: To make the violin plots more readable, I added jittering functionality to tikzviolinplots in [this PR](https://github.com/pedro-callil/tikzviolinplots/pull/3). This has been merged by now, but it's not released as part of the package. My thesis still assumes a local version is available, so you need to clone the tikzviolinplots repository and put it in `../tikzviolinplots/` relative to the thesis.
 
 ## Folder Structure
 
