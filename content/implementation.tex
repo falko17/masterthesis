@@ -8,7 +8,8 @@
 The integration of \gls{lsp} into \SEE{}, with a special focus on how to build \glspl{city} using \gls{lsp}'s \glspl{capability}.
 We will start by briefly going over some preliminary changes to both \SEE{} and the \gls{lsp} specification.
 Then, we will spend the majority of this chapter specifying and explaining the algorithm which "converts" \gls{lsp} information into \glspl{city}, before looking into how additional \glspl{capability} can be integrated into \SEE{}'s \glspl{city} and \glspl{window}.
-Finally, we will conduct a brief technical evaluation, with a more thorough user study following in the next chapter.
+This allows us to answer \textsf{RQ1}.
+Finally, we will conduct a brief technical evaluation to answer \textsf{RQ2}, with a more thorough user study following in the next chapter.
 
 Before continuing with this chapter, I highly recommend watching the six-minute showcase video at \web{https://www.youtube.com/watch?v=yAzyv2\_q2ng}{2025-01-15}.
 It goes over all important user-facing features implemented in this chapter and does a better job of presenting them than can be done in text alone.
@@ -50,7 +51,7 @@ There was not much I had to do in terms of getting \SEE{} ready, so this section
 \begin{itemize}
 	\item I have integrated the OmniSharp \gls{lsp} C\# library~\cite{csharplanguageserverprotocol2023} into \SEE{}, which we will leverage in the subsequent sections so that we can use \gls{lsp} without needing to worry about \gls{jrpc} encoding, data models, and so on.
 	\item \Glspl{window} have previously been made editable by \textcite{moritz} in his bachelor's thesis, also enabling collaborative editing over the internet.
-	      I unfortunately had to remove these changes because they did not work anymore in the current version of \SEE{}, and additionally caused a lot of complexity overhead in the \gls{window} implementation that would have made the \gls{lsp} integration much harder.
+	      I unfortunately had to remove these changes because they did not work anymore in the current version of \SEE{}, and additionally caused a lot of complexity overhead in the \glsh{window} implementation that would have made the \gls{lsp} integration much harder.
 	\item Finally, the attribute space $\mathcal{A}$ in \SEE{} did not allow for \glspl{range} of the form \gls{lsp} needs, so I had to replace the existing attributes (which track the line and column, but not a full range) with a proper set of \gls{range} attributes.
 	      In \cref{subsec:graph}, we have introduced this as a single \tt{Source.Range} attribute, but in reality, there are four \gls{range} attributes---one per member of the decomposed form.
 	      We will ignore this reality for the rest of this thesis and act like the \gls{range} is a single attribute, that is, for all project graphs with nodes $V$ and attributes $a$, it holds that $\{a(v, \tt{Source.Range}) \mid v \in V \land (v, \tt{Source.Range}) \in \mathrm{dom}(a) \} \subseteq \mathcal{R}$.
@@ -64,6 +65,7 @@ All of these changes have been made across two pull requests to \SEE{}.\footnote
 In this section, we will examine the centerpiece of this thesis:
 The algorithm with which \glspl{city} can be generated using the \glsentrylong{lsp}.
 While going over how the algorithm works, we will investigate \glspl{intervaltree} and how they relate to the algorithm, before finally taking a look at what the import process looks like in practice in \SEE{}.
+This part also comprises the main answer to the first research question \textsf{RQ1} of how \glspl{city} can be built using \gls{lsp}, with the following \cref{sec:intocity,sec:intowindow} providing additional specifics.
 
 \subsection{Algorithm}
 
@@ -374,7 +376,7 @@ Finally, there is an option to enable the \gls{lsp} functions for \glspl{window}
 With all of these options configured, the graph can be loaded and drawn (and optionally exported to a \gls{gxl} file), where a bar displays the approximate progress of the process.
 At this point, we will once again refer back to the explanatory video\footnote{\web{https://www.youtube.com/watch?v=yAzyv2\_q2ng}{2025-01-15}},
 which goes over the implemented functionality in a bit more detail and may be easier to follow along than this textual description.
-Some examples of \glspl{city} rendered using this algorithm are given in \cref{fig:gencities} in \cref{sec:techeval}.
+Some examples of \glspl{city} rendered using this algorithm are given in \cref{fig:gencities} in \cref{sec:techeval}---this is also where we will investigate the scalability of the algorithm in order to answer our second research question \textsf{RQ2}.
 
 \section{Integrating LSP Functionality into Code Cities}\label{sec:intocity}
 After having examined how \glspl{city} are generated through the use of \gls{lsp}, we are now going to take a quick look at how some \gls{lsp} \glspl{capability} are integrated into \SEE{}.
@@ -439,7 +441,7 @@ Clicking on this entry leads to one of two things happening:
 \subsection{Diagnostics as Erosion Icons}
 Finally, we are displaying \gls{lsp}-sourced diagnostics as erosion icons above each node.
 As described in \cref{sec:generate} and specifically \cpageref{alg:generate:end3,alg:generate:funcend} of \cref{alg:generate}, we retrieve these diagnostics either by using the pull diagnostics \gls{capability} if it is available, or we collect pushed diagnostics during the import process.
-We then associate diagnostics to nodes using the \gls{intervaltree}-based function described in \cref{subsec:kd}.
+We then associate diagnostics to nodes using the \glsh{intervaltree}-based function described in \cref{subsec:kd}.
 Finally, if the user enabled this in the configuration, we aggregate diagnostics upwards so that collected diagnostics can also be seen on the module they are in, for example.
 
 We are not going to go into the details of the rendering and display of the nodes, as this just re-uses the same mechanisms as the implementation from my bachelor's thesis~\cite[section~3.3]{galperin2021}.
@@ -447,7 +449,7 @@ There were only minimal changes, like the integration of new icons for the diffe
 
 \section{Integrating LSP Functionality into Code Windows}\label{sec:intowindow}
 Now we will go over how the functionalities of \glspl{ls} have been integrated into \glspl{window} to make them more \gls{ide}-like.
-Some of these functionalities will seem quite similar to the way the corresponding \gls{city} \gls{lsp} features were implemented in the previous section.
+Some of these functionalities will seem quite similar to the way the corresponding \glsh{city} \gls{lsp} features were implemented in the previous section.
 However, a crucial difference here is that, for \glspl{city}, the pre-computed \gls{lsp} attributes from \cref{alg:generate} are used (\ie, no actual requests are made to the \gls{ls}, it does not even have to be running), while for \glspl{window}, all \gls{lsp} functionality does actually go through the \gls{ls} as a proper \gls{jrpc} request.
 \Cref{fig:lspwindow} showcases what a \gls{window} with the newly added \gls{lsp} features looks like.
 
@@ -524,7 +526,7 @@ This is useful because it allows the user to quickly jump to the definition of, 
 \section{Technical Evaluation}\label{sec:techeval}
 Before ending this chapter, we want to briefly evaluate the implementation on a technical level.
 While there are some unit tests for parts of the algorithm, taking real-world projects and trying to generate \glspl{city} out of them using our implementation is important to verify that it is working correctly too.
-Apart from a quick qualitative glance at each generated city, we are also interested in an analysis of performance here---we made quite a few theoretical statements and analyses in \cref{sec:generate}, so we can also use this section to make sure the \gls{intervaltree}-based \cref{alg:interval} actually does work more efficiently than the original "brute-force" approach of \cref{alg:generate}.
+Apart from a quick qualitative glance at each generated city, we are also interested in an analysis of performance here---we made quite a few theoretical statements and analyses in \cref{sec:generate}, so we can also use this section to make sure the \glsh{intervaltree}-based \cref{alg:interval} actually does work more efficiently than the original "brute-force" approach of \cref{alg:generate}.
 
 I ran the city generation algorithm on the following projects:
 \begin{itemize}
@@ -721,7 +723,7 @@ There, the optimized version (suffix $O$) is compared against the brute-force ve
 		\end{center}
 	\end{subfigure}
 	\caption{Generation time for each project, broken down by parts of the algorithm.
-		The suffix \emph{O} denotes the optimized (\gls{intervaltree}) version of the algorithm, while \emph{B} refers to the brute-force version.
+		The suffix \emph{O} denotes the optimized (\glsh{intervaltree}) version of the algorithm, while \emph{B} refers to the brute-force version.
 	}\label{fig:techeval}
 \end{figure}
 
@@ -840,6 +842,7 @@ Still, this should not be a big problem, as the structure of the \gls{city} stil
 
 \section{Interim Conclusion}\label{sec:implconclusion}
 In this chapter, we covered how we implemented the various aspects of the \gls{lsp} integration, placing a special focus on the generation algorithm for \glspl{city}.
+\Crefrange{sec:generate}{sec:intowindow} specifically provide an answer to the first research question \textsf{RQ1}.
 We closed out the chapter by evaluating the implementation and benchmarking its performance.
 
 The technical evaluation revealed that the implementation does work well for the tested projects and that the implemented optimizations make sense, but the total runtime still is not really at the level where this system can be used productively for larger projects.
@@ -847,8 +850,15 @@ For example, generating a city for SpotBugs, a project with around \qty{200000}{
 Actually generating a \gls{city} for projects on the order of \qty{1000000}{\loc} from \gls{lsp} information with all available information being present (\ie, all nodes, all edges, all diagnostics) still seems intractable, but I am unsure whether this is due to additional inefficiencies in the algorithm or if the \glspl{ls} themselves are at fault.\footnote{
 	Of course, this is a slightly unfair assessment---\glspl{ls} were never developed with the intent to be used in high-throughput scenarios like this, only for moderate use in \glspl{ide}.
 }
-Thus, we have to answer our first research question \textsf{RQ1} with caveats:
-While it is feasible to generate \glspl{city} using the \glsentrylong{lsp}, more research and work needs to be done for this to work well with very large software projects.
+
+Thus, we have to answer the second research question \textsf{RQ2} as follows:
+Our approach to the \gls{lsp} integration scales only for projects with up to circa \qty{200000}{\loc}---assuming that only high-level node types and only some edge types are chosen---before the long generation time becomes impractical.
+If all node and edge types stay enabled, then this number has to be lowered by an order of magnitude.
+This answer also varies between \glspl{ls}: for very different languages like \LaTeX{}, these values may especially differ.
+In general, within the same \gls{ls} and for usual projects\footnote{
+	Specifically, projects where $n_d \ll |E|$ and $|V| \ll |E|$.
+}, the algorithm's average-case runtime lies in $\mathcal{O}(|E| \cdot \log |V|)$.
+So, while it is feasible to generate \glspl{city} using the \glsentrylong{lsp}, more research and work needs to be done for this to work well with very large software projects.
 
 \Cref{tab:code} contains a summary of all pull requests created for this thesis, along with the number of added and deleted lines.
 There is one more pull request here that I have not mentioned yet, since it only contains disparate fixes and small additions that were done for the user study that we will talk about in the next chapter.
@@ -865,7 +875,7 @@ There are two relevant features here that we should quickly go over:
 	      }.
 \end{itemize}
 
-\begin{table*}[htbp]
+\begin{table*}[tbp]
 	\newcommand{\githubpr}[2]{\href{https://github.com/#1/pull/#2}{\proptt{#1\##2}}}
 	\newcommand{\diffsum}[2]{\textcolor{Green}{\ensuremath{#1}} & \textcolor{Red}{\ensuremath{#2}}}
 	\caption{All submitted pull requests done as part of this thesis.}\label{tab:code}

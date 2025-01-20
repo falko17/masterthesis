@@ -651,13 +651,14 @@
 \pdfbookmark[0]{Abstract}{abstract}
 {\usekomafont{chapter}Abstract}
 
-In this master's thesis, we investigate how to generate code cities by using the \emph{Language Server Protocol} (LSP), and more specifically, how to integrate it into the code city tool SEE.
-Apart from investigating how feasible this is, another research question is whether code cities are a suitable means to present LSP information as compared to traditional IDEs.
+In this master's thesis, we investigate how to generate code cities by using the \emph{Language Server Protocol} (LSP), and more specifically, how to integrate it into the code-city tool SEE.
+Apart from investigating how scalable this is, another research question is whether code cities are a suitable means to present LSP information as compared to traditional IDEs.
 
-After giving a short overview of LSP and SEE, the first main part of the thesis deals with the implementation of LSP into the code city tool SEE, with a special focus on how code cities can be algorithmically generated using the information provided by the protocol.
-We also conduct a brief technical evaluation to benchmark the performance of the city generation algorithm, with the result that using the algorithm is feasible for projects of up to around \num{100000} lines of code, but takes too long for projects bigger than that, assuming no node and edge types are filtered out.
+After giving a short overview of LSP and SEE, the first main part of the thesis deals with the implementation of LSP into the code-city tool SEE, with a special focus on how code cities can be algorithmically generated using the information provided by the protocol.
+We also conduct a brief technical evaluation to benchmark the performance of the city generation algorithm.
+The result is that, for the average case and Language Server, with only the most important node and edge types enabled, using the algorithm is feasible for projects of up to around \num{200000} lines of code, but takes too long for projects bigger than that.
 
-The second main part is about evaluating the second research question in a user study, which compares SEE against the popular IDE VSCode across three program understanding tasks.
+The second main part is about evaluating the second research question in a user study, which compares SEE against the popular IDE VSCode across three program-understanding tasks.
 We evaluate the two tools on the dimensions of correctness, time, and usability.
 For usability, we use the \emph{After-Scenario Questionnaire} (ASQ) as a post-task questionnaire, and the \emph{System Usability Scale} (SUS) as a post-study questionnaire.
 Each of the $n = \participants$ participants solved the tasks in an online study using both SEE and VSCode,with a different software project per tool.

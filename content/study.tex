@@ -25,7 +25,7 @@ A drawback here is that this algorithm does not necessarily converge.
 In those cases, we fall back to using Silverman's rule of thumb~\cite{silverman1986}, the implementation of which is integrated into the library we use to draw these plots~\cite{callil-soares2024}.
 
 \section{Plan}\label{sec:plan}
-Our main aim here is to answer our second research question that we defined in \cref{sec:goals}:
+Our main aim here is to answer our third research question that we defined in \cref{sec:goals}:
 \begin{displayquote}
 	Are \glspl{city} a suitable means to present \gls{lsp} information to developers as compared to \glspl{ide} + tables (on the dimensions of speed, accuracy, and usability)?
 \end{displayquote}
@@ -33,8 +33,8 @@ Our main aim here is to answer our second research question that we defined in \
 To empirically evaluate this research question, we will devise a series of short software engineering related tasks on the real-world software projects \emph{JabRef}~\cite{jabref} and \emph{SpotBugs}~\cite{spotbugs}.
 Participants then get randomly assigned to either use \SEE{} (along with our implementation from \cref{ch:implementation}) or \gls{vscode} (with an active \gls{ls}).
 However, evaluating the supported \glspl{capability} (see \cref{tab:capabilities}) in this way turns out to be quite difficult---for example, how would one evaluate the \emph{Hover} \gls{capability}, let alone features like \glspl{token} which are almost identically implemented across \SEE{} and \gls{vscode}?
-For this reason, we will abstain from incorporating the \gls{window}-related \glspl{capability} from \cref{sec:intowindow}.
-Limiting ourselves, then, to the \gls{city}-related changes from \cref{sec:intocity}, we have:
+For this reason, we will abstain from incorporating the \glsh{window}-related \glspl{capability} from \cref{sec:intowindow}.
+Limiting ourselves, then, to the \glsh{city}-related changes from \cref{sec:intocity}, we have:
 \begin{enumerate}
 	\item \emph{Diagnostics} being displayed as erosion icons above corresponding nodes.
 	      \begin{description}
@@ -75,16 +75,16 @@ As a reminder, the big green point marks the average of the dataset.
 	\caption{\Gls{sus} results for \SEE{} across sixteen studies~\cite{davidwagner2020, felixgaebler2021, galperin2021, hannesmasuch2020, kevindoehl2020, lennartkipka2020, maximilianwick2022, michelkrause2024, moritz, nicoweiser2021, robertbohnsack2020, rohlfing2024, rubensmidt2021, schramm2022, sulanabubakarov2021, yannisrohloff2021}.}\label{fig:seesus}
 \end{figure}
 
-Outside of \SEE{}, there are a number of other \gls{city} implementations, such as \emph{CodeCity}~\cite{wettel2007} or \emph{Software World}~\cite{knight2000} (see also the overview by \textcite{jeffery2019}).
-In their evaluations, these papers often compare different platforms (such as Desktop to VR/AR)~\cite[\eg,][]{merino2017,fittkau2015, merino2018}, but as with the \SEE{}-related theses, we are most interested in those that have controlled experiments comparing a \gls{city} tool with a traditional \gls{ide}.
+Outside of \SEE{}, there are a number of other \glsh{city} implementations, such as \emph{CodeCity}~\cite{wettel2007} or \emph{Software World}~\cite{knight2000} (see also the overview by \textcite{jeffery2019}).
+In their evaluations, these papers often compare different platforms (such as Desktop to VR/AR)~\cite[\eg,][]{merino2017,fittkau2015, merino2018}, but as with the \SEE{}-related theses, we are most interested in those that have controlled experiments comparing a \glsh{city} tool with a traditional \gls{ide}.
 
-One such study was done by \textcite{wettel2011} and compares \emph{CodeCity} against the Eclipse \gls{ide}, with the caveat that participants using Eclipse can also access an Excel spreadsheet of software metrics, as the \gls{city} implementation would otherwise have an unfair advantage.
+One such study was done by \textcite{wettel2011} and compares \emph{CodeCity} against the Eclipse \gls{ide}, with the caveat that participants using Eclipse can also access an Excel spreadsheet of software metrics, as the \glsh{city} implementation would otherwise have an unfair advantage.
 He based his study on an extensive survey of existing empirical work on software visualization, constructing a "wishlist" of desiderata for such studies~\cite[chapter 7]{wettel2011}.
 We will refer back to this wishlist, and to his experiment design in general, in \cref{sec:design} for our own study.
 The study was later replicated by \textcite{romano2019} with a subset of tasks.
 
 Similarly, \textcite{mortara2024} supplied tabular data for \gls{ide} users in a comparison against \emph{VariCity}, although here, participants were allowed to choose whatever \gls{ide} they are most comfortable with.
-\textcite{mehra2020} gave participants who were using Eclipse an additional 2D graph tool when evaluating the augmented reality \textsc{XRaSE} \gls{city} visualization.
+\textcite{mehra2020} gave participants who were using Eclipse an additional 2D graph tool when evaluating the augmented reality \textsc{XRaSE} \glsh{city} visualization.
 On the other hand, the category of comparative user studies between \glspl{city} and \glspl{ide} without any other helper tools includes ones by \textcite{khaloo2017,galperin2022,lennartkipka2020}.
 The results of their experiments, and all others cited here, are listed in the color-coded \cref{tab:compresults}.
 
@@ -165,7 +165,7 @@ The script with which the metrics were extracted is attached as \gls{extract}.
 
 \subsection{Hypotheses}\label{subsec:hypotheses}
 
-To answer \textsf{RQ2} (see \cref{sec:goals}), we would like to know whether there is any significant\footnote{
+To answer \textsf{RQ3} (see \cref{sec:goals}), we would like to know whether there is any significant\footnote{
 	Any mention of "significance" in this chapter refers to statistical significance.
 } difference between the approaches on the dimensions of \emph{speed}, \emph{correctness}, and \emph{usability}, similar to most other studies mentioned in \cref{subsec:research}.
 We will now create more concrete hypotheses for each of these dimensions.
@@ -322,7 +322,7 @@ Because we need a validated German translation, we can also strike out the Engli
 
 This leaves the \emph{\glsentrylong{sus}} as a fitting option:
 It has a validated German translation~\cite{reinhardt2015}, is the most used \gls{poststudy} questionnaire for this purpose~\cites[1615]{sauro2009}[577]{lewis2018}, and is very well-suited for comparing two systems or interfaces~\cites[195]{peres2013}[590--591]{bangor2008}.
-It consists of ten \gls{likert} questions which alternate between positive and negative aspects of the system and returns a score between 0 and 100, representing the system's usability~\cite{brooke1996}.
+It consists of ten \glsh{likert} questions which alternate between positive and negative aspects of the system and returns a score between 0 and 100, representing the system's usability~\cite{brooke1996}.
 These questions are collected in \cref{app:susq}.
 Existing measured \gls{sus} scores for \SEE{} are given in \cref{fig:seesus}.
 
@@ -332,7 +332,7 @@ Specifically, we need to:
 \begin{itemize}
 	\item reliably measure the time each task takes to solve,
 	\item provide both an English and a German version of the questionnaire,
-	\item ask questions with numerical, text-based, selection, and \gls{likert}-based input, and
+	\item ask questions with numerical, text-based, selection, and \glsh{likert}-based input, and
 	\item conditionally show fields or bar the user from continuing (\eg, until the tutorial question is answered correctly) depending on existing input.
 \end{itemize}
 Among the tools that can handle this for free, \textit{KoboToolbox}\footnote{
@@ -400,7 +400,7 @@ As explained in \cref{sec:plan}, we cannot feasibly evaluate most implemented \g
 This means we are actually comparing a \gls{city} against an \gls{ide}, with \gls{lsp} only playing the role of providing us with those \glspl{city}, for which there are a number of existing experiments that we went over in \cref{subsec:research}.
 Thus, we should base our own study design on the existing literature established in that section.
 Specifically, out of the similar studies collected in \cref{tab:compresults}, the study by \textcites{wettel2011} (replicated by \textcite{romano2019}) seems most fitting for us:
-It compares a desktop \gls{city} implementation against a traditional \gls{ide} along with providing tabular metrics to make the comparison fair.
+It compares a desktop \glsh{city} implementation against a traditional \gls{ide} along with providing tabular metrics to make the comparison fair.
 In addition, the paper provides a great number of details, including detailed task definitions, and a wish list which we went over at the beginning of \cref{sec:design}.
 
 Wettel uses two kinds of tasks~\cite[128--130]{wettel2011}:
@@ -467,7 +467,7 @@ To help the reader quickly identify important results, we put a star ($\bigstar$
 
 \subsection{Study Procedure}\label{subsec:procedure}
 Before we started with the actual study, we did a small-scale pilot study with two participants, one of them being this thesis's first reviewer Prof.\ Dr.\ Rainer Koschke.
-Through their valuable feedback, I was able to see some issues I had not noticed myself before starting the study, such as a few bugs in \SEE{}, confusion regarding the term \gls{base}, and errors unpacking the prepared compressed builds of \SEE{} and \gls{vscode}\footnote{
+Through their valuable feedback, I was able to see some issues I had not noticed myself before starting the study, such as a few bugs in \SEE{}, confusion regarding the term "\gls{base}", and errors unpacking the prepared compressed builds of \SEE{} and \gls{vscode}\footnote{
 	As a sidenote, using prepared builds also prevents any potential problems with pre-installed versions of the tools.
 	For example, some plugins of \gls{vscode} might otherwise interfere with our study.
 } when using Windows.
@@ -726,7 +726,7 @@ With the \gls{asq} after each task (six times total), which we will examine firs
 \paragraph{\gls{asq}: Complexity}
 The \gls{asq} consists of two questions, the first of which is about the "cognitive" complexity or difficulty of solving the task---this is the factor we will examine here.
 Comparisons of this factor between the two systems are visualized in \cref{fig:asqc}.
-Note that the values are \gls{likert} responses to the question given in \cref{subsec:question}, meaning that \emph{lower} scores correspond to \emph{higher} complexity.
+Note that the values are \glsh{likert} responses to the question given in \cref{subsec:question}, meaning that \emph{lower} scores correspond to \emph{higher} complexity.
 
 \begin{figure}
 	\begin{subfigure}[T]{0.5\textwidth}
@@ -931,7 +931,7 @@ Since this is where most of the comments were left, I will group these comments 
 		      \item There should be a more obvious function to highlight the superclass instead of just the edges.
 		            \answer{This function already exists via the context menu, but was not included in the explanatory video.}
 		      \item It would be useful to have the feature to directly navigate to the \gls{base} instead of having to go from one parent to the next.
-		            \answer{I agree when talking about \SEE{} as it is normally used, but for this study, the intent was to have a non-trivial task that required moderate interaction with the \gls{city} environment.}
+		            \answer{I agree when talking about \SEE{} as it is normally used, but for this study, the intent was to have a non-trivial task that required moderate interaction with the \glsh{city} environment.}
 		      \item File paths should have been shown more prominently.
 		            \answer{There should at least be an option to include this information in the hover popup.
 			            Showing paths for every node in the city would overcrowd it a bit.}
@@ -941,7 +941,7 @@ Since this is where most of the comments were left, I will group these comments 
 		      \item A gradient may have been better on the nodes.
 		            The single color makes it harder to distinguish nodes whose \gls{nom} is similar. \agree
 		      \item A less three-dimensional view may have been useful to navigate this city more easily.
-		            \answer{This may be true here, since we have not used all three dimensions for metrics, but at its core, \SEE{} is a 3D \gls{city} visualization.}
+		            \answer{This may be true here, since we have not used all three dimensions for metrics, but at its core, \SEE{} is a 3D \glsh{city} visualization.}
 	      \end{itemize}
 	\item \textbf{Bug reports}:
 	      \begin{itemize}
@@ -1026,17 +1026,17 @@ Identifying the biggest components in the codebase is a good starting point for 
 when adding new tests to a project, it is a good idea to first identifying the convention with which existing tests are organized;
 and when trying to understand a certain class, it is often necessary to navigate up its inheritance hierarchy to investigate parts specified in superordinate classes.
 However, in retrospect, some of the tasks (specifically $A$ and $C$) may have been too easy, given that almost no participants made any mistake, as seen in \cref{fig:correctness}.
-This makes analysis of this aspect a bit harder insofar that we may miss relevant answers to our research question \textsf{RQ2} here (\eg, maybe there \emph{are} significant differences between \gls{lsp}-enabled \glspl{city} and \glspl{ide}, and our tasks were just too easy to catch them), but it should not be a big problem for the study as a whole, because time and usability were varied enough to cause meaningful results.
+This makes analysis of this aspect a bit harder insofar that we may miss relevant answers to our research question \textsf{RQ3} here (\eg, maybe there \emph{are} significant differences between \gls{lsp}-enabled \glspl{city} and \glspl{ide}, and our tasks were just too easy to catch them), but it should not be a big problem for the study as a whole, because time and usability were varied enough to cause meaningful results.
 
 As for the setup, it consists of the subject systems (\SEE{} and \gls{vscode}) and the object systems (JabRef and SpotBugs).
 JabRef and SpotBugs should be reasonably representative (see \cref{sec:design}) but the combination of \gls{vscode} together with external tables might be somewhat unusual.
-It is probably more common to encounter a setup where such information is integrated into the \gls{ide}, for example, in the form of a \gls{smell} tool that tells the developer when components exceed certain metrics.
+It is probably more common to encounter a setup where such information is integrated into the \gls{ide}, for example, in the form of a \glsh{smell} tool that tells the developer when components exceed certain metrics.
 Still, this should not be too big a problem, as on the one hand, the same setup was used in Wettel's study, and on the other hand, setups like this do exist in the real world (\eg, the Axivion Dashboard, used in a similar comparative study~\cite[section~4.1]{galperin2021}, is such a tabular external tool).
 However, even though we tried to reduce it (as discussed in \cref{sec:design}), our results might be biased due to the \gls{hawthorne} or related effects.
 For example, I was not physically present for the tasks, but just knowing that they were being timed could have caused participants to perform worse than they would have without any perceived time pressure~\cite[\eg,][]{sussman2022a}.
 
 \section{Interim Conclusion}
-In this chapter, we evaluated our second research question \textsf{RQ2} by conducting a user study.
+In this chapter, we evaluated our third research question \textsf{RQ3} by conducting a user study.
 The study consisted of six program understanding tasks and compared the \gls{lsp}-integrated version of \SEE{} from \cref{ch:implementation} to the \gls{lsp}-enabled \gls{ide} \gls{vscode} together with tables listing code metrics.
 Using the data of \participants participants, it turned out that some tasks took less perceived effort and were faster to solve when using \gls{vscode} instead of \SEE{}, with no other significant results.
 Additionally, participants found \gls{vscode} significantly more usable than \SEE{}.
@@ -1057,7 +1057,7 @@ Additionally, participants found \gls{vscode} significantly more usable than \SE
 	\end{tabular}
 \end{table*}
 
-Based on this data, we can answer \textsf{RQ2} as follows:
+Based on this data, we can answer \textsf{RQ3} as follows:
 \Glspl{city} are a suitable means to present \gls{lsp} information, but developers work faster and report both lower perceived effort and higher usability ratings when using traditional \glspl{ide}, at least in the case of \SEE{} versus \gls{vscode}.
 It is unclear what the exact cause of this difference is.
 The \gls{sus} score of \SEE{} is very close to average \gls{sus} scores~\cite{sauro2013}, while \gls{vscode} reaches a very high score, so one possible reason is that \gls{vscode} is a much more polished and "tried-and-tested" product than \SEE{}, which made it easier to use.
@@ -1073,11 +1073,11 @@ While \citeauthor{wettel2011}'s study did not measure usability, \citeauthor{rom
 These differences could come from the fact that more tasks were used (twelve for \citeauthor{wettel2011} and ten for \citeauthor{romano2019}), making their experiments more representative, but it could also have been due to the choice of Eclipse as the \gls{ide}, which in one study by \textcite{morales2019} received an average \gls{sus} of $60.9$, lower than our average \SEE{} \gls{sus} score of $69.5$.
 
 We can also make a comparison with the study for my bachelor's thesis, whose tasks $A$ and $B$ are very similar to our task $A$~\cite{galperin2022}.
-There, I compared \SEE{} against the Axivion Dashboard, a web-based tabular \gls{smell} explorer, with the result being that using the Dashboard leads to higher correctness, but using \SEE{} leads to higher speed and a better \gls{asq} effort rating.
+There, I compared \SEE{} against the Axivion Dashboard, a web-based tabular \glsh{smell} explorer, with the result being that using the Dashboard leads to higher correctness, but using \SEE{} leads to higher speed and a better \gls{asq} effort rating.
 While this also goes against our results, we can at least replicate the difference between the \gls{sus}, as the Dashboard (analogously to \gls{vscode}) received a significantly higher score than \SEE{}.
 
 In summary, our results here go against most of the existing literature covered in \cref{subsec:research}, especially when looking at \cref{tab:compresults}.
-As said before, this may be due to the choice of \gls{ide} (the most-used \gls{ide} by other studies has been Eclipse, while we used \gls{vscode}), choice of \gls{city} implementation, or choice of tasks.
-Further investigation into the exact causes here---perhaps by rigorously comparing various \glspl{ide}, \gls{city} tools, tasks, and so on, against each other in further user studies---could be a good avenue for future research.
+As said before, this may be due to the choice of \gls{ide} (the most-used \gls{ide} by other studies has been Eclipse, while we used \gls{vscode}), choice of \glsh{city} implementation, or choice of tasks.
+Further investigation into the exact causes here---perhaps by rigorously comparing various \glspl{ide}, \glsh{city} tools, tasks, and so on, against each other in further user studies---could be a good avenue for future research.
 
 \chapterendornament{78}{0.2}

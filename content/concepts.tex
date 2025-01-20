@@ -13,7 +13,7 @@ For both topics, we will focus on the parts relevant to the implementation and e
 
 \section{SEE}\label{sec:see}
 
-As explained in \cref{subsec:see}, \SEE{} is an interactive software visualization tool using the \gls{city} metaphor in 3D, with the aim to make it easier to work with large software projects on an architectural level.
+As explained in \cref{subsec:see}, \SEE{} is an interactive software visualization tool using the \glsh{city} metaphor in 3D, with the aim to make it easier to work with large software projects on an architectural level.
 To name a few example scenarios in which using code cities could be useful, compared to using traditional \glspl{ide}:
 \begin{itemize}
 	\item Senior developers may use it in its "multiplayer" mode to explain the structure of their software to newcomers.
@@ -25,7 +25,7 @@ To name a few example scenarios in which using code cities could be useful, comp
 It is a research project at the University of Bremen, where it has been in development since 2017~\cite{ganser2017}, and where it is frequently offered as a bachelor or master project for the students.
 While it was at first a project for the \emph{Unreal Engine}, the game engine has been switched to \emph{Unity} relatively early, mainly because its editor eased development due to the ability to reload the \gls*{ui} without having to restart the whole engine.
 
-After going over the basics of how \SEE{} works, I will give an explanation and formalization of the project graph---as this is the central component in the \gls{lsp}-based \gls{city}-generation algorithm---followed by a brief overview over other relevant features for this thesis.
+After going over the basics of how \SEE{} works, I will give an explanation and formalization of the project graph---as this is the central component in the \gls{lsp}-based \glsh{city} generation algorithm---followed by a brief overview over other relevant features for this thesis.
 
 \subsection{Basics}
 As mentioned before, when analyzing a software project in \SEE{}, its source code structure is reflected in the rendered buildings, where connections between the components, such as references, are displayed using edges rendered as splines (this will be elaborated in \cref{subsec:graph}), as can be seen in \cref{fig:edges}, for example.
@@ -134,7 +134,7 @@ Following my bachelor's thesis~\cite{galperin2021}, \SEE{} offers the possibilit
 These are essentially small icons that can be put above each node, as shown in \cref{fig:erosion}.
 The size and color of these erosion icons can then indicate the quantity of \glspl{smell} for that given node.
 A controlled experiment has suggested that this gives developers a quicker, more intuitive overview over the distribution of \glspl{smell} within a project, compared to traditional (\ie, tabular) ways of displaying this information~\cite{galperin2022}.
-While \gls{lsp} does not offer a standardized way of offering \gls{smell} information, we can use its diagnostics capability (see \cref{subsec:capabilities}) for the same purpose.
+While \gls{lsp} does not offer a standardized way of offering \glsh{smell} information, we can use its diagnostics capability (see \cref{subsec:capabilities}) for the same purpose.
 
 \section{Language Server Protocol}\label{sec:lsp}
 The very basic concepts behing \gls{lsp} have already been explained in \cref{subsec:lsp}.
@@ -249,7 +249,7 @@ I have grouped the following \glspl{capability} into this category:
 	      For example, tokens with the \tt{static} modifier might be rendered in \textit{italics}, while ones with the \tt{deprecated} modifier could be rendered in \st{strikethrough}.
 
 	      \SEE{} currently uses Antlr\footnote{\web{https://www.antlr.org}{2024-06-10}}-based syntax highlighting, where we need to manually group each parser's token into some categories to determine colors.
-	      The added value of the \glspl{token} \gls{capability} here would be ease of use (\ie, no need to manually configure each \gls{ls}) on the one hand, and support for token modifiers (\ie, "extended" syntax highlighting) on the other hand.
+	      The added value of the \glsh{token} \gls{capability} here would be ease of use (\ie, no need to manually configure each \gls{ls}) on the one hand, and support for token modifiers (\ie, "extended" syntax highlighting) on the other hand.
 \end{itemize}
 
 
@@ -323,7 +323,7 @@ We have also motivated and laid out the specific ways in which the existing \gls
 We are ready to tackle the actual implementation in the next chapter.
 As a quick overview before then, \cref{tab:capabilities} lists the planned \glspl{capability} along with their intended use in \SEE{}.
 
-\begin{table}[H]
+\begin{table}[tbp]
 	\caption{\gls{lsp} \glspl{capability} that will be integrated into \SEE{} as part of this thesis.}\label{tab:capabilities}
 	\begin{tabularx}{\textwidth}{@{}lXX@{}}
 		\toprule
@@ -340,5 +340,7 @@ As a quick overview before then, \cref{tab:capabilities} lists the planned \glsp
 	\caption*{\footnotesize $^*$This includes the \textit{Go to declaration / definition / implementation / type definition} capabilities.}
 \end{table}
 
+\newpage
+\vspace*{\fill}
 \chapterendornament{19}{0.1}
 \end{document}

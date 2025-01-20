@@ -28,6 +28,16 @@
 	\end{info@box}
 }
 
+% From https://tex.stackexchange.com/a/311882
+\glsaddkey
+{hyphenated}        % new key
+{\relax}            % default value if "hyphenated" isn't used in \newglossaryentry
+{\glsentryh}     % analogous to \glsentrytext
+{\Glsentryh}     % analogous to \Glsentrytext
+{\glsh}          % analogous to \glstext
+{\Glsh}          % analogous to \Glstext
+{\GLSh}          % analogous to \GLStext
+
 \makeatletter
 \newcommand*{\@starsymfn}[1]{%
 	$\ifcase#1 \or*\or**\or\dagger\or\ddagger\or\mathsection\or\mathparagraph\or\|%
@@ -177,10 +187,12 @@
 
 \newglossaryentry{base}{name=base class,
 	description={{T}he base class of a class is its superordinate (\ie, above in the inheritance tree) class that itself has no further parent class within the project.},
+	hyphenated={base-class},
 	plural=base classes}
 
 \newglossaryentry{city}{name={c}ode {c}ity,
 description={{I}n the code city metaphor, software components are visualized as buildings within a city, where various metrics of the software are represented visually (\eg, the height of a building could represent the lines of code of the component).},
+hyphenated={code-city},
 plural=code cities}
 
 \newglossaryentry{ls}{name={L}anguage {S}erver,
@@ -194,18 +206,21 @@ description={{A} development tool, such as an \gls{ide}, that supports \gls{lsp}
 	plural=capabilities}
 
 \newglossaryentry{window}{name={c}ode {w}indow, text=code window,
+hyphenated={code-window},
 description={{A} source code viewer in \SEE{} which supports very basic \gls{ide}-like functionality.}}
 
 \newglossaryentry{fisherexact}{name={F}isher's exact test,
 	description={{A} test for statistical significance for contingency tables, intended as an alternative to the $\chi^2$ test to be accurate even with smaller sample sizes.~\cite{fisher1922}}}
 
 \newglossaryentry{likert}{name={L}ikert scale,
+	hyphenated={{L}ikert-scale},
 	description={{A} psychometric scale in which users indicate their agreement on a linear scale from "strongly agree" to "strongly disagree"~\cite{likert1932}.}}
 
 \newglossaryentry{kdtree}{name={$k$-{d} tree},
 description={{A} data structure (using a binary tree as a basis) with which certain spatial data in $k$ dimensions can be efficiently stored and retrieved.}}
 
 \newglossaryentry{intervaltree}{name=interval tree,
+	hyphenated={interval-tree},
 	description={{A} data structure meant to store intervals/ranges in such a way that overlapping or contained intervals can be found efficiently.}}
 
 \newglossaryentry{multiplecomp}{name=multiple comparisons problem,
@@ -238,6 +253,7 @@ description={{T}he process of comparing the architecture and implementation of a
 	description={{a} class for which only one instance exists for the duration of the process.}}
 
 \newglossaryentry{smell}{name={c}ode {s}mell,
+hyphenated={code-smell},
 description={{c}ertain structures in source code that suggest that a refactoring is in order, such as duplicated code, or a very long method~\cite[85-87]{fowler2019}.}}
 
 \newglossaryentry{mwu}{name={Mann-Whitney $U$ test},
@@ -247,10 +263,12 @@ description={{c}ertain structures in source code that suggest that a refactoring
 	description={{t}he contiguous portion within a source code file that a certain element occupies. In this thesis, we will express it as an ordered pair of a start and end position $(s, e)$, or, alternatively, as a 4-tuple $(s_l, s_c, e_l, e_c)$.
 			In the latter representation, the first two elements describe the zero-indexed start line and start character offset, respectively, and the last two describe the corresponding (exclusive) end line and end character offset.}}
 
-\newglossaryentry{token}{name={s}emantic token, text=semantic token,
+\newglossaryentry{token}{name=semantic token,
+	hyphenated={semantic-token},
 	description={An \gls{lsp} \gls{capability} that returns tokens for a document, with the intention that those tokens can be used to apply syntax highlighting to the file. Apart from token types, it also offers token \emph{modifiers}, which can be used to apply additional formatting on top of the colors from the types.}}
 
 \newglossaryentry{violin}{name=violin plot,
+	hyphenated={violin-plot},
 	description={A plot visualizing the distribution of a collection of data points along with an estimated probability density~\cite{hintze1998}.
 			The black/white data points are randomly "jittered" along the $x$-axis to make them more differentiable from one another.
 			A bigger, green point marks the average of the dataset.
