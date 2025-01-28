@@ -10,7 +10,6 @@ from scipy.stats import (
     kendalltau,
     mannwhitneyu,
     pointbiserialr,
-    spearmanr,
 )
 
 from .util import print_statistic, write_dat
@@ -168,11 +167,14 @@ def check_effects(sv, vs, both):
     # DVs:
     # Time, Usability, and Correctness are continuous variables (interval-scaled).
     # According to (Khamis, 2008), we will use...
-    # - Either Pearson or Spearman (if outliers) for Interval-Interval
+    # - ~~Either Pearson or Spearman (if outliers) for Interval-Interval~~
+    #   => Spearman and Kendall are very similar, and Rainer recommended using Kendall
+    #      here too, as it's more robust. This has the additional advantage that all
+    #      elements in the correlation matrix are directly comparable.
     for key1, key2 in product(iv_interval, dvs):
         # We choose Spearman here, as there are indeed some outliers.
-        corr_see = spearmanr(df[key1], df[f"see_{key2}"])
-        corr_vscode = spearmanr(df[key1], df[f"vscode_{key2}"])
+        corr_see = kendalltau(df[key1], df[f"see_{key2}"])
+        corr_vscode = kendalltau(df[key1], df[f"vscode_{key2}"])
         mat = pl.concat(
             [
                 mat,
@@ -229,5 +231,5 @@ def check_effects(sv, vs, both):
         p_adjusted=pl.Series(false_discovery_control(mat_total["p"], method="by"))
     ).with_columns(pl.col(pl.String).str.replace_all("_", "-"))
 
-    # code.interact(local=dict(globals(), **locals()))
+    code.interact(local=dict(globals(), **locals()))
     write_dat("corr", mat_total, violin=False)

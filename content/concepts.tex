@@ -48,7 +48,7 @@ One of the main goals of this thesis is generating such a graph using \gls{lsp},
 These graphs can be formalized as $G = (V, E, a, s, t, \ell)$, with:
 \begin{itemize}
 	\item $V$ being a set of nodes and $E$ being a set of edges.
-	\item $a: (V \times \mathcal{A}_K) \rightharpoonup \mathcal{A}_V$ associating nodes and an attribute name $(\in \mathcal{A}_{K})$ with a value $(\in \mathcal{A}_{V})$. Note that this is a partial function.
+	\item $a: (V \times \mathcal{A}_K) \rightharpoonup \mathcal{A}_V$ associating nodes and an attribute name ($\in \mathcal{A}_{K}$, the set of attribute keys/names) with a value ($\in \mathcal{A}_{V}$, the set of attribute values). Note that this is a partial function.
 	\item $s: E \rightarrow V$ denoting the source node of an edge.
 	\item $t: E \rightarrow V$ denoting the target node of an edge.
 	\item $\ell: E \rightarrow \Sigma$ providing a label for an edge over some alphabet $\Sigma$.
@@ -137,7 +137,7 @@ A controlled experiment has suggested that this gives developers a quicker, more
 While \gls{lsp} does not offer a standardized way of offering \glsh{smell} information, we can use its diagnostics capability (see \cref{subsec:capabilities}) for the same purpose.
 
 \section{Language Server Protocol}\label{sec:lsp}
-The very basic concepts behing \gls{lsp} have already been explained in \cref{subsec:lsp}.
+The very basic concepts behind \gls{lsp} have already been explained in \cref{subsec:lsp}.
 The protocol aims to make it easier for \glspl{ide} to support more programming languages---specifically, to support language-specific \glspl{capability}, which we will go over in \cref{subsec:capabilities}.
 It was originally developed for Microsoft's editor \gls{vscode} and was later converted into an open-source specification\footnote{
 	Available at \web{https://github.com/microsoft/language-server-protocol}{2024-10-05}.
@@ -149,7 +149,7 @@ The current (as of \today{}) version of the protocol is 3.17, with version 3.18 
 \subsection{Basics}\label{subsec:lspbasics}
 Messages in the Language Server Protocol are built using \gls{jrpc}, which uses JSON to encode both requests (consisting of a method name and parameters) and responses (consisting of either a result object or an error object) for procedure calls.
 Requests include an ID that a response by the server can then reference to match it up with the request it is a reply to.
-There also so-called \emph{notifications}, which are in essence requests without an ID, intended to send a message that does not warrant a response~\cite{jsonrpc,json}.
+There are also so-called \emph{notifications}, which are in essence requests without an ID, intended to send a message that does not warrant a response~\cite{jsonrpc,json}.
 In \gls{lsp}, any message sent between the \gls{lc} and \gls{ls} consist of a header---describing the length and type of the content---followed by the content, which is always a \gls{jrpc} payload.
 While the specification does not mandate it, it lists some recommended communication channels on which the protocol messages can be sent, those being \tt{stdio} (using standard input/output), \tt{pipe} (using Windows's pipes), \tt{socket} (using a socket), and \tt{node-ipc} (IPC communication over Node.js\footnote{\web{https://nodejs.org}{2024-10-05}}).
 

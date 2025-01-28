@@ -109,6 +109,17 @@
 \let\@glslink\glsplainhyperlink
 \makeatother
 
+% Horrible hack to make citations colored.
+\makeatletter
+\renewcommand*{\bibleftbracket}{\blx@postpunct\textcolor{black}{[}}
+\renewcommand*{\bibrightbracket}{\blx@postpunct\textcolor{black}{]}\midsentence}
+\makeatother
+\newcommand{\glosscite}[2][]{%
+	\textcolor{ForestGreen}{\cite[#1]{#2}}%
+}
+\newcommand{\glosscref}[1]{%
+	\textcolor{Fuchsia}{\cref{#1}}%
+}
 
 \defglsentryfmt[main]{\glsgenentryfmt\mainformat{\glslabel}}
 %\defglsentryfmt[\acronymtype]{\glsgenentryfmt\ifglsused{\glslabel}{\glsentryshort{\glslabel}}{\glsentrylong{\glslabel}}\mainformat{\glslabel}}
@@ -134,17 +145,17 @@
 
 %%% ACRONYMS HERE %%%
 
-\newacronym[description={{A} three-item questionnaire asking participants for satisfaction with ease, completion time, and support information~\cite{lewis1991}.}]{asq}{ASQ}{After-Scenario Questionnaire}
+\newacronym[description={{A} three-item questionnaire asking participants for satisfaction with ease, completion time, and support information~\glosscite{lewis1991}.}]{asq}{ASQ}{After-Scenario Questionnaire}
 
 \newacronym[description={{A} protocol that can be viewed as the analogue to LSP for debuggers, with the goal to make it easier to integrate debuggers into development tools.}]{dap}{DAP}{Debug Adapter Protocol}
 
 \newacronym[description={A syntax in which context-free grammars can be formally expressed.}]{ebnf}{EBNF}{Extended Backus–Naur Form}
 
-\newacronym[description={The expected proportion of false positives within all positives.~\cite{benjamini1995}}]{fdr}{FDR}{False Discovery Rate}
+\newacronym[description={The expected proportion of false positives within all positives.~\glosscite{benjamini1995}}]{fdr}{FDR}{False Discovery Rate}
 
 \newacronym[description={The area of the world that can be seen by a camera or eye.}]{fov}{FOV}{Field of view}
 
-\newacronym[description={The probability of getting at least one false positive in a family of statistical tests.~\cite{tukey1953}}]{fwer}{FWER}{Family-Wise Error Rate}
+\newacronym[description={The probability of getting at least one false positive in a family of statistical tests.~\glosscite{tukey1953}}]{fwer}{FWER}{Family-Wise Error Rate}
 
 \newacronym[description={{A} file format for graphs, used in \gls{see} for representing dependency and hierarchy graphs of software projects.}]{gxl}{GXL}{\itag{G}raph e\itag{X}change \itag{L}anguage}
 
@@ -160,23 +171,23 @@
 
 \newacronym[description={{T}he number of methods in a certain class.}]{nom}{NOM}{Number of Methods}
 
-\newacronym[description={{A} questionnaire that measures usability in sixteen questions across the three factors \emph{usefulness}, \emph{information quality}, and \emph{interface quality}.~\cite{lewis1992,lewis2002}}]{pssuq}{PSSUQ}{Post-Study System Usability Questionnaire}
+\newacronym[description={{A} questionnaire that measures usability in sixteen questions across the three factors \emph{usefulness}, \emph{information quality}, and \emph{interface quality}.~\glosscite{lewis1992,lewis2002}}]{pssuq}{PSSUQ}{Post-Study System Usability Questionnaire}
 
-\newacronym[description={{A} \gls{poststudy} questionnaire measuring usability across 41 questions in its short version and 122 questions in its long version.~\cite{chin1988}}]{quis}{QUIS}{\itag{Q}uestionnaire for \itag{U}ser \itag{I}nteraction \itag{S}atisfaction}
+\newacronym[description={{A} \gls{poststudy} questionnaire measuring usability across 41 questions in its short version and 122 questions in its long version.~\glosscite{chin1988}}]{quis}{QUIS}{\itag{Q}uestionnaire for \itag{U}ser \itag{I}nteraction \itag{S}atisfaction}
 
 \newacronym[description={{A}n interactive software visualization tool using the code city metaphor in 3D, developed in the Unity game engine at the University of Bremen.}]{see}{SEE}{Software Engineering Experience}
 
-\newacronym[description={A single question intended to estimate usability which uses a scale with 150 options.~\cite[53\psqq]{zijlstra1985a}}]{smeq}{SMEQ}{Subjective Mental Effort Question}
+\newacronym[description={A single question intended to estimate usability which uses a scale with 150 options.~\glosscite[53\psqq]{zijlstra1985a}}]{smeq}{SMEQ}{Subjective Mental Effort Question}
 
-\newacronym[description={{A} 50-item questionnaire measuring usability on the axes of efficiency, affect, help and support, steerability, and learnability.~\cite{kirakowski1994}}]{sumi}{SUMI}{Software Usability Measurement Inventory}
+\newacronym[description={{A} 50-item questionnaire measuring usability on the axes of efficiency, affect, help and support, steerability, and learnability.~\glosscite{kirakowski1994}}]{sumi}{SUMI}{Software Usability Measurement Inventory}
 
-\newacronym[description={A simple questionnaire by \textcite{brooke1996} with ten Likert-scale questions that are supposed to measure the usability of a system.}]{sus}{SUS}{System Usability Scale}
+\newacronym[description={A simple questionnaire with ten Likert-scale questions that are supposed to measure the usability of a system.~\glosscite{brooke1996} }]{sus}{SUS}{System Usability Scale}
 
-\newacronym[description={A post-task questionnaire developed by NASA consisting of six questions asking about mental, physical, and temporal demand, as well as about performance, effort, and frustration level.~\cite[169]{hart1988}}]{tlx}{TLX}{\itag{T}ask \itag{L}oad Inde\itag{x}}
+\newacronym[description={A post-task questionnaire developed by NASA consisting of six questions asking about mental, physical, and temporal demand, as well as about performance, effort, and frustration level.~\glosscite[169]{hart1988}}]{tlx}{TLX}{\itag{T}ask \itag{L}oad Inde\itag{x}}
 
 \newacronym[description={}]{ui}{UI}{User Interface}
 
-\newacronym[description={A post-task questionnaire which does not depend on any pre-defined scale. Instead, numbers given by each user are put in relation to each other, with the resulting ratios serving as the usability measure.~\cite{mcgee2003}}]{ume}{UME}{Usability Magnitude Estimation}
+\newacronym[description={A post-task questionnaire which does not depend on any pre-defined scale. Instead, numbers given by each user are put in relation to each other, with the resulting ratios serving as the usability measure.~\glosscite{mcgee2003}}]{ume}{UME}{Usability Magnitude Estimation}
 
 \newacronym[description={A string that uniquely identifies some resource.}]{uri}{URI}{Uniform Resource Identifier}
 
@@ -210,11 +221,11 @@ hyphenated={code-window},
 description={{A} source code viewer in \SEE{} which supports very basic \gls{ide}-like functionality.}}
 
 \newglossaryentry{fisherexact}{name={F}isher's exact test,
-	description={{A} test for statistical significance for contingency tables, intended as an alternative to the $\chi^2$ test to be accurate even with smaller sample sizes.~\cite{fisher1922}}}
+	description={{A} test for statistical significance for contingency tables, intended as an alternative to the $\chi^2$ test to be accurate even with smaller sample sizes.~\glosscite{fisher1922}}}
 
 \newglossaryentry{likert}{name={L}ikert scale,
 	hyphenated={{L}ikert-scale},
-	description={{A} psychometric scale in which users indicate their agreement on a linear scale from "strongly agree" to "strongly disagree"~\cite{likert1932}.}}
+	description={{A} psychometric scale in which users indicate their agreement on a linear scale from "strongly agree" to "strongly disagree"~\glosscite{likert1932}.}}
 
 \newglossaryentry{kdtree}{name={$k$-{d} tree},
 description={{A} data structure (using a binary tree as a basis) with which certain spatial data in $k$ dimensions can be efficiently stored and retrieved.}}
@@ -224,7 +235,7 @@ description={{A} data structure (using a binary tree as a basis) with which cert
 	description={{A} data structure meant to store intervals/ranges in such a way that overlapping or contained intervals can be found efficiently.}}
 
 \newglossaryentry{multiplecomp}{name=multiple comparisons problem,
-	description={{A} problem in statistics that happens when the same dataset is tested for significant results multiple times, thereby increasing the chance of a false positive beyond what is acceptable.~\cite{tukey1953}}}
+	description={{A} problem in statistics that happens when the same dataset is tested for significant results multiple times, thereby increasing the chance of a false positive beyond what is acceptable.~\glosscite{tukey1953}}}
 
 \newglossaryentry{reflexion}{name={r}eflexion {a}nalysis,
 description={{T}he process of comparing the architecture and implementation of a software project and finding incongruencies between the two.}}
@@ -237,7 +248,7 @@ description={{T}he process of comparing the architecture and implementation of a
 
 \newglossaryentry{hawthorne}{name=Hawthorne effect,
 	description={{T}he effect through which participants in a study behave differently when under observation by a researcher.
-			The name is based on experiments conducted at the Hawthorne Plant in the 1930's~\cite{hawthorne1939}, although the effects seen there have later turned out to be likely unrelated to the observation~\cite{jones1992}.
+			The name is based on experiments conducted at the Hawthorne Plant in the 1930's~\glosscite{hawthorne1939}, although the effects seen there have later turned out to be likely unrelated to the observation~\glosscite{jones1992}.
 		}}
 
 \newglossaryentry{poststudy}{name=post-study,
@@ -254,10 +265,13 @@ description={{T}he process of comparing the architecture and implementation of a
 
 \newglossaryentry{smell}{name={c}ode {s}mell,
 hyphenated={code-smell},
-description={{c}ertain structures in source code that suggest that a refactoring is in order, such as duplicated code, or a very long method~\cite[85-87]{fowler2019}.}}
+description={{c}ertain structures in source code that suggest that a refactoring is in order, such as duplicated code, or a very long method~\glosscite[85-87]{fowler2019}.}}
 
 \newglossaryentry{mwu}{name={Mann-Whitney $U$ test},
-	description={A test to check whether two distributions have identical distributions, requiring only ordinal-scaled independent samples drawn from the distributions.~\cite{mann1947}}}
+	description={A test to check whether two distributions have identical distributions, requiring only ordinal-scaled independent samples drawn from the distributions.~\glosscite{mann1947}}}
+
+\newglossaryentry{wilcoxon}{name={Wilcoxon signed-rank test},
+	description={A test to check whether two distributions have identical distributions, requiring only ordinal-scaled \emph{dependent} samples drawn from the distributions.~\glosscite{wilcoxon1945}}}
 
 \newglossaryentry{range}{name=Source Range, text=range,
 	description={{t}he contiguous portion within a source code file that a certain element occupies. In this thesis, we will express it as an ordered pair of a start and end position $(s, e)$, or, alternatively, as a 4-tuple $(s_l, s_c, e_l, e_c)$.
@@ -269,20 +283,20 @@ description={{c}ertain structures in source code that suggest that a refactoring
 
 \newglossaryentry{violin}{name=violin plot,
 	hyphenated={violin-plot},
-	description={A plot visualizing the distribution of a collection of data points along with an estimated probability density~\cite{hintze1998}.
+	description={A plot visualizing the distribution of a collection of data points along with an estimated probability density~\glosscite{hintze1998}.
 			The black/white data points are randomly "jittered" along the $x$-axis to make them more differentiable from one another.
 			A bigger, green point marks the average of the dataset.
 		}}
 
 \newglossaryentry{xlsform}{name=XLSForm,
-	description={{A} form standard based on human-readable Excel spreadsheets, which allows for complex forms (\eg, conditionals, skip logic) to be built~\cite{marder2024}.
-			The forms can then be converted into the open ODK XForm format, which is compatible with a number of data collection tools~\cite{odkcommunity2019}.}}
+	description={{A} form standard based on human-readable Excel spreadsheets, which allows for complex forms (\eg, conditionals, skip logic) to be built~\glosscite{marder2024}.
+			The forms can then be converted into the open ODK XForm format, which is compatible with a number of data collection tools~\glosscite{odkcommunity2019}.}}
 
 %%% DIGITAL HERE %%%
 \newglossaryentry{thesis}{name={\tt{thesis.pdf}}, type=file,
 	description={The PDF version of this thesis.}}
 \newglossaryentry{benchmark}{name={\tt{benchmark.zip}}, type=file,
-	description={A ZIP archive containing both the script and all measured data of the technical evaluation. Refer to \cref{app:techdata} for more information.}}
+	description={A ZIP archive containing both the script and all measured data of the technical evaluation. Refer to \glosscref{app:techdata} for more information.}}
 \newglossaryentry{extract}{name={\tt{extract-metrics.py}}, type=file,
 	description={A Python script which extracts metrics from a \gls{gxl} file and outputs them into a CSV file.}}
 \newglossaryentry{psi}{name={\tt{SEE-VSCode\_redacted.csv}}, type=file,
@@ -294,6 +308,6 @@ description={{c}ertain structures in source code that suggest that a refactoring
 \newglossaryentry{omegatest}{name={\tt{Eval-Vscode-See.xlsx}}, type=file,
 	description={The \gls{xlsform} questionnaire for the $\Omega$ version of the user study.}}
 \newglossaryentry{analysis}{name={\tt{analysis.zip}}, type=file,
-	description={A ZIP archive containing all scripts for the analysis of the user study. Refer to \cref{app:scripts} for more information.}}
+	description={A ZIP archive containing all scripts for the analysis of the user study. Refer to \glosscref{app:scripts} for more information.}}
 \newglossaryentry{redirect}{name={\tt{redirect-evaluation.py}}, type=file,
-	description={A Python script which acts as a web server that redirects users to either the $\Psi$ or $\Omega$ version of the study, as described by \cref{alg:redirect}.}}
+	description={A Python script which acts as a web server that redirects users to either the $\Psi$ or $\Omega$ version of the study, as described by \glosscref{alg:redirect}.}}

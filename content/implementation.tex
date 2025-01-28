@@ -72,7 +72,7 @@ This part also comprises the main answer to the first research question \textsf{
 We will examine the algorithm in a generalized and programming language independent form here.
 In this form, the algorithm takes as input a set of source code documents, as well as a family of \gls{lsp} functions belonging to a specific instantiation of a \gls{ls}.
 These functions will be used to analyze the documents and extract the required information from them.
-The output of the algorithm, is a graph representing the given software project.
+The output of the algorithm is a graph representing the given software project.
 
 \begin{figure}
 	\begin{center}
@@ -187,7 +187,7 @@ The locations returned by \gls{lsp} functions such as "show references" or "go t
 We cannot simply create a lookup table from locations to nodes, as the locations are not necessarily equal to the location of the nodes, even when they describe the same logical element.
 Instead, we need to match the location to the node with the "tightest fitting range",
 that is: from the nodes whose \gls{range} completely contains the given location, we pick the one whose \gls{range} is the smallest (to find the most specific fitting element).
-The naive solution used in \cref{alg:generate}---simply going over all nodes each time to find the best fit---leads to an unacceptable runtime.
+The naïve solution used in \cref{alg:generate}---simply going over all nodes each time to find the best fit---leads to an unacceptable runtime.
 
 There are a few possible ways to solve this problem (which is in essence a variant of the stabbing problem) more efficiently, such as segment trees or range trees, but we will use augmented \glspl{intervaltree} with \glspl{kdtree} as a base, as this configuration best fits our circumstances—there is no need to update/re-balance the tree (so the high cost associated with that is fine), the membership query should not be in $\Omega(n)$ (or worse), we need to represent two dimensions (which is possible with a 2d-tree), and so on.
 
@@ -444,7 +444,7 @@ We then associate diagnostics to nodes using the \glsh{intervaltree}-based funct
 Finally, if the user enabled this in the configuration, we aggregate diagnostics upwards so that collected diagnostics can also be seen on the module they are in, for example.
 
 We are not going to go into the details of the rendering and display of the nodes, as this just re-uses the same mechanisms as the implementation from my bachelor's thesis~\cite[section~3.3]{galperin2021}.
-There were only minimal changes, like the integration of new icons for the different \gls{lsp} diagnostic types, and a change that allows leaf erosion icons to be displayed on non-leaf nodes, since the \gls{lsp} diagnostics are not always present at the lowest level in the hierarchy.
+There were only minimal changes, such as the integration of new icons for the different \gls{lsp} diagnostic types, and a change that allows leaf erosion icons to be displayed on non-leaf nodes, since the \gls{lsp} diagnostics are not always present at the lowest level in the hierarchy.
 
 \section{Integrating LSP Functionality into Code Windows}\label{sec:intowindow}
 Now we will go over how the functionalities of \glspl{ls} have been integrated into \glspl{window} to make them more \gls{ide}-like.
@@ -524,7 +524,7 @@ This is useful because it allows the user to quickly jump to the definition of, 
 
 \section{Technical Evaluation}\label{sec:techeval}
 Before ending this chapter, we want to briefly evaluate the implementation on a technical level.
-While there are some unit tests for parts of the algorithm, taking real-world projects and trying to generate \glspl{city} out of them using our implementation is important to verify that it is working correctly too.
+While there are some unit tests for parts of the algorithm, taking real-world projects and trying to generate \glspl{city} out of them using our implementation is important to verify that it is working correctly, too.
 Apart from a quick qualitative glance at each generated city, we are also interested in an analysis of performance here---we made quite a few theoretical statements and analyses in \cref{sec:generate}, so we can also use this section to make sure the \glsh{intervaltree}-based \cref{alg:interval} actually does work more efficiently than the original "brute-force" approach of \cref{alg:generate}.
 
 I ran the city generation algorithm on the following projects:
@@ -540,17 +540,18 @@ I ran the city generation algorithm on the following projects:
 	\item \textbf{\LaTeX{} source of my bachelor's thesis}: Self-explanatory.
 \end{itemize}
 
+Only the algorithm as described in the paper here was part of the evaluation, any other layouting or drawing done by \SEE{} has been excluded from the analysis.
 The algorithm was repeated three times for the first two projects and five times for the others\footnote{
 	The difference stems from the fact that the generation for JabRef and SpotBugs took much longer.
 }, to make sure that any single result was not an outlier.
-For the generation, we enabled every edge type, node type, and diagnostic, except for JabRef and SpotBugs, where we only enabled some node types (namely File, Module, Namespace, Package, Class, and Interface) and only one edge type (Extend for JabRef and Reference for SpotBugs), otherwise the generation would have taken much too long.
-\Cref{tab:benchmark} lists all projects along with their node count, edge count, \gls{loc}, and average generation time.
+For the generation, we enabled every edge type, node type, and diagnostic, except for JabRef and SpotBugs, where we only enabled some node types (namely File, Module, Namespace, Package, Class, and Interface) and only one edge type (Extend for JabRef and Reference for SpotBugs), otherwise the generation would have taken much too long (multiple hours or even days).
+\Cref{tab:benchmark} lists all projects along with their node and edge count, \gls{loc}, and average generation time.
 
 \begin{table*}[htbp]
 	\caption{Relevant metadata for all evaluated projects, along with the average total generation time.}\label{tab:benchmark}
-	\begin{tabular}{@{}llccccc@{}}
+	\begin{tabular}{@{}llrrrrr@{}}
 		\toprule
-		\multicolumn{1}{c}{\multirow{2}{*}{\textbf{Name}}} & \multicolumn{1}{c}{\multirow{2}{*}{\textbf{\Gls{ls}}}} & \multicolumn{1}{c}{\multirow{2}{*}{\textbf{k\gls{loc}}}} & \multicolumn{1}{c}{\multirow{2}{*}{\textbf{\# Nodes}}} & \multicolumn{1}{c}{\multirow{2}{*}{\textbf{\# Edges}}} & \multicolumn{2}{c}{\textbf{Average Time [h:m]}}                         \\
+		\multicolumn{1}{c}{\multirow{2}{*}{\textbf{Name}}} & \multicolumn{1}{c}{\multirow{2}{*}{\textbf{\Gls{ls}}}} & \multicolumn{1}{c}{\multirow{2}{*}{\textbf{k\gls{loc}}}} & \multicolumn{1}{c}{\multirow{2}{*}{\textbf{\# Nodes}}} & \multicolumn{1}{c}{\multirow{2}{*}{\textbf{\# Edges}}} & \multicolumn{2}{c}{\textbf{Average Time [m:s]}}                         \\
 		                                                   &                                                        &                                                          &                                                        &                                                        & {Optimized}                                     & {Brute-force}         \\
 		\midrule
 		\textit{JabRef}                                    & Eclipse JDT                                            & $\num{179}$                                              & $\num{5575}$                                           & $\num{919}$                                            & $4$:$\num{17}$                                  & $4$:$\num{29}$        \\
@@ -564,7 +565,7 @@ For the generation, we enabled every edge type, node type, and diagnostic, excep
 
 The first thing that is worth mentioning here is that generations by different \glspl{ls} are not really comparable to one another.
 For example, we can see that the generation run for this thesis took on average ten seconds---faster than any other project---even though there were more edges than in almost every other project.
-This difference cannot be explained by the idea that edges may not play a big role in generation time after all, since a closer look at the data for JabRef and SpotBugs reveals a much longer generation time for SpotBugs, even though SpotBugs has less nodes (but a lot more edges) than JabRef.
+This difference cannot be explained by the idea that edges may not play a big role in generation time after all, since a closer look at the data for JabRef and SpotBugs reveals a much longer generation time for SpotBugs, even though SpotBugs has fewer nodes (but a lot more edges) than JabRef.
 Hence, the difference there has to come from the different \glspl{ls}.
 This is also why we have chosen to analyze two projects per \gls{ls}.
 
@@ -727,7 +728,8 @@ There, the optimized version (suffix $O$) is compared against the brute-force ve
 \end{figure}
 
 The generation of edges is by far the most expensive part\footnote{
-	As the distribution of other components is hard to tell due to the edge component taking up so much space, there is another version of the diagram without this component in \cref{app:noedge}.
+	As the distribution of other components is hard to tell, there is another version of the diagram without the "edges" component in \cref{app:techeval}.
+	The same appendix also contains a "normalized" version, with the node and edge components divided by the number of nodes and edges, respectively.
 } of the algorithm, partly confirming our theoretical analysis from \cref{subsec:performance}.
 The one exception to this seems to be JabRef, where the most expensive component consists of nodes.
 This can be explained by the respective counts of the graph elements:
@@ -737,14 +739,14 @@ Another thing to note is that the only components big enough to even make out on
 The optimized version of the algorithm is also always quicker than the brute-force version, and we can hypothesize based on these bar graphs that the relative improvement of the optimized version (\ie, the percentage by which time decreases when switching to the optimized version) over the number of edges is strictly monotonic, that is, the more edges there are, the more the optimized algorithm will shorten the total runtime in relation to the brute-force version.
 We can check this hypothesis by plotting the relative time improvement as defined here against the number of edges in each project.
 
-\begin{figure}
+\begin{figure}[tbhp]
 	\begin{center}
 		\tikzexternaldisable
 		\begin{tikzpicture}[
 				labelnode/.style={font=\footnotesize,Maroon}
 			]
 			\begin{semilogxaxis}[
-					height=9cm,
+					height=8cm,
 					name=line,
 					set layers,
 					ymin=0, ymax=1,
@@ -783,14 +785,19 @@ We can check this hypothesis by plotting the relative time improvement as define
 		\tikzexternalenable
 	\end{center}
 	\caption{The relative improvement of the optimized algorithm by number of edges (\ie, the percentage by which the time is reduced when using \cref{alg:interval} instead of the base \cref{alg:generate}).
-		Error bars are only shown when their extent exceeds the diameter of the point, and describe the full range of datapoints (\ie, from minimum to maximum).
+		Error bars are only shown when their extent exceeds the diameter of the point, and describe the full range of datapoints (from minimum to maximum).\\
 		\emph{Note the logarithmic x-axis.}
 	}\label{fig:relimprov}
 \end{figure}
 
 \Cref{fig:relimprov} shows exactly that plot, but it disproves this hypothesis:
 While almost every datapoint does seem to follow this rule, the relative time improvement for the master's thesis source code is actually lower than for SpotBugs, even though SpotBugs has fewer edges.
-I suspect that the hypothesis is still directionally correct (the more edges there are, the more the optimization helps), but that it does not hold when making comparisons across multiple \glspl{ls}, since the performance differences between their implementation makes too big a dent.
+I suspect that the hypothesis is still directionally correct, but that it does not hold when making comparisons across multiple \glspl{ls}, since the performance differences between their implementation makes too big a dent.
+
+We can additionally check whether the weak form of the hypothesis (\ie, asserting a weakly monotonic relationship) is true:
+Calculating Kendall's coefficient $\tau_b$~\cite{kendall1938, kendall1945} for the relative time improvement and the number of edges, we get a value of $\tau_b = 0.8\overline{6}$, which indeed indicates a strong positive relationship.
+Hence, we can conclude that, in general, the more edges there are, the more the optimization implemented in \cref{alg:interval} helps.
+However, more extensive tests across a wide breadth of \glspl{ls} would be required to solidify this point further.
 The final thing to note from this plot is that, across all our samples, the brute-force version is never better than the optimized version of the algorithm, which we can tell by the fact that the error bars (denoting the minimum and maximum relative time improvement across all samples) never extend into the negatives.
 
 \begin{figure}
@@ -836,7 +843,7 @@ The two Rust projects in \cref{fig:aaocity,fig:dcafcity} also match up with my k
 
 There is one weird aspect here, though, that is not present in other languages, namely that there seem to be duplicated empty modules.
 For example, in \cref{fig:aaocity}, we can see an empty grey \proptt{re} component, even though the regular expressions contained in the corresponding module are shown elsewhere in the city.
-My guess is that there is a mismatch between Rust modules and files that is not handled correctly either by the Rust Analyzer or by my algorithm.
+My guess is that there is a mismatch between Rust modules and files due to the Rust Analyzer, that is, module nodes are separate from the files that contain them.
 Still, this should not be a big problem, as the structure of the \gls{city} still reflects the original project apart from those empty modules.
 
 \section{Interim Conclusion}\label{sec:implconclusion}

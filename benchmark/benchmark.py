@@ -1,15 +1,15 @@
-import polars as pl
 import code
 
+import polars as pl
 from polars.dependencies import dataclasses
 
 PROJECTS = {
-    "aao": (5, "rust", 1250),
-    "bachelor": (5, "tex", 46348),
-    "dcaf": (5, "rust", 9940),
-    "jab": (3, "java", 919),
-    "master": (5, "tex", 24048),
-    "spot": (3, "java", 16262),
+    "aao": (5, "rust", 1250, 515, 9),
+    "bachelor": (5, "tex", 46348, 376, 5),
+    "dcaf": (5, "rust", 9940, 1192, 63),
+    "jab": (3, "java", 919, 5575, 1588),
+    "master": (5, "tex", 24048, 301, 8),
+    "spot": (3, "java", 16262, 3813, 1103),
 }
 
 NAMES = {
@@ -23,8 +23,10 @@ NAMES = {
 
 COLKEYS = {
     "LSP Nodes",
+    "LSP Nodes Normed",
     "LSP Tree",
     "LSP Edges",
+    "LSP Edges Normed",
     "find",
     "LSP Diagnostics",
     "LSP Aggregate",
@@ -38,12 +40,14 @@ class Variant:
     kind: str
     ls: str
     edges: int
+    nodes: int
+    diagnostics: int
     index: int  # NOTE: 1-indexed
 
     @staticmethod
     def all() -> list["Variant"]:
         variants = []
-        for project, (count, ls, edges) in PROJECTS.items():
+        for project, (count, ls, edges, nodes, diag) in PROJECTS.items():
             for i in range(count):
                 for kind in ("norm", "x"):
                     variants.append(
@@ -53,6 +57,8 @@ class Variant:
                             index=i + 1,
                             ls=ls,
                             edges=edges,
+                            nodes=nodes,
+                            diagnostics=diag,
                         )
                     )
         return variants
@@ -74,8 +80,17 @@ def main():
             [original_df, pl.concat([results, metadata], how="horizontal")]
         )
 
+    # Add columns for normalized running time.
+    df = original_df.with_columns(
+        (pl.col("LSP Edges") / pl.col("edges")).alias("LSP Edges Normed"),
+        (pl.col("LSP Nodes") / pl.col("nodes")).alias("LSP Nodes Normed"),
+        (pl.col("LSP Diagnostics") / pl.col("diagnostics")).alias(
+            "LSP Diagnostics Normed"
+        ),
+    )
+
     # Then, aggregate along project and kind.
-    df = original_df.group_by(pl.col("project", "kind", "ls", "edges")).agg(
+    df = df.group_by(pl.col("project", "kind", "ls", "edges")).agg(
         pl.mean(*COLKEYS),
         pl.max(*COLKEYS).name.suffix("_max"),
         pl.min(*COLKEYS).name.suffix("_min"),
@@ -142,7 +157,6 @@ def main():
         )
         .with_columns(pl.col("project").replace_strict(NAMES))
     )
-    # code.interact(local=dict(globals(), **locals()))
     df.sort(pl.col("edges")).write_csv(
         "advantage.dat", separator="\t", include_header=True
     )

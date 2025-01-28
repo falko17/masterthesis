@@ -7,6 +7,8 @@
 \lettrine[lines=3]{\textcolor{Maroon}{U}}{ltimately}, having now successfully completed both the implementation and the user study, we are ready to conclude this thesis.
 In this final chapter, we do so by first pointing out some limitations of the work presented here, mentioning some possibilities of future expansions, and finally, by offering some closing remarks.
 
+\setlength\parskip{0.1\baselineskip plus 2pt}
+
 \section{Limitations}
 We will first go over a few ways in which the implementation and user study are limited.
 
@@ -38,6 +40,10 @@ An example of this is that the Jedi Python \gls{ls} outputs different \glspl{cit
 Finally, only very few \glspl{ls} support the \emph{pull diagnostics} \gls{capability}.
 For all other ones, we need to collect the pushed diagnostics in the background, meaning we could easily miss some if the import algorithm is done before all diagnostics have been pushed.
 
+\paragraph{Technical Evaluation}
+Due to time constraints, we only tested six projects across three \glspl{ls} for our technical evaluation in \cref{sec:techeval}.
+More extensive testing should be done here, both to catch any bugs, and to determine a more exact relationship between running time and project size (in terms of nodes, edges, or \gls{loc}).
+
 \subsection{User Study}
 We already went over some important threats to validity in \cref{sec:threats}.
 Apart from those, another major limitation may be that we have not actually evaluated most of the implementation: as explained in \cref{sec:plan}, we basically only evaluated the changes from \cref{sec:generate}, leaving out almost all features implemented in \cref{sec:intocity,sec:intowindow}.
@@ -64,11 +70,12 @@ Since there is no real unifying thread here, I will just list these ideas for fu
 		      Where "install" does not have to refer to a system-wide installation, but could just involve placing the binary into a \SEE{}-local folder.
 	      } them automatically so that they can subsequently be used in \SEE{}.
 	\item While the focus of this thesis was on \SEE{}, \cref{alg:generate,alg:interval} are general enough to port them over to other \glsh{city} implementations, or---even better---into a separate tool or library that generates a \gls{gxl} file out of the input project.
-	\item Instead of \gls{lsp}, one could utilize \gls{lsif} to construct \glspl{city} fully remotely, that is, without having a local copy of the analyzed project.
+	\item Instead of \gls{lsp}, one could utilize \gls{lsif}~\cite{lsif} to construct \glspl{city} fully remotely, that is, without having a local copy of the analyzed project.
 	      In the most advanced form, the user would just need to enter, for example, a GitHub link, and then \SEE{} would utilize \gls{lsif} information in combination with GitHub's REST API to construct the city.
 	      If the user tries to open a \gls{window}, the corresponding file could be retrieved using the same API, or perhaps using git's \emph{sparse checkout} feature.
 \end{itemize}
 
+\setlength\parskip{0.5\baselineskip plus 2pt}
 \section{Closing Remarks}
 We started this thesis by motivating the use of \gls{lsp}, \glspl{city}, and the integration of the former into the latter in \cref{ch:intro}.
 There, we also pinned down our main three research questions, which are about:

@@ -115,7 +115,7 @@
 \newcommand{\myDepartment}{Faculty 3 --- Mathematics \& Computer Science\xspace}
 \newcommand{\myUniversity}{University of Bremen\xspace}
 
-\newcommand{\participants}{20\xspace}
+\newcommand{\participants}{19\xspace}
 
 \newcommand{\SEE}{\gls*{see}}
 \newcommand{\eg}{e.\,g.\xspace}
@@ -390,7 +390,7 @@
     #1
   }
 
-  \newtcolorbox[use counter=algorithm]{talgorithm}[3][]{%
+  \newtcolorbox[use counter=algorithm,number within=chapter,list inside=loa]{talgorithm}[3][]{%
     colback=blue!10,colframe=blue!75!black,
     width=1.05\textwidth, arc=0mm,
     left=2mm, right=2mm, top=2mm, bottom=2mm,
@@ -401,28 +401,13 @@
     breakable,
     label type=algorithm,
     adjusted title=\Cref*{#3}: #2,
+    list text=#2,
     label=#3,
     float,
     floatplacement=btp,
     #1
     }
 }
-
-\makeatletter
-\AtBeginDocument{%
-	\let\l@algorithm\l@figure%
-	\let\listofalgorithms\listoffigures% Copy \listoffigures
-	\let\@cftmakeloatitle\@cftmakeloftitle% Copy LoF title
-	% Update LoA-related macros
-	\patchcmd{\listofalgorithms}{\@cftmakeloftitle}{\@cftmakeloatitle}{}{}%
-	\patchcmd{\listofalgorithms}{\@starttoc{lof}}{\@starttoc{loa}}{}{}%
-	\patchcmd{\@cftmakeloatitle}{\listfigurename}{\listalgorithmname}{}{}%
-	% Add per-chapter LoA space (similar to LoF)
-	\patchcmd{\@chapter}{\addtocontents}{%
-		\addtocontents{loa}{\protect\addvspace{10\p@}}%
-		\addtocontents}{}{}%
-}
-\makeatother
 
 %%% OPTIONS %%%
 
@@ -661,7 +646,7 @@ The result is that, for the average case and Language Server, with only the most
 The second main part is about evaluating the second research question in a user study, which compares SEE against the popular IDE VSCode across three program-understanding tasks.
 We evaluate the two tools on the dimensions of correctness, time, and usability.
 For usability, we use the \emph{After-Scenario Questionnaire} (ASQ) as a post-task questionnaire, and the \emph{System Usability Scale} (SUS) as a post-study questionnaire.
-Each of the $n = \participants$ participants solved the tasks in an online study using both SEE and VSCode,with a different software project per tool.
+Each of the $n = \participants$ participants solved the tasks in an online study using both SEE and VSCode, with a different software project per tool.
 
 Our analysis revealed significantly ($p < 0.05$) better results for VSCode in terms of speed, usability as measured by the SUS, and usability as measured by the "effort" question of the ASQ for some tasks, with other factors having no significant differences between SEE and VSCode.
 As a result, we conclude that code cities are a suitable means to present LSP information, but developers work faster and report higher usability when using traditional IDEs, at least in the case of SEE versus VSCode.
@@ -716,8 +701,7 @@ accuracy of the information provided.
 
 First and foremost, I want to thank Rainer Koschke for his general help, quick answers to any questions that I had, and availability for detailed discussions on various aspects of both the implementation and user study of this thesis.
 Additionally, I am thankful for every participant who took part in my user study, with additional gratitude towards those who even shared the link to the evaluation in their own circles.
-Finally, I want to thank all proofreaders (namely, Sven Hager, Hugo Hakim Damer, \fxerror[layout=inline]{Add other proofreader names here}) who, despite its length, read through this thesis to catch any mistakes.
-If you're reading this right now, you must be a proofreader, so good luck, and thanks!
+Finally, I want to thank all proofreaders (namely, Sven Hager, Hugo Hakim Damer, and Valea Koschke) who, despite its length, read through this thesis to catch any mistakes.
 
 \cleardoublepage
 
@@ -756,20 +740,6 @@ If you're reading this right now, you must be a proofreader, so good luck, and t
 % 			{\color{ctcolorchapternum}\fontsize{60}{60}\letterfamily\selectfont#1}%
 % 		}%
 % 	\end{minipage}}
-
-\makeatletter
-\renewcommand\listoffigures{%
-	\chapter{\listfigurename}
-	\@starttoc{lof}%
-}
-\makeatother
-
-\makeatletter
-\renewcommand\listoftables{%
-	\chapter{\listtablename}
-	\@starttoc{lot}%
-}
-\makeatother
 
 \makeatletter
 \renewcommand\listoffixmes{%

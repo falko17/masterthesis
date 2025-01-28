@@ -31,6 +31,7 @@ Our main aim here is to answer our third research question that we defined in \c
 \end{displayquote}
 
 To empirically evaluate this research question, we will devise a series of short software engineering related tasks on the real-world software projects \emph{JabRef}~\cite{jabref} and \emph{SpotBugs}~\cite{spotbugs}.
+We choose these projects due to their language (Java is a well-known language and has a good \gls{ls} implementation), availability of source code, and size (not so high as to cause performance problems, but not so low as to be unrealistic).
 Participants then get randomly assigned to either use \SEE{} (along with our implementation from \cref{ch:implementation}) or \gls{vscode} (with an active \gls{ls}).
 However, evaluating the supported \glspl{capability} (see \cref{tab:capabilities}) in this way turns out to be quite difficult---for example, how would one evaluate the \emph{Hover} \gls{capability}, let alone features like \glspl{token} which are almost identically implemented across \SEE{} and \gls{vscode}?
 For this reason, we will abstain from incorporating the \glsh{window}-related \glspl{capability} from \cref{sec:intowindow}.
@@ -79,7 +80,7 @@ Outside of \SEE{}, there are a number of other \glsh{city} implementations, such
 In their evaluations, these papers often compare different platforms (such as Desktop to VR/AR)~\cite[\eg,][]{merino2017,fittkau2015, merino2018}, but as with the \SEE{}-related theses, we are most interested in those that have controlled experiments comparing a \glsh{city} tool with a traditional \gls{ide}.
 
 One such study was done by \textcite{wettel2011} and compares \emph{CodeCity} against the Eclipse \gls{ide}, with the caveat that participants using Eclipse can also access an Excel spreadsheet of software metrics, as the \glsh{city} implementation would otherwise have an unfair advantage.
-He based his study on an extensive survey of existing empirical work on software visualization, constructing a "wishlist" of desiderata for such studies~\cite[chapter 7]{wettel2011}.
+\citeauthor{wettel2011} based their study on an extensive survey of existing empirical work on software visualization, constructing a "wishlist" of desiderata for such studies~\cite[chapter 7]{wettel2011}.
 We will refer back to this wishlist, and to his experiment design in general, in \cref{sec:design} for our own study.
 The study was later replicated by \textcite{romano2019} with a subset of tasks.
 
@@ -235,6 +236,7 @@ This flow is illustrated in \cref{fig:taskflow}.
 
 We have several constraints for our study.
 It should be possible to partake in the study online and asynchronously (\ie, without me needing to be present) to facilitate participation and reduce the \gls{hawthorne} (though this will not completely eliminate it~\cite[\eg][]{evans2010}).
+The collected data will be anonymized to make it impossible to identify any individual participants.
 To not overexert participants and thus confound any results, the study should also be of a reasonable length---ideally, not longer than an hour (hence the number of six tasks).
 Finally, we cannot assume familiarity with either \SEE{} or \gls{vscode}, so we need to explain the core concepts of each system and verify that the participant understood them before starting the actual tasks.
 
@@ -321,7 +323,9 @@ This eliminates both the \gls{sumi} and \gls{quis} from consideration.
 Because we need a validated German translation, we can also strike out the English-only \gls{pssuq} as an option.
 
 This leaves the \emph{\glsentrylong{sus}} as a fitting option:
-It has a validated German translation~\cite{reinhardt2015}, is the most used \gls{poststudy} questionnaire for this purpose~\cites[1615]{sauro2009}[577]{lewis2018}, and is very well-suited for comparing two systems or interfaces~\cites[195]{peres2013}[590--591]{bangor2008}.
+It has a validated\footnote{That is, the questionnaire was translated back into English by native speakers to check that the items have the intended meaning.
+	See the comparison by \textcite{brix2023} for more information.}
+German translation~\cite{reinhardt2015}, is the most used \gls{poststudy} questionnaire for this purpose~\cites[1615]{sauro2009}[577]{lewis2018}, and is very well-suited for comparing two systems or interfaces~\cites[195]{peres2013}[590--591]{bangor2008}.
 It consists of ten \glsh{likert} questions which alternate between positive and negative aspects of the system and returns a score between 0 and 100, representing the system's usability~\cite{brooke1996}.
 These questions are collected in \cref{app:susq}.
 Existing measured \gls{sus} scores for \SEE{} are given in \cref{fig:seesus}.
@@ -462,7 +466,7 @@ We will then also investigate the role of experience (and some other independent
 Finally, we handle the various comments that were left during the study.
 
 As mentioned before, we use a significance level of $\alpha = 0.05$.
-We can neither assume normal distributions for our data, nor is it always interval-scaled, so we choose the \gls{mwu} to determine statistically significant differences between either our two groups $\Psi$ and $\Omega$ or between the two tools \SEE{} and \gls{vscode}.
+We can neither assume normal distributions for our data, nor is it always interval-scaled, so we choose the \gls{mwu} to determine statistically significant differences between either our two groups $\Psi$ and $\Omega$ or between the two tools \SEE{} and \gls{vscode} (with the exception of the \gls{sus}, see \cref{subsec:usability}).
 To help the reader quickly identify important results, we put a star ($\bigstar$) in the heading of a paragraph to indicate that it lead to the rejection of a null hypothesis.
 
 \subsection{Study Procedure}\label{subsec:procedure}
@@ -474,8 +478,10 @@ Through their valuable feedback, I was able to see some issues I had not noticed
 I fixed the bugs in \SEE{}, added a tutorial for the \glspl{base} (along with a comprehension question), and added detailed instructions on how to correctly unpack the builds.
 There luckily were no other major issues in the actual study after these problems noticed in the pilot study have been ironed out.
 
-There have been \participants participants in total, though we had to exclude one participant from most analyses because he indicated he had no knowledge of Java.
-Participants were gained via convenience sampling, that is, I asked fellow students, colleague developers from Axivion, and other acquaintances who had software engineering experience to participate.
+There have been \participants participants in total---there was originally one more, but we had to exclude him from most analyses because he indicated he had no knowledge of Java.
+Participants were gained via convenience sampling, that is, I asked fellow students, colleague developers from Axivion\footnote{
+	A company producing static analysis tools, such as the original \gls{gxl} generation program used in \SEE{}.
+}, and other acquaintances who had software engineering experience to participate.
 
 \subsection{Demographics}\label{subsec:demographics}
 
@@ -647,7 +653,7 @@ For SpotBugs, there actually were no unit tests under the root package we includ
 The only class that could be reasonably construed as a test was \proptt{TestDataflowAnalysis}, so we allowed both "none" and "dispersed" as answers, though the latter only if \proptt{TestDataflowAnalysis} was given as an example.
 The most common error here was participants mistaking the aforementioned test detectors by SpotBugs as unit test classes \emph{for} SpotBugs (either giving them as a "centralized" or "dispersed" example), while the second-most common type of wrong answer were "other" answers which consisted of confused explanations of the system in the free text field.
 
-For JabRef, unit tests were all centralized under the \tt{src.test} package, so I had expected there to be less issues here for task $B$ than with SpotBugs.
+For JabRef, unit tests were all centralized under the \tt{src.test} Java package, so I had expected there to be less issues here for task $B$ than with SpotBugs.
 \Cref{fig:b1c,fig:b2c} prove this assumption wrong.
 The most common (and actually only) type of error was to answer "dispersed" and then give one or more test classes under the centralized test package hierarchy as examples.
 I am not sure what went wrong here.
@@ -700,15 +706,15 @@ While the \glspl{violin} in \cref{fig:time} include all data points, for the \gl
 		Outsiders are excluded by cutting off the Y-axis---they are still included in the average.}\label{fig:time}
 \end{figure}
 
-We can see a slight, but non-significant advantage for \gls{vscode} for task $A$ (\cref{fig:a1t,fig:a2t}), where the classes with the highest \gls{nom} had to be identified.
-\gls{vscode} users were allowed to use a table that could be sorted by exactly this metric, while \SEE{} users had to glean this information by inspecting the size or color of the buildings in the \gls{city}.
+We can see a slight, but non-significant advantage for \gls{vscode} for task $A$ (\cref{fig:a1t,fig:a2t}), where the classes with the highest \glsentrylong{nom} had to be identified.
+\gls{vscode} users were allowed to use a table that could be sorted by exactly this metric, while \SEE{} users had to glean this information by inspecting the color of the buildings in the \gls{city}.
 The former made this task very simple and quick to solve, probably even more so than the visual method provided by \SEE{}.
 In task $B$, by contrast, we see (\cref{fig:b1t,fig:b2t}) a slight and again non-significant advantage for \SEE{}.
 This was the task about identifying the way that unit tests were organized.
 Perhaps \SEE{} made the structure of the package hierarchy more immediately visible, which would have especially helped in task $B_2$ (where we do see a bigger margin) where all tests were in a separate hierarchy---in \gls{vscode}, this would have just been a path at the top of the \gls{ide} indicating where the file belongs, while for \SEE{} it would be immediately apparent due to the node's location that the class belongs to a certain package.
 
 The only actual significant difference lies in task $C$ (\cref{fig:c1t,fig:c2t}) for both object systems.
-Here, participants using \gls{vscode} outperformed those using \SEE{}, with an especially clear difference for task $C_1$, where we have a $p$-value of ca.\ $0.1\%$.
+Here, participants using \gls{vscode} outperformed those using \SEE{}, with an especially clear difference for task $C_1$, where we have a $p$-value of ca.\ $0.001$.
 This was the task about finding a \gls{base} for a given class.
 In \gls{vscode}, this was very simple:
 All that participants needed to do was to keep \keystroke{Ctrl}-clicking on the superclass until they eventually reach a class without any parent.
@@ -719,7 +725,7 @@ Some of the comments that we got in \cref{subsec:comments} seem to support this 
 
 While four out of the six tasks yielded no significant differences, two of them point to \gls{vscode} increasing the participants' speed, so we will reject $H_{b_0}$ and accept $H_{b_1}$ instead, specifically, $t_V < t_S$.
 
-\subsection[Usability]{$\bigstar$ Usability}
+\subsection[Usability]{$\bigstar$ Usability}\label{subsec:usability}
 We have measured the usability in two ways:
 With the \gls{asq} after each task (six times total), which we will examine first, and with the \gls{sus} after each system (twice total), which we will examine afterwards.
 
@@ -826,6 +832,7 @@ To map a set of answers onto a score from 0--100, we apply the formula by \textc
 The alternation introduced by the factor $(-1)^{i+1}$ exists due to the fact that even-numbered questions are inverted phrasings of the odd-numbered questions.
 \Cref{fig:sus} exhibits the difference in measured \gls{sus} scores between \SEE{} and \gls{vscode}.
 We have 38 data points here because participants were asked to rate both systems.
+Because the data contains paired samples, we choose the \gls{wilcoxon} as our statistical test, as the \gls{mwu} only works for independent samples.
 
 \begin{figure}
 	\center
@@ -833,7 +840,7 @@ We have 38 data points here because participants were asked to rate both systems
 	\caption{Comparisons between measured \gls{sus} scores for \SEE{} and \gls{vscode}.}\label{fig:sus}
 \end{figure}
 
-As one might guess from the star in the heading, the difference here is significant when we apply the \gls{mwu}, specifically in favor of \gls{vscode} ($U = 114.5, p \approx 0.02116$).
+As one might guess from the star in the heading, the difference here is significant when we apply the \gls{wilcoxon}, specifically in favor of \gls{vscode} ($T = 27.5, p \approx 0.02024$).
 The average \gls{sus} score for \SEE{} is $69.5$, with a median of $68.75$, while the \gls{sus} score for \gls{vscode} was on average $80.5$, with a median of $82.5$.
 Our measured score for \SEE{} falls in line with the average for \SEE{} established from other experiments (see~\cref{fig:seesus}), and its difference to a traditional tool also replicates the results of the study for my bachelor's thesis~\cite{galperin2022}.
 There may be multiple reasons why \SEE{} does worse than \gls{vscode} here:
@@ -860,14 +867,16 @@ Luckily, such a tool exists in the procedure by \textcite{benjamini1995} to cont
 Since our data points here might not be fully independent, we choose the variation by \textcite{benjamini2001} and fix the \gls{fdr} at our usual $\alpha$ of $0.05$.
 We designate the "original" $p$-value (\ie, the one before fixing the \gls{multiplecomp}) as $\xcancel{p}$.
 
-For the correlations themselves, we follow the recommendations by \textcite[157,159]{khamis2008} and use Kendall's coefficient of rank correlation $\tau_b$ for comparisons with ordinal independent variables~\cite{kendall1938, kendall1945}, and Spearman's rank correlation coefficient $r$\footnote{
-	We could have also used Pearson's correlation coefficient $r$~\cite{bravais1844, pearson1895}, but Spearman's $r$ seems more fitting due to our dataset including some outliers.
-} for comparisons with continuous independent variables~\cite{spearman1904} (since all our dependent variables, at least in aggregated form, are continuous).
+For the correlations themselves, we use Kendall's coefficient of rank correlation $\tau_b$~\cite{kendall1938, kendall1945}, as we compare ordinal\footnote{
+	With the exception of the continuous \emph{age} variable, where we could have used Pearson's correlation coefficient $r$~\cite{bravais1844, pearson1895} or Spearman's $r$~\cite{spearman1904}, but Kendall's coefficient is more robust and works for this kind of comparison too.
+	This also makes the individual correlations more comparable to one another.
+} independent with continuous dependent variables.
+For this statistic, a value of $1$ indicates a perfectly identical ranking, $0$ indicates no relationship, and $-1$ indicates a completely different ranking.
 
 \begin{figure}
 	\centering
 	\includegraphics{tikz/corr.tikz}
-	\caption{Correlations between independent and dependent variables.\\
+	\caption{Correlations ($\tau_b$) between independent and dependent variables.\\
 		Dependent variables for \SEE{} are marked in \textcolor{Maroon}{red} and those for \gls{vscode} in \textcolor{Gray!50!black}{gray}.}\label{fig:corr}
 \end{figure}
 
@@ -1057,7 +1066,7 @@ Additionally, participants found \gls{vscode} significantly more usable than \SE
 	\end{tabular}
 \end{table*}
 
-Based on this data, we can answer \textsf{RQ3} as follows:
+Based on these data, we can answer \textsf{RQ3} as follows:
 \Glspl{city} are a suitable means to present \gls{lsp} information, but developers work faster and report both lower perceived effort and higher usability ratings when using traditional \glspl{ide}, at least in the case of \SEE{} versus \gls{vscode}.
 It is unclear what the exact cause of this difference is.
 The \gls{sus} score of \SEE{} is very close to average \gls{sus} scores~\cite{sauro2013}, while \gls{vscode} reaches a very high score, so one possible reason is that \gls{vscode} is a much more polished and "tried-and-tested" product than \SEE{}, which made it easier to use.

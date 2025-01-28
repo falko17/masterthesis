@@ -8,7 +8,7 @@ from colorama import init as colorama_init
 from genericpath import isfile
 from polars import DataFrame, Datetime, Expr, String
 from scipy.special import os
-from scipy.stats import fisher_exact, mannwhitneyu
+from scipy.stats import fisher_exact, mannwhitneyu, wilcoxon
 
 from src.cleanup import clean_data, set_correctness, sus_total
 from src.demographics import check_demographics, check_effects
@@ -132,7 +132,7 @@ def check_usability(sv, vs, both):
 
     # Then the SUS.
     print_statistic(
-        "SUS (SEE vs VSCode)", mannwhitneyu(both["sus_see"], both["sus_vscode"])
+        "SUS (SEE vs VSCode)", wilcoxon(both["sus_see"], both["sus_vscode"])
     )
 
 
