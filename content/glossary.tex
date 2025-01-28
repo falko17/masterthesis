@@ -294,20 +294,63 @@ description={{c}ertain structures in source code that suggest that a refactoring
 
 %%% DIGITAL HERE %%%
 \newglossaryentry{thesis}{name={\tt{thesis.pdf}}, type=file,
-	description={The PDF version of this thesis.}}
+	description={The PDF version of this thesis.
+				{\footnotesize Hash: \txtbrut{NOT YET KNOWN}}
+		}}
 \newglossaryentry{benchmark}{name={\tt{benchmark.zip}}, type=file,
-	description={A ZIP archive containing both the script and all measured data of the technical evaluation. Refer to \glosscref{app:techdata} for more information.}}
+	description={A ZIP archive containing both the script and all measured data of the technical evaluation. Refer to \glosscref{app:techdata} for more information.
+				{\footnotesize Hash: \txtbrut{1e044658f4c87b67ae62fdc413ffea7371358ec7a8fdaebdd58a9162faf884ec}}
+		}}
 \newglossaryentry{extract}{name={\tt{extract-metrics.py}}, type=file,
-	description={A Python script which extracts metrics from a \gls{gxl} file and outputs them into a CSV file.}}
+	description={A Python script which extracts metrics from a \gls{gxl} file and outputs them into a CSV file.
+				{\footnotesize Hash: \txtbrut{dd89383f1d7acd5ab80225518b273d8b0fdefc1f832dce8d5974dedc48ab95e3}}
+		}}
 \newglossaryentry{psi}{name={\tt{SEE-VSCode\_redacted.csv}}, type=file,
-	description={The pseudonymized participation data for group $\Psi$, collected from KoboToolbox during the user study.}}
+	description={The pseudonymized participation data for group $\Psi$, collected from KoboToolbox during the user study.
+				{\footnotesize Hash: \txtbrut{01a564eb6203134016c55e9f4427eb43e02c4c09f824518bbf68c0e10536c9b0}}
+		}}
 \newglossaryentry{omega}{name={\tt{VSCode-SEE\_redacted.csv}}, type=file,
-	description={The pseudonymized participation data for group $\Omega$, collected from KoboToolbox during the user study.}}
+	description={The pseudonymized participation data for group $\Omega$, collected from KoboToolbox during the user study.
+				{\footnotesize Hash: \txtbrut{c5558c48cd717fe60d6c63f183634a09bae67d334f21a51d7074bce3b8a9bae9}}
+		}}
 \newglossaryentry{psitest}{name={\tt{Eval-See-Vscode.xlsx}}, type=file,
-	description={The \gls{xlsform} questionnaire for the $\Psi$ version of the user study.}}
+	description={The \gls{xlsform} questionnaire for the $\Psi$ version of the user study.
+				{\footnotesize Hash: \txtbrut{dd221396e6d520f53b236a8a98242c78b657cfd75061b4bd02d849a56b3a48e8}}
+		}}
 \newglossaryentry{omegatest}{name={\tt{Eval-Vscode-See.xlsx}}, type=file,
-	description={The \gls{xlsform} questionnaire for the $\Omega$ version of the user study.}}
+	description={The \gls{xlsform} questionnaire for the $\Omega$ version of the user study.
+				{\footnotesize Hash: \txtbrut{95eb34fe3ea945a57abd5c153a41f5664be60cc69f48a51072ccf96820a7e317}}
+		}}
 \newglossaryentry{analysis}{name={\tt{analysis.zip}}, type=file,
-	description={A ZIP archive containing all scripts for the analysis of the user study. Refer to \glosscref{app:scripts} for more information.}}
+	description={A ZIP archive containing all scripts for the analysis of the user study. Refer to \glosscref{app:scripts} for more information.
+				{\footnotesize Hash: \txtbrut{f41b2c73064399936e8aff70642d190ddf2662c316bc82dc2c792591c947561d}}
+		}}
 \newglossaryentry{redirect}{name={\tt{redirect-evaluation.py}}, type=file,
-	description={A Python script which acts as a web server that redirects users to either the $\Psi$ or $\Omega$ version of the study, as described by \glosscref{alg:redirect}.}}
+description={A Python script which acts as a web server that redirects users to either the $\Psi$ or $\Omega$ version of the study, as described by \glosscref{alg:redirect}.
+{\footnotesize Hash: \txtbrut{cc31e669ab84f1c5d591bf4f3a0b5b0ae7cef3b8536ed2fbd85c1becc1dbcf9f}}
+}}
+\newglossaryentry{lsppy}{name={\tt{lsp.py}}, type=file,
+	description={A Python script that has been used to debug \gls{lsp} servers while testing the the city generation algorithm.
+				{\footnotesize Hash: \txtbrut{605bf7727bf4a5ff55af6114292d5d229e17fe3fa0d36f50f9b737c9ea7b8a26}}
+		}}
+\newglossaryentry{seecode}{name={\tt{SEE\_Code.zip}}, type=file,
+	description={The source code of \SEE{} (only including C\# files) from the version that includes all of my \gls{lsp}-related changes.
+			Corresponds to commit hash \tt{6bf8362} for the \SEE{} repository.
+				{\footnotesize Hash: \txtbrut{7cafed216aac5f5750c4a0d99a93551cb9b040cc60fb0f21e40e6e51580cf2f6}}
+		}}
+\newglossaryentry{jabref}{name={\tt{JabRef.gxl}}, type=file,
+	description={The \gls{gxl} file representing JabRef that was used in the user study.
+				{\footnotesize Hash: \txtbrut{5a8a2e2341404a14663c322c7f9868296215d52bfddf7098a8cbf741c3e99d48}}
+		}}
+\newglossaryentry{spotbugs}{name={\tt{SpotBugs.gxl}}, type=file,
+	description={The \gls{gxl} file representing SpotBugs that was used in the user study.
+				{\footnotesize Hash: \txtbrut{465c4b99753a1bec0a7ec4f2b8e31f4e76b71fb79e0542242ee8dd732d2c4e58}}
+		}}
+\newglossaryentry{evaltutorial}{name={\tt{SEE\_LSP.webm}}, type=file,
+description={The overview video of the \gls{lsp} implementation into \SEE{} as described in \cref{ch:implementation}.
+{\footnotesize Hash: \txtbrut{1698e5fe0b97bbe728f5d7d87582631244a89a79aadb1fb05f225b9b151d7e8c}}
+}}
+\newglossaryentry{lspoverview}{name={\tt{Study\_Tutorial.webm}}, type=file,
+	description={The explanatory video for \SEE{} shown to participants during the tutorial phase of the user study.
+				{\footnotesize Hash: \txtbrut{4479a0b13c90d777ad77bc6b3f783ccee86a2b13961490de532a061ca9dc4793}}
+		}}

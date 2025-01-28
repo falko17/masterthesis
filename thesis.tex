@@ -11,8 +11,10 @@
 	titlepage=on,           % own page for each title page
 	captions=tableabove,    % display table captions above the float env
   %draft   % if neither is specified, "draft for review mode"
-  %final
+  final
 ]{scrbook}
+
+\pdfminorversion=7
 
 %%% PACKAGES %%%
 
@@ -122,6 +124,11 @@
 \newcommand{\ie}{i.\,e.\xspace}
 \newcommand{\web}[2]{\url{#1} \textit{(last access: #2)}}
 \newcommand{\tt}[1]{\monott{#1}}
+
+\newcommand\txtbrut[1]{\tbhelp#1\relax\relax\relax}
+\def\tbhelp#1#2\relax{%
+	{\texttt{#1}}\penalty0\ifx\relax#2\else\tbhelp#2\relax\fi}
+
 
 %\newcommand{\follows}{\tikzexternaldisable\pgfornament[scale=0.5,ydelta=-1mm]{155}\tikzexternalenable}
 \newcommand{\follows}{\raisebox{-0.7mm}{\scalebox{1.4}{\textcolor{Maroon}{\ding{43}}}}}
@@ -715,8 +722,6 @@ Finally, I want to thank all proofreaders (namely, Sven Hager, Hugo Hakim Damer,
 
 \mainmatter
 
-\fxwarning{Go through all \LaTeX{} warnings}
-
 \subfile{content/intro}
 
 \subfile{content/concepts}
@@ -741,22 +746,26 @@ Finally, I want to thank all proofreaders (namely, Sven Hager, Hugo Hakim Damer,
 % 		}%
 % 	\end{minipage}}
 
-\makeatletter
-\renewcommand\listoffixmes{%
-	\chapter{List of TODOs}
-	\lettrine[lines=3]{\textcolor{Maroon}{A}}{ny} open tasks/notes/mistakes for this master's thesis are collected within this appendix.
-	If you see any mistake or empty section not covered by such a note, please tell me.
-	Note that this appendix will only appear in draft versions.
+\ifdraft{
+	\makeatletter
+	\renewcommand\listoffixmes{%
+		\chapter{List of TODOs}
+		\lettrine[lines=3]{\textcolor{Maroon}{A}}{ny} open tasks/notes/mistakes for this master's thesis are collected within this appendix.
+		If you see any mistake or empty section not covered by such a note, please tell me.
+		Note that this appendix will only appear in draft versions.
 
-	\@starttoc{lox}%
+		\@starttoc{lox}%
+	}
+	\makeatother
 }
-\makeatother
 
 \glslongextraSetWidest{csvresults}
 
 \renewcommand{\glslongextraNameAlign}[0]{r}
 
-\listoffixmes
+\ifdraft{
+	\listoffixmes
+}
 
 \subfile{content/data}
 
@@ -770,10 +779,13 @@ Finally, I want to thank all proofreaders (namely, Sven Hager, Hugo Hakim Damer,
 \printglossary[type=main,style={index}]
 \printglossary[type=\acronymtype,style={index}]
 \setlength{\LTleft}{0pt}
+\renewcommand*{\entryname}{Filename}
 \printunsrtglossary[type=file,style={long-booktabs}]
-\fxerror{Make sure all digital appendix items are actually attached (and that all are present in the table)!}
-\fxwarning{Notation?}
 Note that all of the attached files mentioned above are part of the attached CD-ROM, but are also available in the \texttt{digital} directory of the GitHub repository for this thesis (see \cref{app:source}).
+The description field above also includes SHA-256 hashes for each file, to make sure they have not been tampered with after I submitted this thesis.
+
+The builds of \SEE{} and \gls{vscode} used for the user study are not included, since they would have taken up too much space.
+Links to them can still be found in the \gls{xlsform} questionnaires.
 
 \makeatletter
 \renewcommand{\listoffigures}{\section{\listfigurename}\@starttoc{lof}}

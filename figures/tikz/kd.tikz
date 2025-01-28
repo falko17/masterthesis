@@ -14,5 +14,6 @@
 	\draw (num) -- (result);
 	\draw (pow) -- (someValue);
 	\draw (someValue) -- (Example);
+	\node[opacity=0] at (Example.south -| num.east) {.};
 
 \end{tikzpicture}
