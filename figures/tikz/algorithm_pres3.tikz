@@ -1,0 +1,90 @@
+\newcommand{\codesym}{\faFileCodeO}
+\newcommand{\dirsym}{\faFolder}
+\newcommand{\filesym}{\faFile}
+
+\newcommand{\threesteps}{%
+	\node[nextstep,xshift=0.2cm] (3step1) at (foreachroot.west) {1. Aggregate LOC upwards.};
+	\node[nextstepsmall] (3step2) at (3step1.west) {2. Aggregate diagnostic counts upwards.};
+	\node[nextstep,xshift=-0.2cm] (3step3) at (3step2.west) {Return constructed graph.};
+}
+
+\begin{tikzpicture}[
+		node distance=1cm,
+		outercontainer/.style={draw=blue!75!black, fill=blue!10,blur shadow={shadow blur steps=5}},
+		nextstep/.style={anchor=west,yshift=-1cm,align=left},
+		nextstepsmall/.style={nextstep,yshift=0.4cm},
+		innerbox/.style={draw=black!80, fill=blue!15, rounded corners=2pt,thick},
+		graphnode/.style={draw,circle, fill=black!10,rounded corners=3pt,scale=0.7,blur shadow={shadow xshift=0.2ex,shadow yshift=-0.2ex,shadow opacity=20}},
+		newnode/.style={fill=green!20},
+		leftgraphnode/.style={graphnode,xshift=0.4cm,anchor=west},
+		diagnosticnode/.style={color=red,font=\bfseries\large},
+		aggdiagnode/.style={diagnosticnode,opacity=0.3},
+		graphedge/.style={-Stealth,thick},
+		aggedge/.style={graphedge,densely dotted,red,opacity=0.3},
+		edgelabel/.style={sloped,font=\scriptsize\itshape},
+		scale=0.9, transform shape
+	]
+
+	\node[outercontainer,minimum width=13cm, minimum height=5cm] (container3) {};
+
+	% Top of third part.
+	\node[anchor=north west, align=left, xshift=0.3cm,yshift=-1cm] (foreachroot) at (container3.north west) {For each root node\dots};
+	\begin{scope}[opacity=0.3,transparency group]
+		\node[right=0.3cm of foreachroot,opacity=0.3,yshift=0.15cm,graphnode,minimum width=0.7cm,shadow opacity=0] (rnodes) {\dirsym};
+		\node[below left=-0.31cm and -0.27cm of rnodes,graphnode,minimum width=0.7cm,shadow opacity=0] (rnodes1) {\dirsym};
+	\end{scope}
+	\node[below left=-0.29cm and -0.24cm of rnodes1,graphnode,minimum width=0.7cm,shadow opacity=0] (rnodes2) {\dirsym};
+
+	% Steps of third part.
+	\threesteps{}
+
+	% Box around steps
+	\node[innerbox,fit=(3step1) (3step2)] (3stepbox) {};
+
+	\threesteps{}
+
+	% Small graph - Step 3
+	\node[leftgraphnode,yshift=-1cm] (a1) at (container3.north -| {$(3stepbox.east)!0.38!(container3.east)$}) {\dirsym};
+	\node[graphnode, below right=0.9cm of a1] (a2) {\filesym};
+	\node[graphnode, below right=0.9cm and 0.1cm of a2] (a3) {\codesym};
+	\node[graphnode, below left=0.9cm and 0.1cm of a3] (a4) {\codesym};
+	\node[graphnode, below left=0.9cm and 0.1cm of a2] (a5) {\codesym};
+
+	\node[graphnode, below left=0.9cm of a1] (a6) {\filesym};
+	\node[graphnode,below left=0.9cm and 0.1cm of a6] (a7) {\codesym};
+	\node[graphnode,below right=0.9cm and 0.1cm of a6] (a8) {\codesym};
+
+	\node[diagnosticnode,right=-0.1cm of a4] {!};
+	\node[diagnosticnode,right=0.03cm of a4] (agg4) {!};
+	\node[diagnosticnode,right=-0.1cm of a5] (agg5) {!};
+	\node[diagnosticnode,left=-0.1cm of a7] (agg7) {!};
+
+	% Structure
+	\draw[graphedge] (a1) -- (a2);
+	\draw[graphedge] (a2) -- (a3);
+	\draw[graphedge] (a3) -- (a4);
+	\draw[graphedge] (a2) -- (a5);
+	\draw[graphedge] (a1) -- (a6);
+	\draw[graphedge] (a6) -- (a7);
+	\draw[graphedge] (a7) -- (a8);
+
+	% Actual edges
+	\draw[->,thick,green!70!black] (a7) edge[bend left=50] (a5);
+	\draw[->,thick,green!70!black] (a5) edge[bend left=50] (a7);
+	\draw[->,thick,green!70!black] (a5) -- (a4);
+
+	% Aggregation diagnostics
+	\node[aggdiagnode,left=-0.1cm of a6] (agg6) {!};
+	\node[aggdiagnode,right=-0.1cm of a3] (agg3) {!!};
+	\node[aggdiagnode,right=-0.1cm of a2] (agg2) {!!!};
+	\node[aggdiagnode,right=-0.1cm of a1] (agg1) {!!!!};
+
+	% Aggregation
+	\draw[aggedge] (agg4) edge[bend right] (agg3);
+	\draw[aggedge] (agg3) -- (agg2);
+	\draw[aggedge] (agg5) -- (agg2);
+	\draw[aggedge] (agg2) -- (agg1);
+	\draw[aggedge] (agg7) -- (agg6);
+	\draw[aggedge] (agg6) edge[bend left=50] (agg1.north);
+
+\end{tikzpicture}

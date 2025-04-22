@@ -1,0 +1,109 @@
+\newcommand{\codesym}{\faFileCodeO}
+\newcommand{\dirsym}{\faFolder}
+\newcommand{\filesym}{\faFile}
+
+\newcommand{\onesteps}{%
+	\node[nextstep,xshift=0.2cm] (step1) at (foreach.west) {1. Add a node for the document (and its directory).};
+	\node[nextstep] (step2) at (step1.west) {2. For each symbol in that document\dots};
+	\begin{scope}[opacity=0.5,transparency group]
+		\node[right=0.2cm of step2,opacity=0.3,yshift=0.15cm,black] (symbols) {\codesym};
+		\node[below left=-0.56cm and -0.49cm of symbols,black] (symbols1) {\codesym};
+	\end{scope}
+	\node[below left=-0.53cm and -0.48cm of symbols1,black] (symbols2) {\codesym};
+
+	\node[nextstep,xshift=0.2cm] (step21) at (step2.west) {2.1 Add a child node for the symbol.};
+	\node[nextstep] (step22) at (step21.west) {2.2 If there are contained symbols, go to 2.1 for each one.};
+
+	\node[nextstep,xshift=-0.2cm,yshift=-0.65cm] (step3) at (step22.west) {3. Retrieve diagnostics for document and attach to\\corresponding nodes.};
+}
+
+\begin{tikzpicture}[
+		node distance=1cm,
+		outercontainer/.style={draw=blue!75!black, fill=blue!10,blur shadow={shadow blur steps=5}},
+		nextstep/.style={anchor=west,yshift=-1cm,align=left},
+		nextstepsmall/.style={nextstep,yshift=0.4cm},
+		innerbox/.style={draw=black!80, fill=blue!15, rounded corners=2pt,thick},
+		graphnode/.style={draw,circle, fill=black!10,rounded corners=3pt,scale=0.7,blur shadow={shadow xshift=0.2ex,shadow yshift=-0.2ex,shadow opacity=20}},
+		newnode/.style={fill=green!20},
+		leftgraphnode/.style={graphnode,xshift=0.4cm,anchor=west},
+		diagnosticnode/.style={color=red,font=\bfseries\large},
+		aggdiagnode/.style={diagnosticnode,opacity=0.3},
+		graphedge/.style={-Stealth,thick},
+		aggedge/.style={graphedge,densely dotted,red,opacity=0.3},
+		edgelabel/.style={sloped,font=\scriptsize\itshape},
+		scale=0.9, transform shape
+	]
+
+	% Main container with light blue background
+	\node[outercontainer,minimum width=15.5cm, minimum height=7.4cm] (container1) {};
+
+	% Title at the top
+	%\node[anchor=north, yshift=-0.2cm] at (container1.north) {\Large \textbf{\textsf{Part I: Node Synthesis}}};
+
+	% "For each document..." text and small document icon
+	\node[anchor=north west, align=left, xshift=0.3cm,yshift=-0.3cm] (foreach) at (container1.north west) {For each document\dots};
+	\begin{scope}[opacity=0.5,transparency group]
+		\node[right=0.1cm of foreach,opacity=0.3,yshift=0.15cm,black] (files) {\filesym};
+		\node[below left=-0.56cm and -0.49cm of files,black] (files1) {\filesym};
+	\end{scope}
+	\node[below left=-0.53cm and -0.48cm of files1,black] (files2) {\filesym};
+
+	% Steps first.
+	\onesteps{}
+
+	\node[draw=none] (step22r) [right=-0.1cm of step22] {.};
+
+	% Boxes containing steps.
+	\node[innerbox,fit=(step1) (step2) (step21) (step22r) (step3)] (stepbox) {};
+	\node[innerbox,rounded corners=4pt,fill=blue!20,fit=(step21) (step22)] (step2box) {};
+
+	% Need to draw over fitted background again.
+	\onesteps{}
+
+	% Dotted lines
+	\draw[dotted] (container1.west |- {$(step1.south)!0.5!(step2.north)$}) -- (container1.east |- {$(step1.south)!0.5!(step2.north)$});
+	\draw[dotted] (container1.west |- {$(step21.south)!0.3!(step22.north)$}) -- (container1.east |- {$(step21.south)!0.3!(step22.north)$});
+	\draw[dotted] (container1.west |- {$(step22.south)!0.9!(step3.north)$}) -- (container1.east |- {$(step22.south)!0.9!(step3.north)$});
+
+	% Small graph - Step 1
+	\node[leftgraphnode, newnode,right=0.5cm of step1] (n1) at (step1 -| stepbox.east) {\dirsym};
+	\node[graphnode, newnode, right=0.5cm of n1] (n2) {\filesym};
+
+	\draw[graphedge] (n1) -- (n2);
+
+	% Small graph - Step 2
+	\node[leftgraphnode] (n3) at (step2 -| stepbox.east) {\dirsym};
+	\node[graphnode, right=0.5cm of n3] (n4) {\filesym};
+	\node[graphnode,newnode,below right=0.4cm and 0.2cm of n3] (n5) {\codesym};
+
+	\draw[graphedge] (n3) -- (n4);
+	\draw[graphedge] (n4) -- (n5);
+
+	% Small graph - Step 2.2
+	\node[leftgraphnode,yshift=-0.15cm] (n6) at (step22.north -| stepbox.east) {\dirsym};
+	\node[graphnode, right=0.5cm of n6] (n7) {\filesym};
+	\node[graphnode,below right=0.4cm and 0.2cm of n6] (n8) {\codesym};
+	\node[graphnode, newnode, right=0.5cm of n8] (n9) {\codesym};
+
+	\draw[graphedge] (n6) -- (n7);
+	\draw[graphedge] (n7) -- (n8);
+	\draw[graphedge] (n8) -- (n9);
+
+	% Small graph - Step 3
+	\node[leftgraphnode,yshift=-0.5cm] (n10) at (step3.north -| stepbox.east) {\dirsym};
+	\node[graphnode, right=0.5cm of n10] (n11) {\filesym};
+	\node[graphnode,below right=0.4cm and 0.2cm of n10] (n12) {\codesym};
+	\node[graphnode, right=0.5cm of n12] (n13) {\codesym};
+	\node[graphnode, right=0.5cm of n13] (n14) {\codesym};
+	\node[below left=0.5cm and -0.3cm of n10] (n15) {\dots};
+	\node[diagnosticnode,right=-0.1cm of n13] {!};
+	\node[diagnosticnode,right=0.03cm of n13] {!};
+	\node[diagnosticnode,right=-0.1cm of n14] {!};
+
+	\draw[graphedge] (n10) -- (n11);
+	\draw[graphedge] (n11) -- (n12);
+	\draw[graphedge] (n12) -- (n13);
+	\draw[graphedge] (n11) -- (n14);
+	\draw[dotted,graphedge] (n10) -- (n15);
+
+\end{tikzpicture}

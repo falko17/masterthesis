@@ -1,0 +1,80 @@
+\newcommand{\codesym}{\faFileCodeO}
+\newcommand{\dirsym}{\faFolder}
+\newcommand{\filesym}{\faFile}
+
+\newcommand{\twosteps}{%
+	\node[nextstep,xshift=0.2cm] (2step1) at (foreachnode.west) {1. Connect edge to definition, if it exists.};
+	\node[nextstepsmall] (2step2) at (2step1.west) {2. Connect edge to declaration, if it exists.};
+	\node[nextstepsmall] (2step3) at (2step2.west) {3. Connect edge to type definition, if it exists.};
+	\node[nextstepsmall] (2step4) at (2step3.west) {4. Connect edge to implementation, if it exists.};
+	\node[nextstepsmall] (2step5) at (2step4.west) {5. Connect edge to any references.};
+	\node[nextstepsmall] (2step6) at (2step5.west) {6. Connect edge to any outgoing calls using call hierarchy.};
+	\node[nextstepsmall] (2step7) at (2step6.west) {7. Connect edge to any supertypes using type hierarchy.};
+}
+
+\begin{tikzpicture}[
+		node distance=1cm,
+		outercontainer/.style={draw=blue!75!black, fill=blue!10,blur shadow={shadow blur steps=5}},
+		nextstep/.style={anchor=west,yshift=-1cm,align=left},
+		nextstepsmall/.style={nextstep,yshift=0.4cm},
+		innerbox/.style={draw=black!80, fill=blue!15, rounded corners=2pt,thick},
+		graphnode/.style={draw,circle, fill=black!10,rounded corners=3pt,scale=0.7,blur shadow={shadow xshift=0.2ex,shadow yshift=-0.2ex,shadow opacity=20}},
+		newnode/.style={fill=green!20},
+		leftgraphnode/.style={graphnode,xshift=0.4cm,anchor=west},
+		diagnosticnode/.style={color=red,font=\bfseries\large},
+		aggdiagnode/.style={diagnosticnode,opacity=0.3},
+		graphedge/.style={-Stealth,thick},
+		aggedge/.style={graphedge,densely dotted,red,opacity=0.3},
+		edgelabel/.style={sloped,font=\scriptsize\itshape},
+		scale=0.9, transform shape
+	]
+
+	\node[outercontainer,minimum width=15cm, minimum height=5.9cm] (container2) {};
+
+	% Top of second part.
+	\node[anchor=north west, align=left, xshift=0.3cm,yshift=-0.3cm] (foreachnode) at (container2.north west) {For each node\dots};
+	\begin{scope}[opacity=0.3,transparency group]
+		\node[right=0.3cm of foreachnode,opacity=0.3,yshift=0.15cm,graphnode,minimum width=0.7cm,shadow opacity=0] (nodes) {};
+		\node[below left=-0.27cm and -0.25cm of nodes,graphnode,minimum width=0.7cm,shadow opacity=0] (nodes1) {};
+	\end{scope}
+	\node[below left=-0.25cm and -0.22cm of nodes1,graphnode,minimum width=0.7cm,shadow opacity=0] (nodes2) {};
+
+	% Steps of second part.
+	\twosteps{}
+
+	% Box around steps
+	\node[innerbox,fit=(2step1) (2step2) (2step3) (2step4) (2step5) (2step6) (2step7)] (2stepbox) {};
+
+	\twosteps{}
+
+	% Small graph - Step 3
+	\node[leftgraphnode,yshift=-0.5cm] (e1) at (2step1.north -| {$(2stepbox.east)!0.38!(container2.east)$}) {\dirsym};
+	\node[graphnode, below right=0.9cm of e1] (e2) {\filesym};
+	\node[graphnode, below right=0.9cm and 0.1cm of e2] (e3) {\codesym};
+	\node[graphnode, below left=0.9cm and 0.1cm of e3] (e4) {\codesym};
+	\node[graphnode, below left=0.9cm and 0.1cm of e2] (e5) {\codesym};
+
+	\node[graphnode, below left=0.9cm of e1] (e6) {\filesym};
+	\node[graphnode,below left=0.9cm and 0.1cm of e6] (e7) {\codesym};
+	\node[graphnode,below right=0.9cm and 0.1cm of e6] (e8) {\codesym};
+
+	\node[diagnosticnode,right=-0.1cm of e4] {!};
+	\node[diagnosticnode,right=0.03cm of e4] {!};
+	\node[diagnosticnode,right=-0.1cm of e5] {!};
+	\node[diagnosticnode,left=-0.1cm of e7] {!};
+
+	% Structure
+	\draw[graphedge] (e1) -- (e2);
+	\draw[graphedge] (e2) -- (e3);
+	\draw[graphedge] (e3) -- (e4);
+	\draw[graphedge] (e2) -- (e5);
+	\draw[graphedge] (e1) -- (e6);
+	\draw[graphedge] (e6) -- (e7);
+	\draw[graphedge] (e7) -- (e8);
+
+	% Actual edges
+	\draw[->,green!70!black,thick] (e7) edge[bend left=50] node[above=-0.08cm,edgelabel] {reference} (e5);
+	\draw[->,green!70!black,thick] (e5) edge[bend left=50] node[below=-0.08cm,edgelabel] {supertype} (e7);
+	\draw[->,green!70!black,thick] (e5) -- node[edgelabel,below left=-0.08cm and -0.25cm] {call} (e4);
+
+\end{tikzpicture}
