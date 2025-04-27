@@ -1,4 +1,4 @@
-\documentclass[xcolor={dvipsnames},aspectratio=169,compress]{beamer} % maybe 10pt?
+\documentclass[xcolor={dvipsnames},aspectratio=169,compress,final]{beamer}
 
 %-------------------------------------------------------------------------------
 %   REQUIRED PACKAGES AND SETTINGS
@@ -20,11 +20,12 @@
 \usepackage{tikz}
 \usepackage{tikzscale}
 \usepackage{ifdraft}
-\usepackage{csquotes}
 \usepackage{subcaption}
+\usepackage{caption}
 \usepackage{bm}
+\usepackage{pdfpc}
+\usepackage{appendixnumberbeamer}
 
-\MakeOuterQuote{"}
 
 % --- Font Setup ---
 \usepackage[scaled=1.05]{zlmtt}
@@ -42,21 +43,32 @@
 
 % Minted for code listings (NOTE: requires --shell-escape option during compilation)
 \usepackage{minted}
-\usemintedstyle{tango}
 \setminted{
-    fontsize=\footnotesize,
-    breaklines,
-    autogobble,
-    frame=lines,
-    framesep=2mm,
-    rulecolor=\color{Gray!70},
-    bgcolor=Gray!10
+  autogobble,
+  breakaftersymbolpre=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
+  breaklines,
+  fontsize=\footnotesize,
+  numberblanklines=true,
+  mathescape,
+  texcomments,
 }
+\renewcommand{\theFancyVerbLine}{\textcolor{Gray}{\scriptsize \arabic{FancyVerbLine}}}
+
+\usepackage{csquotes}
+\MakeOuterQuote{"}
 
 \newcommand{\follows}{\raisebox{-0.7mm}{\scalebox{1.4}{\textcolor{Maroon}{\ding{43}}}}}
 \newcommand{\answer}[1]{\begin{description}\item[\follows{}]{#1}\end{description}}
 \newcommand{\TODO}[1]{\textbf{\textcolor{red}{TODO: #1}}}
 \newcommand{\glsentrylong}[1]{System Usability Scale}  % Only used in one included Tikz drawing for SUS
+
+\pgfplotsset{every axis/.append style={
+      tick label style={font=\footnotesize,text=gray!50!black},
+    },
+    compat=1.18,
+    axis line style={draw=none}
+  }
+
 
 \newcommand{\plotornaments}[1]{
   \node[shift={(0.44,-0.47)}](CNW) at (#1.north west) {\pgfornament[color=Gray,width=1cm]{41}};
@@ -188,6 +200,9 @@
 \newcommand{\violinsv}[7]{\violin{seevs}{SEE}{VSCode}{#1}{ymin=#3,ymax=#4,#2}{#5}{#6}{#7}}
 \newcommand{\violinsus}{\violin{seevs-sus}{SEE}{VSCode}{sus}{ymin=40,ymax=100,ylabel=SUS}{7.4}{7.2153}{1}}
 
+\captionsetup[figure]{labelformat=empty}
+\captionsetup[table]{labelformat=empty}
+
 %-------------------------------------------------------------------------------
 %   THEME CONFIGURATION
 %-------------------------------------------------------------------------------
@@ -301,6 +316,11 @@
 \setbeamertemplate{enumerate subitem}{\insertenumlabel.\insertsubenumlabel}
 \setbeamertemplate{enumerate subsubitem}{\insertenumlabel.\insertsubenumlabel.\insertsubsubenumlabel}
 
+% A dumb cheat (slightly pressed for time right now) to make sure the subenumerations are aligned.
+\setbeamerfont{enumerate item}{family=\ttfamily\bfseries}
+\setbeamerfont{enumerate subitem}{family=\ttfamily\bfseries}
+\setbeamerfont{enumerate subsubitem}{family=\ttfamily\bfseries}
+
 \setbeamersize{description width=0.5cm}
 
 % Increase separation between items
@@ -335,7 +355,7 @@
   University of Bremen
 }
 \titlegraphic{\includegraphics[height=0.6cm]{figures/unibremen}}
-\date{\today}
+\date{April 29, 2025}
 
 %-------------------------------------------------------------------------------
 %   PRESENTATION CONTENT STARTS HERE
@@ -352,26 +372,44 @@
 
 \section{Introduction}
 
-\begin{frame}{Outline}
-	\tableofcontents
-\end{frame}
+% \begin{frame}{Outline}
+% 	\tableofcontents
+% \end{frame}
 
 \begin{frame}{Overview}
-	\begin{itemize}
-		\item \textbf{Code Cities} can help developers understand complex software systems
-		      \begin{itemize}
-			      \item Often limited to few languages
-		      \end{itemize}
-		\item The \textbf{Language Server Protocol} (LSP) specifies how \emph{Language Servers} can provide language-specific features to IDEs
-		      \begin{itemize}
-			      \item Many Language Servers are available
-		      \end{itemize}
-	\end{itemize}
-	\begin{block}{Goal}
-		\answer{Integrate LSP information into code-city implementation SEE}
-	\end{block}
+	\begin{columns}
+		\column{0.7\textwidth}
+		\begin{itemize}
+			\item \textbf{Code Cities} can help developers understand complex software systems
+			      \begin{itemize}
+				      \item Often limited to few languages
+			      \end{itemize}
+			\item The \textbf{Language Server Protocol} (LSP) specifies how \emph{Language Servers} can provide language-specific features to IDEs
+			      \begin{itemize}
+				      \item Many Language Servers are available
+			      \end{itemize}
+		\end{itemize}
+		\begin{block}{Goal}
+			\answer{Integrate LSP information into code-city implementation SEE}
+		\end{block}
 
-	% TODO: Images (e.g., explanatory LSP/SEE graphic)
+		\column{0.3\textwidth}
+		\begin{figure}
+			\begin{center}
+				\includegraphics[width=0.95\textwidth,clip,trim={11cm 0 13cm 0}]{figures/SEE_screenshot}
+			\end{center}
+			\caption{Sample code city (SEE)}
+		\end{figure}
+
+		\begin{figure}
+			\begin{center}
+				\includegraphics[width=0.95\textwidth,clip,trim={4cm 0 3cm 0}]{figures/SEEEdges}
+			\end{center}
+			\caption{Edges connecting nodes (SEE)}
+		\end{figure}
+
+
+	\end{columns}
 
 \end{frame}
 
@@ -389,21 +427,6 @@
 	\end{block}
 \end{frame}
 
-\begin{frame}{SEE: Graph}
-	Attributed project graph $G = (V, E, a, s, t, \ell)$
-
-	\begin{itemize}
-		\item $V$: Set of nodes
-		\item $E$: Set of edges
-		\item $a: (V \times \mathcal{A}_K) \rightharpoonup \mathcal{A}_V$ assigns named attributes to nodes
-		\item $s, t: E \rightarrow V$ denotes source/target node of each edge
-		\item $\ell: E \rightarrow \Sigma$ for labelling edges
-		      \begin{itemize}
-			      \item Edge label $\texttt{partOf} \in \Sigma$ induces source code hierarchy
-		      \end{itemize}
-	\end{itemize}
-\end{frame}
-
 \begin{frame}{Language Server Protocol}
 	\begin{itemize}
 		\item Open-source specification managed by Microsoft
@@ -412,7 +435,7 @@
 		\item Specifies \textbf{capabilities} to be used by implementers
 		      \begin{itemize}
 			      \item Examples: Go to definition, hover, document symbols
-			      \item We will only use (some) "read-only" capabilities
+			      \item We will use only (some) "read-only" capabilities
 		      \end{itemize}
 	\end{itemize}
 \end{frame}
@@ -444,22 +467,38 @@
 
 \end{frame}
 
-% TODO: Note performance problems / augmented interval trees in any way?
-% \begin{frame}{Augmented Interval Trees}
-% 	Left out
-% \end{frame}
-
 \subsection{Integration}
 
-\begin{frame}{Code Cities}
+\begin{frame}{Hover Tooltip}
 	\begin{figure}
 		\begin{center}
 			\includegraphics[trim={0.3cm 0.8cm 2.7cm 0.3cm},clip,width=0.95\textwidth]{figures/HoverInfo}
 		\end{center}
 		\caption{A hover tooltip with information collected from the \texttt{rust-analyzer} Language Server.}
 	\end{figure}
-
 \end{frame}
+
+\begin{frame}{Navigation}
+	\begin{columns}
+		\column{0.5\linewidth}
+		\begin{figure}
+			\begin{center}
+				\includegraphics[height=6cm]{figures/CodeWindowContext}
+			\end{center}
+			\caption{Menu shown when right-clicking an element.}
+		\end{figure}
+
+		\column{0.5\linewidth}
+		\begin{figure}
+			\begin{center}
+				\includegraphics[height=6cm]{figures/CodeWindowReferences}
+			\end{center}
+			\caption{Selecting an LSP reference to navigate to.}
+		\end{figure}
+	\end{columns}
+\end{frame}
+
+
 
 \begin{frame}{Code Windows}
 	\begin{figure}
@@ -503,8 +542,10 @@
 	\end{itemize}
 \end{frame}
 
-\begin{frame}[plain]{Evaluation Results---Time Breakdown}
-
+{
+\setbeamertemplate{headline}{\vskip-\headheight}
+\begin{frame}{Evaluation Results---Time Breakdown}
+	\vspace{-1em}
 	\begin{figure}
 		\begin{subfigure}[T]{0.5\textwidth}
 			\begin{center}
@@ -516,7 +557,6 @@
 							name=bars,
 							set layers,
 							ymin=0, ymax=370,
-							axis line style={draw=none},
 							enlarge x limits={0.5},
 							ymajorgrids,
 							bar width=0.6cm,
@@ -549,7 +589,6 @@
 							name=bars,
 							set layers,
 							ymin=0, ymax=2700,
-							axis line style={draw=none},
 							axis y line*=left,
 							xmin=3, xmax=4,
 							enlarge x limits={1},
@@ -573,73 +612,27 @@
 				\end{tikzpicture}
 			\end{center}
 		\end{subfigure}
-		\caption{Generation time for Rust and \LaTeX{} projects, broken down by parts of the algorithm.
+		\caption{Generation time for Rust (left) and Java (right) projects, broken down by parts of the algorithm.
 			The suffix \emph{O} denotes the optimized version of the algorithm, while \emph{B} refers to the brute-force version.
 		}
 	\end{figure}
 \end{frame}
-
-\begin{frame}[plain]{Evaluation Results---Optimization Improvement}
-	\begin{figure}
-		\begin{center}
-			\begin{tikzpicture}[
-					labelnode/.style={font=\footnotesize,Maroon}
-				]
-				\begin{semilogxaxis}[
-						height=6.5cm,
-						name=line,
-						set layers,
-						ymin=0, ymax=1,
-						xmin=10^(2.7), xmax=55000,
-						xtick distance=10^(0.5),
-						xtick distance=10^(0.5),
-						axis line style={draw=none},
-						grid=major,
-						xlabel={Number of edges},
-						ylabel={Relative time improvement},
-						width=\textwidth,
-					]
-
-					\addplot+[draw=black,
-						mark=*,
-						mark options={fill=Maroon,draw=Maroon},
-						% nodes near coords,
-						% nodes near coords align={above left},
-						% every node near coord/.append style={font=\footnotesize,Maroon},
-						point meta=explicit symbolic,
-						ultra thick,
-						error bars/.cd,
-						y dir=both,y explicit,
-					] table [meta=project,x=edges,y=adv_mean,y error minus=adv_min,y error plus=adv_max,col sep=tab] {benchmark/advantage.dat};
-
-
-					\node[labelnode] at (axis cs: 10^2.87,0.08) {JabRef};
-					\node[labelnode] at (axis cs: 10^2.97,0.29) {\proptt{aaoffline}};
-					\node[labelnode] at (axis cs: 10^3.9,0.29) {\proptt{dcaf-rs}};
-					\node[labelnode] at (axis cs: 10^4.1,0.82) {SpotBugs};
-					\node[labelnode] at (axis cs: 10^4.4,0.68) {Master's thesis};
-					\node[labelnode] at (axis cs: 10^4.45,0.95) {Bachelor's thesis};
-				\end{semilogxaxis}
-				\plotornaments{line}
-			\end{tikzpicture}
-		\end{center}
-		\caption{The percentage by which time is reduced when using the optimized instead of the base algorithm.}
-	\end{figure}
-\end{frame}
+}
 
 \begin{frame}{Evaluation Results---Conclusion}
 	\begin{itemize}
-		\item Time taken only comparable within the same Language Server
 		\item Most important metric by far: Number of edges
 		\item Optimized variant always more performant than brute-force approach
 		      \begin{itemize}
 			      \item $\mathcal{O}(|E| \cdot \log |V|)$ vs.\ $\Theta(|E| \cdot |V|)$
 		      \end{itemize}
+		\item Time taken only comparable within the same Language Server
 	\end{itemize}
 
 	\begin{exampleblock}{Research Question 2}
 		\emph{What is the scalability of this integration?}
-		\answer{\small Feasible until $\approx 200$ kLOC (but very dependent on configuration and Language Server)}
+		\answer{\small Feasible until $\approx 200$ kLOC (but very dependent on configuration and Language Server).\\
+			Similar results for many more language servers and projects as part of ICSME 2025 paper.}
 	\end{exampleblock}
 \end{frame}
 
@@ -647,7 +640,7 @@
 
 \subsection{Design}
 
-\begin{frame}{Plan}
+\begin{frame}{Study Design}
 	\begin{columns}
 		\column{0.5\textwidth}
 		\begin{itemize}
@@ -672,6 +665,11 @@
 			      \end{enumerate}
 		\end{enumerate}
 	\end{columns}
+
+	\begin{block}{Research Question 3}
+		Are code cities a suitable means to present LSP information to developers as compared to IDEs + tables (on the dimensions of speed, accuracy, and usability)?
+	\end{block}
+
 \end{frame}
 
 \begin{frame}{VSCode}
@@ -746,25 +744,15 @@
 	\end{itemize}
 \end{frame}
 
-% \begin{frame}{Time: Significant Differences}
-% 	\ifoptionfinal{
-% 		\begin{figure}
-% 			\begin{subfigure}[T]{0.5\textwidth}
-% 				\includegraphics[width=\textwidth,height=6cm]{figures/tikz/a3t.tikz}
-% 				\caption{Time taken for task $C_1$.}
-% 			\end{subfigure}\hfill
-% 			\begin{subfigure}[T]{0.5\textwidth}
-% 				\includegraphics[width=\textwidth,height=6cm]{figures/tikz/a6t.tikz}
-% 				\caption{Time taken for task $C_2$.}
-% 			\end{subfigure}
-% 		\end{figure}}{\TODO{Specify final option to see}}
-% \end{frame}
-
 \begin{frame}{Usability: ASQ}
 	\begin{itemize}
-		\item Two questions asked after each task
-		\item "Cognitive" complexity: No significant differences for any task
-		\item "Temporal" effort: \alert{Significant differences} for tasks $A_2$ and $C_1$ in favor of VSCode
+		\item Two questions asked after each task:
+		      \begin{itemize}
+			      \item "Overall, I am satisfied with the ease of completing the tasks in this scenario."
+			      \item "Overall, I am satisfied with the amount of time it took to complete the tasks in this scenario."
+		      \end{itemize}
+		\item Complexity (Ease): No significant differences for any task
+		\item Effort (Time): \alert{Significant differences} for tasks $A_2$ and $C_1$ in favor of VSCode
 		      \begin{itemize}
 			      \item Participants indeed took longer to solve tasks $A_2$ and $C_1$ in SEE
 		      \end{itemize}
@@ -800,7 +788,7 @@
 		\item \emph{Kendall's coefficient of rank correlation $\tau_b$} used as statistical test
 		      \begin{itemize}
 			      \item However, at 90 tests, we run into the multiple comparisons problem
-			      \item Hence, \emph{Benjamini-Yekutieli procedure} used to fix False Discovery Rate at $0.05$
+			      \item Hence, \emph{Benjamini-Yekutieli procedure} used to fix False Discovery Rate (FDR) at $0.05$
 		      \end{itemize}
 		\item Result: No significant correlations for any pair of variables (after FDR correction)
 	\end{itemize}
@@ -841,26 +829,9 @@
 
 \section{Conclusion}
 
-% \begin{frame}{Summary}
-%
-% 	\begin{alertblock}{Research Question 1}
-% 		\emph{How can LSP be integrated into SEE to generate code cities?}
-% 		\answer{\small Using the algorithm explained in previous slides}
-% 	\end{alertblock}
-%
-% 	\begin{exampleblock}{Research Question 2}
-% 		\emph{What is the scalability of this integration?}
-% 		\answer{\small Feasible until $\approx 200$ kLOC (but very dependent on configuration and Language Server)}
-% 	\end{exampleblock}
-%
-% 	\begin{block}{Research Question 3}
-% 		\emph{Are code cities a suitable means to present LSP information to developers as compared to IDEs + tables (on the dimensions of speed, accuracy, and usability)?}
-% 		\answer{While code cities seem suitable to present LSP information, developers work faster and prefer traditional IDEs (at least in the case of SEE vs.\ VSCode).}
-% 	\end{block}
-% \end{frame}
-
 \begin{frame}{Future Work}
 	\begin{itemize}
+		\item Improve usability of SEE
 		\item Improve performance to make it possible for bigger projects to run well
 		\item Add suport for editing-related capabilities to SEE
 		\item Use the Language Server Index Format (LSIF) to construct code cities remotely
@@ -869,10 +840,10 @@
 \end{frame}
 
 
-\begin{frame}{Thank You!}
+\begin{frame}[noframenumbering]{Thank You!}
 	\vspace{1cm}
 	\centering
-	\Large Any questions?
+	\LARGE Any questions?
 	\vspace{1cm}
 
 	\vfill
@@ -884,6 +855,14 @@
 \end{frame}
 
 \appendix
+
+\begin{frame}[noframenumbering,plain]{Appendix}
+	\begin{center}
+		{\huge Following slides: Appendix}\\
+		\vspace{1em}
+		{i.e., not part of main presentation}
+	\end{center}
+\end{frame}
 
 \ifdraft{
 	\begin{frame}{TODOs: General}
@@ -900,5 +879,195 @@
 		\end{itemize}
 	\end{frame}
 }
+
+\section{Appendix}
+
+\subsection{Additional Material}
+
+\begin{frame}{SEE: Graph}
+	Attributed project graph $G = (V, E, a, s, t, \ell)$
+
+	\begin{itemize}
+		\item $V$: Set of nodes
+		\item $E$: Set of edges
+		\item $a: (V \times \mathcal{A}_K) \rightharpoonup \mathcal{A}_V$ assigns named attributes to nodes
+		\item $s, t: E \rightarrow V$ denotes source/target node of each edge
+		\item $\ell: E \rightarrow \Sigma$ for labelling edges
+		      \begin{itemize}
+			      \item Edge label $\texttt{partOf} \in \Sigma$ induces source code hierarchy
+		      \end{itemize}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[plain]{Evaluation Results---Optimization Improvement}
+	\begin{figure}
+		\begin{center}
+			\begin{tikzpicture}[
+					labelnode/.style={font=\footnotesize,Maroon}
+				]
+				\begin{semilogxaxis}[
+						height=6.5cm,
+						name=line,
+						set layers,
+						ymin=0, ymax=1,
+						xmin=10^(2.7), xmax=55000,
+						xtick distance=10^(0.5),
+						xtick distance=10^(0.5),
+						grid=major,
+						xlabel={Number of edges},
+						ylabel={Relative time improvement},
+						width=\textwidth,
+					]
+
+					\addplot+[draw=black,
+						mark=*,
+						mark options={fill=Maroon,draw=Maroon},
+						% nodes near coords,
+						% nodes near coords align={above left},
+						% every node near coord/.append style={font=\footnotesize,Maroon},
+						point meta=explicit symbolic,
+						ultra thick,
+						error bars/.cd,
+						y dir=both,y explicit,
+					] table [meta=project,x=edges,y=adv_mean,y error minus=adv_min,y error plus=adv_max,col sep=tab] {benchmark/advantage.dat};
+
+
+					\node[labelnode] at (axis cs: 10^2.87,0.08) {JabRef};
+					\node[labelnode] at (axis cs: 10^2.97,0.29) {\proptt{aaoffline}};
+					\node[labelnode] at (axis cs: 10^3.9,0.29) {\proptt{dcaf-rs}};
+					\node[labelnode] at (axis cs: 10^4.1,0.82) {SpotBugs};
+					\node[labelnode] at (axis cs: 10^4.4,0.68) {Master's thesis};
+					\node[labelnode] at (axis cs: 10^4.45,0.95) {Bachelor's thesis};
+				\end{semilogxaxis}
+				\plotornaments{line}
+			\end{tikzpicture}
+		\end{center}
+		\caption{The percentage by which time is reduced when using the optimized instead of the base algorithm.}
+	\end{figure}
+\end{frame}
+
+\begin{frame}{Time: Significant Differences}
+	\ifoptionfinal{
+		\begin{figure}
+			\begin{subfigure}[T]{0.5\textwidth}
+				\includegraphics[width=\textwidth,height=6cm]{figures/tikz/a3t.tikz}
+				\caption{Time taken for task $C_1$.}
+			\end{subfigure}\hfill
+			\begin{subfigure}[T]{0.5\textwidth}
+				\includegraphics[width=\textwidth,height=6cm]{figures/tikz/a6t.tikz}
+				\caption{Time taken for task $C_2$.}
+			\end{subfigure}
+		\end{figure}}{\TODO{Specify final option to see}}
+\end{frame}
+
+\begin{frame}{Sample Code Cities}
+	\begin{columns}
+		\column{0.5\linewidth}
+		\begin{figure}
+			\begin{center}
+				\includegraphics[width=0.95\textwidth]{figures/DcafCity}
+			\end{center}
+			\caption{Code city for \texttt{dcaf-rs}.}
+		\end{figure}
+
+		\column{0.5\linewidth}
+		\begin{figure}
+			\begin{center}
+				\includegraphics[width=0.95\textwidth]{figures/JabCity}
+			\end{center}
+			\caption{Code city for JabRef.}
+		\end{figure}
+	\end{columns}
+\end{frame}
+
+\begin{frame}{Summary}
+
+	\begin{alertblock}{Research Question 1}
+		\emph{How can LSP be integrated into SEE to generate code cities?}
+		\answer{\small Using the algorithm explained in previous slides}
+	\end{alertblock}
+
+	\begin{exampleblock}{Research Question 2}
+		\emph{What is the scalability of this integration?}
+		\answer{\small Feasible until $\approx 200$ kLOC (but very dependent on configuration and Language Server)}
+	\end{exampleblock}
+
+	\begin{block}{Research Question 3}
+		\emph{Are code cities a suitable means to present LSP information to developers as compared to IDEs + tables (on the dimensions of speed, accuracy, and usability)?}
+		\answer{While code cities seem suitable to present LSP information, developers work faster and prefer traditional IDEs (at least in the case of SEE vs.\ VSCode).}
+	\end{block}
+\end{frame}
+
+\begin{frame}{All SUS Questions}
+	\begin{enumerate}
+		\item "I think that I would like to use the system frequently."
+		\item "I found the system unnecessarily complex."
+		\item "I thought the system was easy to use."
+		\item "I think that I would need the support of a technical person to be able to use the system."
+		\item "I found the various functions in the system were well integrated."
+		\item "I thought there was too much inconsistency in the system."
+		\item "I would imagine that most people would learn to use the system very quickly."
+		\item "I found the system very cumbersome to use."
+		\item "I felt very confident using the system."
+		\item "I needed to learn a lot of things before I could get going with the system."
+	\end{enumerate}
+\end{frame}
+
+\subsection{Edge Matching}
+
+\begin{frame}{Matching Locations to Nodes}
+	\begin{itemize}
+		\item Need to match returned LSP locations (definition, references, \dots) to nodes
+		\item Cannot use LUT, since locations are not necessarily the same
+		\item[\follows{}] Match location to node with "tightest fitting range"
+		      \begin{itemize}
+			      \item That is, smallest node that completely contains given location
+		      \end{itemize}
+		\item Naïve approach: iterate over all nodes to find best fit
+		      \begin{itemize}
+			      \item $\Theta(|V|)$ per added edge, so in total, $\Theta(|V| \cdot |E|)$
+		      \end{itemize}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Augmented Interval Trees}
+	\begin{itemize}
+		\item Idea: Augment $k$-d tree (2 dimensions: line + column) to \textbf{interval tree}
+		\item Node in such a tree modeled as $T = (v, l, c, \lambda, \rho)$
+		      \begin{itemize}
+			      \item $v \in V$: node in project graph
+			            \begin{itemize}
+				            \item Starting position of node acts as key
+			            \end{itemize}
+			      \item $l, c \in \mathbb{N}_0$: maximum line number and character offset in subtree
+			      \item $\lambda, \rho \in \mathcal{T}$: left and right subtree
+		      \end{itemize}
+		\item Construct such an interval tree for each document
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Augmented Interval Trees: Example}
+	Example: Find \texttt{someValue}: $(1, 13, 1, 22)$
+	\begin{columns}
+		\column{0.5\textwidth}
+		\begin{minted}[linenos,escapeinside=++,firstnumber=0]{csharp}
++\textcolor{red}{|}+public class Example {
+  +\textcolor{Emerald}{|}+const char someValue = 'A'+\textcolor{Emerald}{|}+;
+
+  +\textcolor{Peach}{|}+public static long pow(+\textcolor{OliveGreen}{|}+int num+\textcolor{OliveGreen}{|}+) {
+    +\textcolor{Brown}{|}+long result = num * num+\textcolor{Brown}{|}+;
+    return result;
+  }+\textcolor{Peach}{|}+
+}+\textcolor{red}{|}+
+    \end{minted}
+
+		\column{0.5\textwidth}
+		\begin{figure}
+			\begin{center}
+				\scalebox{0.7}{\includegraphics{figures/tikz/kd.tikz}}
+			\end{center}
+		\end{figure}
+	\end{columns}
+\end{frame}
 
 \end{document}

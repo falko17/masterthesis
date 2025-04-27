@@ -3,13 +3,13 @@
 \newcommand{\filesym}{\faFile}
 
 \newcommand{\twosteps}{%
-	\node[nextstep,xshift=0.2cm] (2step1) at (foreachnode.west) {1. Connect edge to definition, if it exists.};
-	\node[nextstepsmall] (2step2) at (2step1.west) {2. Connect edge to declaration, if it exists.};
-	\node[nextstepsmall] (2step3) at (2step2.west) {3. Connect edge to type definition, if it exists.};
-	\node[nextstepsmall] (2step4) at (2step3.west) {4. Connect edge to implementation, if it exists.};
-	\node[nextstepsmall] (2step5) at (2step4.west) {5. Connect edge to any references.};
-	\node[nextstepsmall] (2step6) at (2step5.west) {6. Connect edge to any outgoing calls using call hierarchy.};
-	\node[nextstepsmall] (2step7) at (2step6.west) {7. Connect edge to any supertypes using type hierarchy.};
+	\node[nextstep,xshift=0.2cm] (2step1) at (foreachnode.west) {1. \dots{}\textbf{definition}, if it exists.};
+	\node[nextstepsmall] (2step2) at (2step1.west) {2. \dots{}\textbf{declaration}, if it exists.};
+	\node[nextstepsmall] (2step3) at (2step2.west) {3. \dots{}\textbf{type definition}, if it exists.};
+	\node[nextstepsmall] (2step4) at (2step3.west) {4. \dots{}\textbf{implementation}, if it exists.};
+	\node[nextstepsmall] (2step5) at (2step4.west) {5. \dots{}any \textbf{references}.};
+	\node[nextstepsmall] (2step6) at (2step5.west) {6. \dots{}any \textbf{outgoing calls} using call hierarchy.};
+	\node[nextstepsmall] (2step7) at (2step6.west) {7. \dots{}any \textbf{supertypes} using type hierarchy.};
 }
 
 \begin{tikzpicture}[
@@ -32,7 +32,7 @@
 	\node[outercontainer,minimum width=15cm, minimum height=5.9cm] (container2) {};
 
 	% Top of second part.
-	\node[anchor=north west, align=left, xshift=0.3cm,yshift=-0.3cm] (foreachnode) at (container2.north west) {For each node\dots};
+	\node[anchor=north west, align=left, xshift=0.3cm,yshift=-0.3cm] (foreachnode) at (container2.north west) {For each node, connect edge to\dots};
 	\begin{scope}[opacity=0.3,transparency group]
 		\node[right=0.3cm of foreachnode,opacity=0.3,yshift=0.15cm,graphnode,minimum width=0.7cm,shadow opacity=0] (nodes) {};
 		\node[below left=-0.27cm and -0.25cm of nodes,graphnode,minimum width=0.7cm,shadow opacity=0] (nodes1) {};
